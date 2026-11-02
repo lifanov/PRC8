@@ -88,7 +88,8 @@ void main()
     	{
 			IPSafeAddItemProperty(oHammer, ItemPropertyAttackBonus(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
     	   	IPSafeAddItemProperty(oHammer, ItemPropertyAttackPenalty(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-    	}   	
+    	}
+    	DelayCommand(0.05, ApplyBinderWeaponDRBypass(oBinder, oHammer));   	
 		if (nBinderLevel >= 11) IPSafeAddItemProperty(oHammer, ItemPropertyDamageBonusVsAlign(IP_CONST_ALIGNMENTGROUP_LAWFUL, IP_CONST_DAMAGETYPE_BLUDGEONING, IP_CONST_DAMAGEBONUS_2d6), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);    
 	}	
 	    
@@ -105,5 +106,5 @@ void main()
     	AddEventScript(GetItemInSlot(INVENTORY_SLOT_CHEST, oBinder), EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
     }	
 	
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

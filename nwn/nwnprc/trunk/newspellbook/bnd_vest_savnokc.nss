@@ -37,6 +37,8 @@ void main()
     object oArmor = GetItemPossessedBy(oBinder, "SavnokCallArmor");
     if (GetIsObjectValid(oArmor))
     {
+    	SetLocalInt(oBinder, "SavnokDelay", TRUE);
+    	DelayCommand(1.5, DeleteLocalInt(oBinder, "SavnokDelay"));
     	SetPlotFlag(oArmor, FALSE);
 		DestroyObject(oArmor);	
 	}	

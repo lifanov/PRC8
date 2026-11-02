@@ -116,7 +116,6 @@ void main()
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_PROF_MARTIAL), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING); 
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_PROF_SIMPLE), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING); 		
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_PROF_EXOTIC), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING); 		
-	}	
-    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));     
+	}
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));     
 }

@@ -150,8 +150,9 @@ void EurynomePoisonBlood(object oBinder, object oTarget)
 
 void TenebrousVoid(object oBinder, object oTarget)
 {
-	if (!GetLocalInt(oBinder, "TenebrousVoidStrike"))
+	if (GetLocalInt(oBinder, "TenebrousVoidArmed") && !GetLocalInt(oBinder, "TenebrousVoidStrike"))
 	{
+		DeleteLocalInt(oBinder, "TenebrousVoidArmed");
 		int nDice = 1 + (GetBinderLevel(oBinder, VESTIGE_TENEBROUS)-7)/4;
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d8(nDice), DAMAGE_TYPE_COLD), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_FROST_L), oTarget);
@@ -189,12 +190,12 @@ void SavnokInfluence(object oBinder, object oItem)
 
 void ExpelledVestigeCleanup(object oBinder)
 {
-	if (!GetHasSpellEffect(VESTIGE_ANDROMALIUS, oBinder))
+	if (!GetHasSpellEffect(VESTIGE_ANDROMALIUS, oBinder) && GetLocalInt(oBinder, "AndroSneak"))
 	{
 		DeleteLocalInt(oBinder, "AndroSneak");
     	DelayCommand(0.1, ExecuteScript("prc_sneak_att", oBinder));    			
 	}
-	if (!GetHasSpellEffect(VESTIGE_MALPHAS, oBinder))
+	if (!GetHasSpellEffect(VESTIGE_MALPHAS, oBinder) && GetLocalInt(oBinder, "MalphasSneak"))
 	{
 		DeleteLocalInt(oBinder, "MalphasSneak");
     	DelayCommand(0.1, ExecuteScript("prc_sneak_att", oBinder));    			
@@ -210,28 +211,34 @@ void ExpelledVestigeCleanup(object oBinder)
 	}	
     if (!GetHasSpellEffect(VESTIGE_SAVNOK, oBinder) && GetIsObjectValid(GetItemPossessedBy(oBinder, "SavnokCallArmor")))
     {
-	    object oArmor = GetItemPossessedBy(oBinder, "SavnokCallArmor");
-		SetPlotFlag(oArmor, FALSE);
-		DestroyObject(oArmor);	        
+        SetLocalInt(oBinder, "SavnokDelay", TRUE);
+        DelayCommand(1.5, DeleteLocalInt(oBinder, "SavnokDelay"));
+        object oArmor = GetItemPossessedBy(oBinder, "SavnokCallArmor");
+        SetPlotFlag(oArmor, FALSE);
+        DestroyObject(oArmor);
     }
     if (!GetHasSpellEffect(VESTIGE_EURYNOME, oBinder) && GetIsObjectValid(GetItemPossessedBy(oBinder, "bnd_eury_hammer")))
     {
-	    object oHammer = GetItemPossessedBy(oBinder, "bnd_eury_hammer");
-		SetPlotFlag(oHammer, FALSE);
-		AssignCommand(oHammer, SetIsDestroyable(TRUE, TRUE, TRUE));
-		DestroyObject(oHammer);	        
+        SetLocalInt(oBinder, "EurynomeDelay", TRUE);
+        DelayCommand(1.5, DeleteLocalInt(oBinder, "EurynomeDelay"));
+        object oHammer = GetItemPossessedBy(oBinder, "bnd_eury_hammer");
+        SetPlotFlag(oHammer, FALSE);
+        AssignCommand(oHammer, SetIsDestroyable(TRUE, TRUE, TRUE));
+        DestroyObject(oHammer);
     }
 	// Using Disguise Self strips the hide of all the vestige feats, this reapplies them
-	// Checks for having naberius, but not the disguise self feat
-	if (GetHasSpellEffect(VESTIGE_NABERIUS, oBinder) && !GetHasFeat(9033, oBinder))
+	// Checks for having naberius (and not having Disguise Self exploited), but missing the disguise self feat
+	if (GetHasSpellEffect(VESTIGE_NABERIUS, oBinder) &&
+	    GetLevelByClass(CLASS_TYPE_BINDER, oBinder) &&
+	    !GetIsVestigeExploited(oBinder, VESTIGE_NABERIUS_DISGUISE_SELF) &&
+	    !GetHasFeat(9033, oBinder))
 	{
     	int i;
     	for(i = VESTIGE_AMON; i <= VESTIGE_ABYSM; i++)
     	{
     		if(GetHasSpellEffect(i, oBinder)) 
     		{
-    			ApplyVestige(oBinder, i);
-    			//FloatingTextStringOnCreature("Applying vestige "+IntToString(i), oBinder, FALSE);
+    			RestoreVestigeSkinFeats(oBinder, i);
     		}
     	}	
 	} 
@@ -279,8 +286,9 @@ void ChupoclopsEth(object oBinder)
 
 void ShaxStormStrike(object oBinder, object oTarget)
 {
-	if (!GetLocalInt(oBinder, "ShaxStormStrike"))
+	if (GetLocalInt(oBinder, "ShaxStormStrikeArmed") && !GetLocalInt(oBinder, "ShaxStormStrike"))
 	{
+		DeleteLocalInt(oBinder, "ShaxStormStrikeArmed");
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(), DAMAGE_TYPE_SONIC), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SONIC), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(), DAMAGE_TYPE_ELECTRICAL), oTarget);
@@ -308,10 +316,13 @@ void VanusInfluence(object oBinder)
 		// We just left combat
 		if (nCurrent == FALSE && nCombat == TRUE)
 		{
-			SetCutsceneMode(oBinder, TRUE);
+			if (!GetCutsceneMode(oBinder))
+			{
+				SetCutsceneMode(oBinder, TRUE);
+				AssignCommand(oBinder, ActionPlayAnimation(ANIMATION_LOOPING_TALK_LAUGHING, 1.0, 6.0));
+				DelayCommand(6.0, SetCutsceneMode(oBinder, FALSE));
+			}
 			FloatingTextStringOnCreature("Victory over my enemies!", oBinder);
-			AssignCommand(oBinder, ActionPlayAnimation(ANIMATION_LOOPING_TALK_LAUGHING, 1.0, 6.0));
-			DelayCommand(6.0, SetCutsceneMode(oBinder, FALSE));
 		}	
 		//FloatingTextStringOnCreature("Vanus Combat State "+IntToString(nCurrent), oBinder); 
     	SetLocalInt(oBinder, "VanusInfluence", nCurrent);
@@ -336,8 +347,9 @@ void CityDweller(object oBinder)
 
 void EligorChromatic(object oBinder, object oTarget)
 {
-	if (!GetLocalInt(oBinder, "EligorStrikeTimer"))
+	if (GetLocalInt(oBinder, "EligorStrikeArmed") && !GetLocalInt(oBinder, "EligorStrikeTimer"))
 	{
+		DeleteLocalInt(oBinder, "EligorStrikeArmed");
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(), GetLocalInt(oBinder, "EligorStrike")), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_FAERIE_FIRE), oTarget);
 		SetLocalInt(oBinder, "EligorStrikeTimer", TRUE);
@@ -526,6 +538,8 @@ void main()
         default:
             oBinder = OBJECT_SELF;
     }
+    if (!GetIsObjectValid(oBinder))
+        oBinder = OBJECT_SELF;
 
     object oItem;
 	object oSkin = GetPCSkin(oBinder);
@@ -550,6 +564,7 @@ void main()
     else if(nEvent == EVENT_ITEM_ONHIT)
     {
         oItem          = GetSpellCastItem();
+        if (!GetIsObjectValid(oItem)) oItem = GetLocalObject(oBinder, "PRC_ONHIT_ITEM_OVERRIDE");
         object oTarget = PRCGetSpellTargetObject();
         if(DEBUG) DoDebug("bnd_events: OnHit:\n"
                         + "oBinder = " + DebugObject2Str(oBinder) + "\n"
@@ -597,35 +612,21 @@ void main()
         // Melee weapon checks
         if(IPGetIsMeleeWeapon(oItem))
         {         
-        	if (GetHasSpellEffect(VESTIGE_AYM, oBinder) && GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && GetBinderLevel(oBinder, VESTIGE_AYM) >= 10 && !GetIsVestigeExploited(oBinder, VESTIGE_AYM_RUINOUS_ATTACK))
-        	{
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       		}  
-        	if (GetHasSpellEffect(VESTIGE_RONOVE, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_RONOVE_COLD_IRON))
-        	{
-        		int nBonus = 1;
-        		if (GetBinderLevel(oBinder, VESTIGE_RONOVE) >= 7) nBonus = 3;
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(nBonus), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(nBonus), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       		}  
-       		if ((GetHasSpellEffect(VESTIGE_VANUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_DISDAIN)) ||
-       		    (GetHasSpellEffect(VESTIGE_MARCHOSIAS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_RETRIBUTION)) ||
-       		    (GetRacialType(oBinder) == RACIAL_TYPE_KARSITE)) 
-       		{
-            	AddEventScript(oItem, EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
+            ApplyBinderWeaponDRBypass(oBinder, oItem);
+            if ((GetHasSpellEffect(VESTIGE_VANUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_DISDAIN)) ||
+                (GetHasSpellEffect(VESTIGE_MARCHOSIAS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_RETRIBUTION)) ||
+                (GetRacialType(oBinder) == RACIAL_TYPE_KARSITE)) 
+            {
+                AddEventScript(oItem, EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
                 IPSafeAddItemProperty(oItem, ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING, FALSE, FALSE);       		
             }    
-       	}
-       	// Any weapon
-       	if (GetIsWeapon(oItem))
-       	{
-			if (GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder))       	
-			{
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);          	
-       		}	
-       	}
+        }
+        // Ranged weapon check for Knight of the Sacred Seal
+        else if (GetIsWeapon(oItem) && GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder))
+        {
+            IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
+            IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);          	
+        }
        	if (GetWeaponRanged(oItem))
        	{
        		if ((GetHasSpellEffect(VESTIGE_VANUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_DISDAIN)) ||
@@ -698,8 +699,6 @@ void main()
         		IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_FINESSE), 5.999, X2_IP_ADDPROP_POLICY_REPLACE_EXISTING);    	
         }	        
         if (GetHasSpellEffect(VESTIGE_ANDRAS, oBinder) && !GetLocalInt(oBinder, "PactQuality"+IntToString(VESTIGE_ANDRAS))) AndrasInfluence(oBinder);
-        if (GetHasSpellEffect(VESTIGE_TENEBROUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_SEE_DARKNESS)) ActionCastSpellOnSelf(SPELL_DARKVISION);
-        if (GetHasSpellEffect(VESTIGE_GERYON, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_GERYON_DARKNESS)) ActionCastSpellOnSelf(SPELL_DARKVISION);
 		if (GetIsPatronVestigeBound(oBinder) && GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder) >= 5)
 		{
 			ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectDamageReduction(10, DAMAGE_POWER_PLUS_ONE), oBinder, 6.0);

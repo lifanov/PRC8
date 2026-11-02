@@ -47,6 +47,6 @@ void main()
     }	
    
     eLink = EffectLinkEffects(eLink, EffectVisualEffect(VFX_DUR_PRISMATIC_SPHERE));
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
     ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_DRAGONBLAST), oBinder);
 }

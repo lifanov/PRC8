@@ -71,5 +71,5 @@ void main()
     	if (!GetIsVestigeExploited(oBinder, VESTIGE_LERAJE_LOW_LIGHT_VISION)) EffectLinkEffects(eLink, EffectUltravision());
     }	
     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));  
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));  
 }

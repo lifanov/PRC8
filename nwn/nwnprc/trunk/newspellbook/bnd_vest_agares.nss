@@ -49,6 +49,5 @@ void main()
     
     if (!GetIsVestigeExploited(oBinder, VESTIGE_AGARES_EARTHSHAKING)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_AGARES_STEP), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     if (!GetIsVestigeExploited(oBinder, VESTIGE_AGARES_COMPANION)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_AGARES_ELEMENTAL), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
-   
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

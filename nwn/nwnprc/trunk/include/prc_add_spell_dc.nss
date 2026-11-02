@@ -726,9 +726,10 @@ int PRCGetSaveDC(object oTarget, object oCaster, int nSpellID = -1)
 
     // For when you want to assign the caster DC
     //this does not take feat/race/class into account, it is an absolute override
-    if (GetLocalInt(oCaster, PRC_DC_TOTAL_OVERRIDE) != 0)
+    if (GetLocalInt(oCaster, PRC_DC_TOTAL_OVERRIDE) != 0 || GetLocalInt(oCaster, "PRC_DC_Total_Override") != 0)
     {
         nDC = GetLocalInt(oCaster, PRC_DC_TOTAL_OVERRIDE);
+        if (!nDC) nDC = GetLocalInt(oCaster, "PRC_DC_Total_Override");
         if(DEBUG) DoDebug("Forced-DC PRC_DC_TOTAL_OVERRIDE casting at DC " + IntToString(nDC));
     }
     // For when you want to assign the caster DC

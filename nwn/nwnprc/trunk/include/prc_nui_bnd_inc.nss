@@ -339,6 +339,7 @@ void BinderNUIBuildHomeMaps(object oPC)
     int bHasRoom = GetBindCount(oPC) < GetMaxVestigeCount(oPC);
     int nMaxLvl = GetMaxVestigeLevel(oPC);
 
+    SetLocalInt(oPC, "BinderCheckingMenuReqs", TRUE);
     int i;
     for (i = 1; i < 50; i++)
     {
@@ -373,6 +374,7 @@ void BinderNUIBuildHomeMaps(object oPC)
         }
     }
 
+    DeleteLocalInt(oPC, "BinderCheckingMenuReqs");
     SetLocalJson(oPC, PRC_BINDER_NUI_HOME_BIND_MAP_VAR, jBindMap);
     SetLocalJson(oPC, PRC_BINDER_NUI_HOME_BIND_NAMES_VAR, jBindNames);
     SetLocalJson(oPC, PRC_BINDER_NUI_HOME_BOUND_MAP_VAR, jBoundMap);
@@ -452,6 +454,33 @@ void BinderNUIBuildAugmentChoices(object oPC)
         jNames = JsonArrayInsert(jNames, JsonString(BinderNUIAugmentName(i)));
     }
     BinderNUISetChoiceMap(oPC, jMap, jNames);
+}
+
+int BinderNUIAvailableNaberiusSkills(object oPC)
+{
+    int nCount = 0;
+    int i;
+    for (i = 0; i < 40; i++)
+    {
+        string sName = GetStringByStrRef(StringToInt(Get2DACache("skills", "Name", i)));
+        if (sName != ""
+            && GetSkillRank(i, oPC, TRUE) == 0
+            && StringToInt(Get2DACache("skills", "Untrained", i))
+            && !GetLocalInt(oPC, "NaberiusSkill" + IntToString(i)))
+        {
+            nCount++;
+        }
+    }
+    return nCount;
+}
+
+int BinderNUINaberiusTargetCount(object oPC)
+{
+    int nConMod = GetAbilityModifier(ABILITY_CONSTITUTION, oPC);
+    if (nConMod <= 0)
+        return 0;
+    int nAvail = BinderNUIAvailableNaberiusSkills(oPC);
+    return nConMod < nAvail ? nConMod : nAvail;
 }
 
 void BinderNUIBuildNaberiusChoices(object oPC)
@@ -574,7 +603,7 @@ void BinderNUIBuildExploitSpellChoices(object oPC)
             && JsonObjectGet(jSeen, sKey) == JsonNull())
         {
             jSeen = JsonObjectSet(jSeen, sKey, JsonBool(TRUE));
-            string sName = GetStringByStrRef(StringToInt(Get2DACache("spells", "Name", nSpell)));
+            string sName = GetStringByStrRef(StringToInt(Get2DAString("spells", "Name", nSpell)));
             if (sName != "")
             {
                 jMap = JsonArrayInsert(jMap, JsonInt(nSpell));
@@ -594,7 +623,7 @@ void BinderNUIAdvanceAfterMethod(object oPC)
         SetLocalInt(oPC, PRC_BINDER_NUI_STAGE_VAR, PRC_BINDER_NUI_STAGE_AUGMENT);
         BinderNUIBuildAugmentChoices(oPC);
     }
-    else if (nRow == 4 && GetAbilityModifier(ABILITY_CONSTITUTION, oPC) >= 1)
+    else if (nRow == 4 && BinderNUINaberiusTargetCount(oPC) >= 1)
     {
         SetLocalJson(oPC, PRC_BINDER_NUI_NABERIUS_VAR, JsonArray());
         SetLocalInt(oPC, PRC_BINDER_NUI_STAGE_VAR, PRC_BINDER_NUI_STAGE_NABERIUS);
@@ -615,7 +644,7 @@ void BinderNUIAdvanceAfterMethod(object oPC)
 void BinderNUIAdvanceAfterAugment(object oPC)
 {
     int nRow = GetLocalInt(oPC, PRC_BINDER_NUI_SELECTED_ROW_VAR);
-    if (nRow == 4 && GetAbilityModifier(ABILITY_CONSTITUTION, oPC) >= 1)
+    if (nRow == 4 && BinderNUINaberiusTargetCount(oPC) >= 1)
     {
         SetLocalJson(oPC, PRC_BINDER_NUI_NABERIUS_VAR, JsonArray());
         SetLocalInt(oPC, PRC_BINDER_NUI_STAGE_VAR, PRC_BINDER_NUI_STAGE_NABERIUS);
@@ -680,10 +709,10 @@ string BinderNUIValidateDraft(object oPC)
     if (BinderNUIAugmentTotal(oPC) != nAugmentTarget)
         return "Choose exactly " + IntToString(nAugmentTarget) + " Pact Augmentation benefits.";
 
-    if (nRow == 4 && GetAbilityModifier(ABILITY_CONSTITUTION, oPC) >= 1)
+    if (nRow == 4 && BinderNUINaberiusTargetCount(oPC) >= 1)
     {
         json jNab = GetLocalJson(oPC, PRC_BINDER_NUI_NABERIUS_VAR);
-        int nTarget = GetAbilityModifier(ABILITY_CONSTITUTION, oPC);
+        int nTarget = BinderNUINaberiusTargetCount(oPC);
         if (JsonGetType(jNab) != JSON_TYPE_ARRAY || JsonGetLength(jNab) != nTarget)
             return "Choose exactly " + IntToString(nTarget) + " Naberius skills.";
         int i;
@@ -1025,7 +1054,7 @@ string BinderNUIBindingSummary(object oPC)
         + "\nMethod: " + BinderNUIMethodName(GetLocalInt(oPC, PRC_BINDER_NUI_METHOD_VAR));
     if (GetPactAugmentCount(oPC) > 0)
         sResult += "\nPact Augmentation: " + BinderNUIAugmentSummary(oPC);
-    if (nRow == 4 && GetAbilityModifier(ABILITY_CONSTITUTION, oPC) >= 1)
+    if (nRow == 4 && BinderNUINaberiusTargetCount(oPC) >= 1)
         sResult += "\nNaberius skills: " + BinderNUINaberiusSummary(oPC);
     if (nRow == 20)
         sResult += "\nAstaroth feat: " + BinderNUIAstarothFeatName(

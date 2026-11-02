@@ -61,5 +61,5 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_BUER_HEALING_GIFT)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_BUER_HEAL), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     if (!GetIsVestigeExploited(oBinder, VESTIGE_BUER_TRACK)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_TRACK), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

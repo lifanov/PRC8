@@ -38,7 +38,11 @@ void main()
     }	
     
     if (!GetIsVestigeExploited(oBinder, VESTIGE_GERYON_GAZE))     IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_GERYON_GAZE),   HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
-    if (!GetIsVestigeExploited(oBinder, VESTIGE_GERYON_DARKNESS)) eLink = EffectLinkEffects(eLink, EffectUltravision());
+    if (!GetIsVestigeExploited(oBinder, VESTIGE_GERYON_DARKNESS))
+    {
+        eLink = EffectLinkEffects(eLink, EffectUltravision());
+        eLink = EffectLinkEffects(eLink, EffectUltravision());
+    }
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_GERYON_VISION))
 	{
         eLink    = EffectLinkEffects(eLink, EffectSkillIncrease(SKILL_SPOT,   4));
@@ -47,6 +51,5 @@ void main()
         IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_UNCANNY_DODGE2),   HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	}	
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_GERYON_FLIGHT))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_GERYON_FLIGHT),       HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
-    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));     
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));     
 }

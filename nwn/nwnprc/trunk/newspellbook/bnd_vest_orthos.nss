@@ -59,7 +59,7 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_ORTHOS_DISPLACEMENT)) eLink = EffectLinkEffects(eLink, EffectConcealment(50));
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_ORTHOS_BREATH))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_ORTHOS_BREATH), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
     ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_WIND), oBinder);
     ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SOUND_SYMBOL_STUNNING), oBinder);
 }

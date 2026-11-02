@@ -57,7 +57,11 @@ void main()
     effect eLink = EffectLinkEffects(EffectVisualEffect(PSI_DUR_SHADOW_BODY), EffectPact(oBinder));
     
     if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_DARKNESS))     IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_DARKNESS),   HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
-    if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_SEE_DARKNESS)) eLink = EffectLinkEffects(eLink, EffectUltravision());
+    if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_SEE_DARKNESS))
+    {
+        eLink = EffectLinkEffects(eLink, EffectUltravision());
+        eLink = EffectLinkEffects(eLink, EffectUltravision());
+    }
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_TOUCH_VOID))   IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_TOUCH_VOID), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_TURN_UNDEAD))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_TURN),       HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_EMPTY_VESSEL)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_VESSEL),     HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
@@ -69,6 +73,5 @@ void main()
     	DelayCommand(3.0, TenebrousInfluence(oBinder, FALSE));
     }	
     if (GetLevelByClass(CLASS_TYPE_TENEBROUS_APOSTATE, oBinder) >= 2) eLink = EffectLinkEffects(eLink, EffectAreaOfEffect(136, "bnd_tnb_visage", "", ""));
-     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

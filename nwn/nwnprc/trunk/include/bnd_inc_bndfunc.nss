@@ -230,6 +230,9 @@ int GetBinderDC(object oBinder, int nVestige);
  * @return          TRUE/FALSE
  */
 int DoSpecialRequirements(object oBinder, int nVestige);
+void ApplyBinderWeaponDRBypass(object oBinder, object oItem);
+void ScrubVestigeSkinFeats(object oBinder, int nVestige);
+void RestoreVestigeSkinFeats(object oBinder, int nVestige);
 
 /**
  * Checks for the special requirements of each vestige
@@ -360,6 +363,336 @@ string GetBindingClassFile(int nClass)
 	return sFile;
 }
 
+int IsSkinFeatForVestige(int nSubType, int nVestige)
+{
+    if (nVestige == VESTIGE_AMON) return nSubType == IP_CONST_VESTIGE_AMON_BREATH;
+    if (nVestige == VESTIGE_AYM) return nSubType == IP_CONST_VESTIGE_AYM_HALO;
+    if (nVestige == VESTIGE_LERAJE) return nSubType == IP_CONST_VESTIGE_LERAJE_RICOCHET;
+    if (nVestige == VESTIGE_NABERIUS) return nSubType == IP_CONST_VESTIGE_NABERIUS_DISGUISE || nSubType == IP_CONST_VESTIGE_NABERIUS_COMMAND;
+    if (nVestige == VESTIGE_RONOVE) return nSubType == IP_CONST_VESTIGE_RONOVE_FARHAND || nSubType == IP_CONST_VESTIGE_RONOVE_BULLRUSH;
+    if (nVestige == VESTIGE_DAHLVERNAR) return nSubType == IP_CONST_VESTIGE_DAHLVER_MOAN || nSubType == IP_CONST_VESTIGE_DAHLVER_SHARE;
+    if (nVestige == VESTIGE_HAAGENTI) return nSubType == IP_CONST_VESTIGE_HAAGENTI_TOUCH;
+    if (nVestige == VESTIGE_MALPHAS) return nSubType == IP_CONST_VESTIGE_MALPHAS_EYE || nSubType == IP_CONST_VESTIGE_MALPHAS_INVIS_ST || nSubType == IP_CONST_VESTIGE_MALPHAS_INVIS_SW;
+    if (nVestige == VESTIGE_SAVNOK) return nSubType == IP_CONST_VESTIGE_SAVNOK_CALL || nSubType == IP_CONST_VESTIGE_SAVNOK_MOVE_ST || nSubType == IP_CONST_VESTIGE_SAVNOK_MOVE_SW;
+    if (nVestige == VESTIGE_ANDROMALIUS) return nSubType == IP_CONST_VESTIGE_ANDRO_MIRTH || nSubType == IP_CONST_VESTIGE_ANDRO_LOCATE || nSubType == IP_CONST_VESTIGE_ANDRO_SEE;
+    if (nVestige == VESTIGE_FOCALOR) return nSubType == IP_CONST_VESTIGE_FOCALOR_AURA || nSubType == IP_CONST_VESTIGE_FOCALOR_BOLT || nSubType == IP_CONST_VESTIGE_FOCALOR_BREATH;
+    if (nVestige == VESTIGE_KARSUS) return nSubType == IP_CONST_VESTIGE_KARSUS_SENSES || nSubType == IP_CONST_VESTIGE_KARSUS_TOUCH;
+    if (nVestige == VESTIGE_PAIMON) return nSubType == IP_CONST_VESTIGE_PAIMON_DANCE;
+    if (nVestige == VESTIGE_AGARES) return nSubType == IP_CONST_VESTIGE_AGARES_STEP || nSubType == IP_CONST_VESTIGE_AGARES_ELEMENTAL;
+    if (nVestige == VESTIGE_ANDRAS) return nSubType == IP_CONST_VESTIGE_ANDRAS_SMITE || nSubType == IP_CONST_VESTIGE_ANDRAS_DISCORD || nSubType == IP_CONST_VESTIGE_ANDRAS_MOUNT;
+    if (nVestige == VESTIGE_BUER) return nSubType == IP_CONST_VESTIGE_BUER_HEAL;
+    if (nVestige == VESTIGE_TENEBROUS) return nSubType == IP_CONST_VESTIGE_TENEBROUS_DARKNESS || nSubType == IP_CONST_VESTIGE_TENEBROUS_TOUCH_VOID || nSubType == IP_CONST_VESTIGE_TENEBROUS_TURN || nSubType == IP_CONST_VESTIGE_TENEBROUS_VESSEL;
+    if (nVestige == VESTIGE_ARETE) return nSubType == IP_CONST_VESTIGE_ARETE_RESISTANCE;
+    if (nVestige == VESTIGE_ASTAROTH) return nSubType == IP_CONST_VESTIGE_ASTAROTH_BREATH || nSubType == IP_CONST_VESTIGE_ASTAROTH_WORD;
+    if (nVestige == VESTIGE_ACERERAK) return nSubType == IP_CONST_VESTIGE_ACERERAK_DETECT || nSubType == IP_CONST_VESTIGE_ACERERAK_HIDE || nSubType == IP_CONST_VESTIGE_ACERERAK_TOUCH;
+    if (nVestige == VESTIGE_BALAM) return nSubType == IP_CONST_VESTIGE_BALAM_CUNNING || nSubType == IP_CONST_VESTIGE_BALAM_GLARE;
+    if (nVestige == VESTIGE_DANTALION) return nSubType == IP_CONST_VESTIGE_DANTALION_AWE || nSubType == IP_CONST_VESTIGE_DANTALION_READ || nSubType == IP_CONST_VESTIGE_DANTALION_TRAVEL;
+    if (nVestige == VESTIGE_GERYON) return nSubType == IP_CONST_VESTIGE_GERYON_GAZE || nSubType == IP_CONST_VESTIGE_GERYON_FLIGHT;
+    if (nVestige == VESTIGE_OTIAX) return nSubType == IP_CONST_VESTIGE_OTIAX_AIR_BLAST || nSubType == IP_CONST_VESTIGE_OTIAX_OPEN || nSubType == IP_CONST_VESTIGE_OTIAX_UNLOCK;
+    if (nVestige == VESTIGE_CHUPOCLOPS) return nSubType == IP_CONST_VESTIGE_CHUPOCLOPS_DESPAIR || nSubType == IP_CONST_VESTIGE_CHUPOCLOPS_ETHEREAL;
+    if (nVestige == VESTIGE_HAURES) return nSubType == IP_CONST_VESTIGE_HAURES_IMAGE || nSubType == IP_CONST_VESTIGE_HAURES_KILLER;
+    if (nVestige == VESTIGE_IPOS) return nSubType == IP_CONST_VESTIGE_IPOS_INSIGHT;
+    if (nVestige == VESTIGE_SHAX) return nSubType == IP_CONST_VESTIGE_SHAX_FREEDOM || nSubType == IP_CONST_VESTIGE_SHAX_STRIKE;
+    if (nVestige == VESTIGE_ZAGAN) return nSubType == IP_CONST_VESTIGE_ZAGAN_AVERSION;
+    if (nVestige == VESTIGE_VANUS) return nSubType == IP_CONST_VESTIGE_VANUS_FREE_ALLY;
+    if (nVestige == VESTIGE_THETRIAD) return nSubType == IP_CONST_VESTIGE_THE_TRIAD_SMITE;
+    if (nVestige == VESTIGE_DESHARIS) return nSubType == IP_CONST_VESTIGE_DESHARIS_TELEPORT || nSubType == IP_CONST_VESTIGE_DESHARIS_SMITE || nSubType == IP_CONST_VESTIGE_DESHARIS_ANIMATE;
+    if (nVestige == VESTIGE_ZCERYLL) return nSubType == IP_CONST_VESTIGE_ZCERYLL_BOLTS || nSubType == IP_CONST_VESTIGE_ZCERYLL_SUMMON || nSubType == IP_CONST_VESTIGE_ZCERYLL_TRUE_STRIKE;
+    if (nVestige == VESTIGE_ELIGOR) return nSubType == IP_CONST_VESTIGE_ELIGOR_STRIKE;
+    if (nVestige == VESTIGE_MARCHOSIAS) return nSubType == IP_CONST_VESTIGE_MARCHOSIAS_SMOKE;
+    if (nVestige == VESTIGE_ASHARDALON) return nSubType == IP_CONST_VESTIGE_ASHARDALON_PRESENCE || nSubType == IP_CONST_VESTIGE_ASHARDALON_LOCATE;
+    if (nVestige == VESTIGE_HALPHAX) return nSubType == IP_CONST_VESTIGE_HALPHAX_IMPRISON || nSubType == IP_CONST_VESTIGE_HALPHAX_BARRIER || nSubType == IP_CONST_VESTIGE_HALPHAX_SHELTER;
+    if (nVestige == VESTIGE_ORTHOS) return nSubType == IP_CONST_VESTIGE_ORTHOS_BREATH;
+    return FALSE;
+}
+
+void ScrubVestigeSkinFeats(object oBinder, int nVestige)
+{
+    object oSkin = GetPCSkin(oBinder);
+    if (!GetIsObjectValid(oSkin)) return;
+    itemproperty ip = GetFirstItemProperty(oSkin);
+    while (GetIsItemPropertyValid(ip))
+    {
+        if (GetItemPropertyType(ip) == ITEM_PROPERTY_BONUS_FEAT)
+        {
+            int nSub = GetItemPropertySubType(ip);
+            if (IsSkinFeatForVestige(nSub, nVestige))
+                RemoveItemProperty(oSkin, ip);
+        }
+        ip = GetNextItemProperty(oSkin);
+    }
+}
+
+void RestoreVestigeSkinFeats(object oBinder, int nVestige)
+{
+    object oSkin = GetPCSkin(oBinder);
+    if (!GetIsObjectValid(oSkin)) return;
+    int nBinderLevel = GetBinderLevel(oBinder, nVestige);
+    float fDur = HoursToSeconds(24);
+
+    if (nVestige == VESTIGE_AMON && GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_AMON_FIREBREATH))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_AMON_BREATH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_AYM && GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_AYM_HALO_FIRE))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_AYM_HALO), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_LERAJE && GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_LERAJE_RICOCHET))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_LERAJE_RICOCHET), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_NABERIUS && GetLevelByClass(CLASS_TYPE_BINDER, oBinder))
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_NABERIUS_DISGUISE_SELF))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_NABERIUS_DISGUISE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_NABERIUS_PERSUASIVE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_NABERIUS_COMMAND), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_RONOVE && GetLevelByClass(CLASS_TYPE_BINDER, oBinder))
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_RONOVE_FAR_HAND))
+        {
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_RONOVE_FARHAND), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_RONOVE_BULLRUSH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        }
+    }
+    else if (nVestige == VESTIGE_DAHLVERNAR && GetLevelByClass(CLASS_TYPE_BINDER, oBinder))
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DAHLVERNAR_MADDENING_MOAN))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DAHLVER_MOAN), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DAHLVERNAR_SHIELD_SELF))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DAHLVER_SHARE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_HAAGENTI && GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_HAAGENTI_CONFUSE))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_HAAGENTI_TOUCH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_MALPHAS)
+    {
+        if ((GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder)) && !GetIsVestigeExploited(oBinder, VESTIGE_MALPHAS_ARCANE_EYE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_MALPHAS_EYE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MALPHAS_INVIS))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(nBinderLevel >= 15 ? IP_CONST_VESTIGE_MALPHAS_INVIS_SW : IP_CONST_VESTIGE_MALPHAS_INVIS_ST), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_SAVNOK)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_SAVNOK_CALL_ARMOR))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_SAVNOK_CALL), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_SAVNOK_MOVE_ALLY))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(nBinderLevel >= 13 ? IP_CONST_VESTIGE_SAVNOK_MOVE_SW : IP_CONST_VESTIGE_SAVNOK_MOVE_ST), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ANDROMALIUS)
+    {
+        if ((GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder)) && !GetIsVestigeExploited(oBinder, VESTIGE_ANDROMALIUS_SEE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRO_SEE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder))
+        {
+            if (!GetIsVestigeExploited(oBinder, VESTIGE_ANDROMALIUS_LOCATE))
+                IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRO_LOCATE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+            if (!GetIsVestigeExploited(oBinder, VESTIGE_ANDROMALIUS_JESTER))
+                IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRO_MIRTH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        }
+    }
+    else if (nVestige == VESTIGE_FOCALOR)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_FOCALOR_AURA))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_FOCALOR_AURA), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder))
+        {
+            if (!GetIsVestigeExploited(oBinder, VESTIGE_FOCALOR_LIGHTNING))
+                IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_FOCALOR_BOLT), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+            if (!GetIsVestigeExploited(oBinder, VESTIGE_FOCALOR_BREATH))
+                IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_FOCALOR_BREATH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        }
+    }
+    else if (nVestige == VESTIGE_KARSUS)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_KARSUS_SENSES_ABIL))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_KARSUS_SENSES), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_KARSUS_TOUCH))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_KARSUS_TOUCH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_PAIMON && GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_PAIMON_DANCE))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_PAIMON_DANCE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_AGARES)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_AGARES_EARTHSHAKING))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_AGARES_STEP), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_AGARES_COMPANION))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_AGARES_ELEMENTAL), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ANDRAS)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ANDRAS_SMITE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRAS_SMITE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ANDRAS_DISCORD))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRAS_DISCORD), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ANDRAS_MOUNT))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRAS_MOUNT), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_BUER && !GetIsVestigeExploited(oBinder, VESTIGE_BUER_HEALING_GIFT))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_BUER_HEAL), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_TENEBROUS)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_DARKNESS))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_DARKNESS), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_TOUCH_VOID))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_TOUCH_VOID), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_TURN_UNDEAD))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_TURN), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_EMPTY_VESSEL))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_VESSEL), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ARETE && !GetIsVestigeExploited(oBinder, VESTIGE_ARETE_RESISTANCE))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ARETE_RESISTANCE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_ASTAROTH)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ASTAROTH_BREATH))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ASTAROTH_BREATH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ASTAROTH_WORD))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ASTAROTH_WORD), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ACERERAK)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ACERERAK_DETECT))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ACERERAK_DETECT), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ACERERAK_HIDE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ACERERAK_HIDE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ACERERAK_TOUCH))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ACERERAK_TOUCH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_BALAM)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_BALAM_CUNNING))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_BALAM_CUNNING), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_BALAM_GLARE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_BALAM_GLARE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_DANTALION)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DANTALION_AWE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DANTALION_AWE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DANTALION_READ))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DANTALION_READ), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DANTALION_TRAVEL))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DANTALION_TRAVEL), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_GERYON)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_GERYON_GAZE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_GERYON_GAZE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_GERYON_FLIGHT))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_GERYON_FLIGHT), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_OTIAX)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_OTIAX_AIR_BLAST))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_OTIAX_AIR_BLAST), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_OTIAX_OPEN))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_OTIAX_OPEN), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_OTIAX_UNLOCK))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_OTIAX_UNLOCK), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_CHUPOCLOPS)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_CHUPOCLOPS_DESPAIR))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_CHUPOCLOPS_DESPAIR), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_CHUPOCLOPS_ETHEREAL))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_CHUPOCLOPS_ETHEREAL), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_HAURES)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_HAURES_IMAGE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_HAURES_IMAGE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_HAURES_KILLER))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_HAURES_KILLER), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_IPOS && !GetIsVestigeExploited(oBinder, VESTIGE_IPOS_INSIGHT))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_IPOS_INSIGHT), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_SHAX)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_FREEDOM))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_SHAX_FREEDOM), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_STORM_STRIKE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_SHAX_STRIKE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ZAGAN && !GetIsVestigeExploited(oBinder, VESTIGE_ZAGAN_AVERSION))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ZAGAN_AVERSION), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_VANUS && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_FREE_ALLY))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_VANUS_FREE_ALLY), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_THETRIAD && !GetIsVestigeExploited(oBinder, VESTIGE_THE_TRIAD_RUJSHA))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_THE_TRIAD_SMITE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_DESHARIS)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DESHARIS_TELEPORT))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DESHARIS_TELEPORT), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DESHARIS_SMITE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DESHARIS_SMITE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_DESHARIS_ANIMATE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_DESHARIS_ANIMATE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ZCERYLL)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ZCERYLL_ALIEN_FORM))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ZCERYLL_TRUE_STRIKE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ZCERYLL_BOLTS))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ZCERYLL_BOLTS), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ZCERYLL_SUMMON))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ZCERYLL_SUMMON), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ELIGOR && !GetIsVestigeExploited(oBinder, VESTIGE_ELIGOR_STRIKE))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ELIGOR_STRIKE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_MARCHOSIAS && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_SMOKE))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_MARCHOSIAS_SMOKE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    else if (nVestige == VESTIGE_ASHARDALON)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ASHARDALON_CREED))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ASHARDALON_LOCATE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_ASHARDALON_PRESENCE))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ASHARDALON_PRESENCE), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_HALPHAX)
+    {
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_HALPHAX_IMPRISON))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_HALPHAX_IMPRISON), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_HALPHAX_BARRIER))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_HALPHAX_BARRIER), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        if (!GetIsVestigeExploited(oBinder, VESTIGE_HALPHAX_SHELTER))
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_HALPHAX_SHELTER), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    else if (nVestige == VESTIGE_ORTHOS && !GetIsVestigeExploited(oBinder, VESTIGE_ORTHOS_BREATH))
+        IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_VESTIGE_ORTHOS_BREATH), fDur, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+}
+
+void CleanupPreEpicVestigeState(object oBinder, int nVestige)
+{
+    effect eClean = GetFirstEffect(oBinder);
+    while (GetIsEffectValid(eClean))
+    {
+        if (GetEffectSpellId(eClean) == nVestige)
+            RemoveEffect(oBinder, eClean);
+        eClean = GetNextEffect(oBinder);
+    }
+    if (nVestige == VESTIGE_ARETE)
+        DeleteLocalInt(oBinder, "AretePsion");
+    else if (nVestige == VESTIGE_THETRIAD)
+        DeleteLocalInt(oBinder, "TheTriadPsion");
+    else if (nVestige == VESTIGE_ABYSM)
+        DeleteLocalInt(oBinder, "AbysmPsion");
+}
+
+void EnsureVestigeApplied(object oBinder, int nVestige, int nExpectedGen)
+{
+    if (!GetIsObjectValid(oBinder)) return;
+    if (GetLocalInt(oBinder, "VestigeBindGen_" + IntToString(nVestige)) != nExpectedGen) return;
+    if (GetHasSpellEffect(nVestige, oBinder)) return;
+
+    string sScript = Get2DACache("spells", "ImpactScript", nVestige);
+    if (sScript != "")
+    {
+        SetLocalInt(oBinder, "PRC_SPELLID_OVERRIDE", nVestige);
+        SetLocalInt(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE", TRUE);
+        SetLocalObject(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE", oBinder);
+        ExecuteScript(sScript, oBinder);
+        DeleteLocalInt(oBinder, "PRC_SPELLID_OVERRIDE");
+        DeleteLocalInt(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE");
+        DeleteLocalObject(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE");
+    }
+}
+
 void ApplyVestige(object oBinder, int nVestige)
 {
 	//:: Remove Astaroth's crafting feat to allow leveling up.
@@ -373,14 +706,17 @@ void ApplyVestige(object oBinder, int nVestige)
         eOld = GetNextEffect(oBinder);  
     } 
 	
+	int nBindGen = GetLocalInt(oBinder, "VestigeBindGen_" + IntToString(nVestige)) + 1;
+	SetLocalInt(oBinder, "VestigeBindGen_" + IntToString(nVestige), nBindGen);
 	PRCRemoveSpellEffects(nVestige, oBinder, oBinder);
 	GZPRCRemoveSpellEffects(nVestige, oBinder, FALSE);
+	ScrubVestigeSkinFeats(oBinder, nVestige);
+	CleanupPreEpicVestigeState(oBinder, nVestige);
 	ActionCastSpellOnSelf(nVestige, METAMAGIC_NONE, oBinder);
+	DelayCommand(2.6f, EnsureVestigeApplied(oBinder, nVestige, nBindGen));
 	if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) >= 2)
 	{
-		PRCRemoveSpellEffects(VESTIGE_PACT_AUGMENTATION, oBinder, oBinder);
-		GZPRCRemoveSpellEffects(VESTIGE_PACT_AUGMENTATION, oBinder, FALSE);
-		ActionCastSpellOnSelf(VESTIGE_PACT_AUGMENTATION, METAMAGIC_NONE, oBinder);	
+		ExecuteScript("bnd_bind_pact", oBinder);	
 	}	
 	if (DEBUG) DoDebug("Applying Vestige "+IntToString(nVestige)+" on "+GetName(oBinder));
 	
@@ -420,8 +756,28 @@ void ExpelVestige(object oBinder, int nVestige)
 	// Here, making a good pack means we can unbind it
 	if (GetLocalInt(oBinder, "PactQuality"+IntToString(nVestige)))
 	{
+		SetLocalInt(oBinder, "VestigeBindGen_" + IntToString(nVestige), GetLocalInt(oBinder, "VestigeBindGen_" + IntToString(nVestige)) + 1);
 		PRCRemoveSpellEffects(nVestige, oBinder, oBinder);
 		GZPRCRemoveSpellEffects(nVestige, oBinder, FALSE);
+		CleanupPreEpicVestigeState(oBinder, nVestige);
+		ScrubVestigeSkinFeats(oBinder, nVestige);
+		if (nVestige == VESTIGE_RONOVE)
+		{
+			DeleteLocalInt(oBinder, "RonovesFists");
+			SetLocalInt(oBinder, "CALL_UNARMED_FEATS", TRUE);
+			SetLocalInt(oBinder, "CALL_UNARMED_FISTS", TRUE);
+			ExecuteScript("unarmed_caller", oBinder);
+			DelayCommand(0.2f, ExecuteScript("prc_speed", oBinder));
+		}
+		else if (nVestige == VESTIGE_AYM || nVestige == VESTIGE_DESHARIS)
+		{
+			DelayCommand(0.2f, ExecuteScript("prc_speed", oBinder));
+		}
+		if (nVestige == VESTIGE_AYM || nVestige == VESTIGE_RONOVE)
+		{
+			ApplyBinderWeaponDRBypass(oBinder, GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder));
+			ApplyBinderWeaponDRBypass(oBinder, GetItemInSlot(INVENTORY_SLOT_LEFTHAND, oBinder));
+		}
 		FloatingTextStringOnCreature("Expelled "+GetStringByStrRef(StringToInt(Get2DACache("spells", "Name", nVestige)))+" successfully!", oBinder, FALSE);
 	}
 	else
@@ -562,7 +918,9 @@ int BindAbilCooldown(object oBinder, int nAbil, int nVestige)
 
 int GetMaxVestigeCount(object oBinder)
 {
-	int nMax = StringToInt(Get2DACache(GetBindingClassFile(CLASS_TYPE_BINDER), "Vestiges", GetBinderLevel(oBinder)));
+	int nLevel = GetBinderLevel(oBinder);
+	int nRow = (nLevel > 0 ? nLevel - 1 : 0);
+	int nMax = StringToInt(Get2DACache(GetBindingClassFile(CLASS_TYPE_BINDER), "Vestiges", nRow));
 	
     if (DEBUG) DoDebug("GetMaxVestigeCount is "+IntToString(nMax));
     return nMax;
@@ -573,7 +931,8 @@ int GetMaxVestigeLevel(object oBinder)
 	int nLevel = GetBinderLevel(oBinder);
 	if (GetHasFeat(FEAT_IMPROVED_BINDING, oBinder)) nLevel += 2;
 	// Due to the 2da starting at row 0
-	int nMax = StringToInt(Get2DACache(GetBindingClassFile(CLASS_TYPE_BINDER), "VestigeLvl", nLevel - 1));
+	int nRow = (nLevel > 0 ? nLevel - 1 : 0);
+	int nMax = StringToInt(Get2DACache(GetBindingClassFile(CLASS_TYPE_BINDER), "VestigeLvl", nRow));
 	
     if (DEBUG) DoDebug("GetMaxVestigeLevel is "+IntToString(nMax));
     return nMax;
@@ -614,15 +973,18 @@ int GetPactAugmentCount(object oBinder)
 
 effect EffectPact(object oBinder)
 {
+	int nSpellId = PRCGetSpellId();
 	effect eEffect;
-	if (!GetLocalInt(oBinder, "PactQuality"+IntToString(GetSpellId())))
+	if (!GetLocalInt(oBinder, "PactQuality"+IntToString(nSpellId)))
 	{
-		// –1 penalty on attack rolls, saving throws, and skill checks
+		// -1 penalty on attack rolls, saving throws, and skill checks
 		eEffect = EffectLinkEffects(EffectSkillDecrease(SKILL_ALL_SKILLS, 1), EffectSavingThrowDecrease(SAVING_THROW_ALL, 1));
 		eEffect = EffectLinkEffects(eEffect, EffectAttackDecrease(1));
 	}	
 	else // NWN hates having a blank effect
 		eEffect = EffectLinkEffects(EffectSkillDecrease(SKILL_DISCIPLINE, 1), EffectSkillIncrease(SKILL_DISCIPLINE, 1));
+	if (nSpellId >= 0)
+		eEffect = SetEffectSpellId(eEffect, nSpellId);
     
     return eEffect;
 }
@@ -812,7 +1174,13 @@ int DoSpecialRequirements(object oBinder, int nVestige)
     	while(GetIsEffectValid(eTest))
     	{
     	    if(GetEffectType(eTest) == EFFECT_TYPE_AREA_OF_EFFECT)
-    	        return FALSE;
+    	    {
+    	        int nEffSpell = GetEffectSpellId(eTest);
+    	        int bIsVestigeAura = ((nEffSpell >= VESTIGE_AMON && nEffSpell <= VESTIGE_ABYSM) ||
+    	                              (nEffSpell >= 19064 && nEffSpell <= 19200));
+    	        if (!bIsVestigeAura)
+    	            return FALSE;
+    	    }
     
         	eTest = GetNextEffect(oBinder);
         }	
@@ -822,22 +1190,27 @@ int DoSpecialRequirements(object oBinder, int nVestige)
 		return FALSE;
 	if (nVestige == VESTIGE_BUER && GetIsAreaInterior(GetArea(oBinder)))
 		return FALSE;
-	if (nVestige == VESTIGE_EURYNOME && GetHasSpellEffect(VESTIGE_AMON, oBinder))
+	if (nVestige == VESTIGE_EURYNOME && (GetHasSpellEffect(VESTIGE_AMON, oBinder) || GetHasSpellEffect(VESTIGE_ARETE, oBinder)))
 		return FALSE;
 	if (nVestige == VESTIGE_TENEBROUS && !GetIsNight())
 		return FALSE;		
 	if (nVestige == VESTIGE_BALAM)		
 	{
 		int nCur = GetCurrentHitPoints(oBinder);
-		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(1, DAMAGE_TYPE_SLASHING), oBinder);
-		if (nCur > GetCurrentHitPoints(oBinder))
+		if (nCur <= 1)
 			return FALSE;
+		if (!GetLocalInt(oBinder, "BinderCheckingMenuReqs"))
+		{
+			ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(1, DAMAGE_TYPE_SLASHING), oBinder);
+			if (GetIsDead(oBinder) || GetCurrentHitPoints(oBinder) < 1)
+				return FALSE;
+		}
 	}
 	if (nVestige == VESTIGE_GERYON && 5 > GetSkillRank(SKILL_LORE, oBinder, TRUE))
 		return FALSE;	
 	if (nVestige == VESTIGE_ARETE && (GetHasSpellEffect(VESTIGE_EURYNOME, oBinder) || GetHasSpellEffect(VESTIGE_CHUPOCLOPS, oBinder)))
 		return FALSE; 		
-	if (nVestige == VESTIGE_CHUPOCLOPS && GetHasSpellEffect(VESTIGE_AMON, oBinder))
+	if (nVestige == VESTIGE_CHUPOCLOPS && (GetHasSpellEffect(VESTIGE_AMON, oBinder) || GetHasSpellEffect(VESTIGE_ARETE, oBinder)))
 		return FALSE;
 	if (nVestige == VESTIGE_IPOS && 5 > GetSkillRank(SKILL_LORE, oBinder, TRUE) && 5 > GetSkillRank(SKILL_SPELLCRAFT, oBinder, TRUE))
 		return FALSE;
@@ -990,3 +1363,50 @@ int GetPatronVestige(object oBinder)
 }
 
 //:: void main(){}
+
+void ApplyBinderWeaponDRBypass(object oBinder, object oItem)
+{
+    if (!GetIsObjectValid(oItem) || !IPGetIsMeleeWeapon(oItem))
+        return;
+
+    int nReqBonus = 0;
+    if (GetHasSpellEffect(VESTIGE_AYM, oBinder) &&
+        GetLevelByClass(CLASS_TYPE_BINDER, oBinder) > 0 &&
+        !GetIsVestigeExploited(oBinder, VESTIGE_AYM_RUINOUS_ATTACK) &&
+        GetBinderLevel(oBinder, VESTIGE_AYM) >= 10)
+    {
+        nReqBonus = 5;
+    }
+    if (GetTag(oItem) == "bnd_eury_hammer" &&
+        GetHasSpellEffect(VESTIGE_EURYNOME, oBinder) &&
+        GetBinderLevel(oBinder, VESTIGE_EURYNOME) >= 15)
+    {
+        if (nReqBonus < 5) nReqBonus = 5;
+    }
+    if (GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder) >= 1 &&
+        GetIsPatronVestigeBound(oBinder))
+    {
+        if (nReqBonus < 3) nReqBonus = 3;
+    }
+    if (GetHasSpellEffect(VESTIGE_RONOVE, oBinder) &&
+        GetLevelByClass(CLASS_TYPE_BINDER, oBinder) > 0 &&
+        !GetIsVestigeExploited(oBinder, VESTIGE_RONOVE_COLD_IRON))
+    {
+        int nRonEBL = GetBinderLevel(oBinder, VESTIGE_RONOVE);
+        int nRonBonus = (nRonEBL >= 7) ? 3 : 1;
+        if (nRonBonus > nReqBonus) nReqBonus = nRonBonus;
+    }
+
+    if (nReqBonus > 0)
+    {
+        IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(nReqBonus), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);
+        IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(nReqBonus), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);
+        SetLocalInt(oItem, "BinderDRBypassBonus", nReqBonus);
+    }
+    else if (GetLocalInt(oItem, "BinderDRBypassBonus") > 0)
+    {
+        DeleteLocalInt(oItem, "BinderDRBypassBonus");
+        IPRemoveMatchingItemProperties(oItem, ITEM_PROPERTY_ATTACK_BONUS, DURATION_TYPE_TEMPORARY);
+        IPRemoveMatchingItemProperties(oItem, ITEM_PROPERTY_DECREASED_ATTACK_MODIFIER, DURATION_TYPE_TEMPORARY);
+    }
+}

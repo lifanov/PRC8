@@ -284,7 +284,7 @@ void main()
         {
             json jNab = GetLocalJson(oPC, PRC_BINDER_NUI_NABERIUS_VAR);
             if (JsonGetType(jNab) != JSON_TYPE_ARRAY
-                || JsonGetLength(jNab) != GetAbilityModifier(ABILITY_CONSTITUTION, oPC))
+                || JsonGetLength(jNab) != BinderNUINaberiusTargetCount(oPC))
                 return;
             BinderNUIAdvanceAfterNaberius(oPC);
             BNDRefresh(oPC, nToken);
