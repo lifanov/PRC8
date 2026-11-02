@@ -66,5 +66,6 @@ void main()
 	    
     if (!GetLocalInt(oBinder, "PactQuality"+IntToString(VESTIGE_CHUPOCLOPS))) FloatingTextStringOnCreature("You have made a poor pact, and Chupoclops prevents you from succeeding at fear saves!", oBinder, FALSE);    
 
+    eLink = SetEffectSpellId(eLink, VESTIGE_CHUPOCLOPS);
     ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
 }

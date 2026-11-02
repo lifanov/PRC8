@@ -33,5 +33,6 @@ void main()
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_IMMUNITY))     eLink = EffectLinkEffects(eLink, EffectDamageImmunityIncrease(DAMAGE_TYPE_ELECTRICAL,  100));
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_STORM_STRIKE)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_SHAX_STRIKE),  HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	
+    eLink = SetEffectSpellId(eLink, VESTIGE_SHAX);
     ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
 }

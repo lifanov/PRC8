@@ -40,8 +40,10 @@ void main()
            
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_AMON_DARKVISION)) eLink = EffectLinkEffects(eLink, EffectUltravision());
            
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));  
+      
     
+    eLink = SetEffectSpellId(eLink, VESTIGE_AMON);
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));
     // We get this with the Practiced Binder feat
     if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder))
     {
@@ -51,8 +53,11 @@ void main()
     		string sResRef = "prc_mino_gore_";
     		int nSize = PRCGetCreatureSize(oBinder);
     		sResRef += GetAffixForSize(nSize);
-    		AddNaturalPrimaryWeapon(oBinder, sResRef);  
-    		DelayCommand(1.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder), ItemPropertyDamageBonus(IP_CONST_DAMAGETYPE_PIERCING, GetAbilityModifier(ABILITY_STRENGTH, oBinder)/2), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));
+    		AddNaturalSecondaryWeapon(oBinder, sResRef, 1);
+    		int bForcePrimaryGore = (!GetHasSpellEffect(VESTIGE_IPOS, oBinder) && !GetHasSpellEffect(VESTIGE_RONOVE, oBinder));
+    		if (bForcePrimaryGore)
+    			DeletePersistantLocalInt(oBinder, "NaturalWeaponPlayerOverride");
+    		AddNaturalPrimaryWeapon(oBinder, sResRef, 1, bForcePrimaryGore);
     	}	
     }	
     // Binders only down here

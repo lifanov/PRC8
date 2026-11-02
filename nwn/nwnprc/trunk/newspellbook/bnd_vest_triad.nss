@@ -118,5 +118,6 @@ void main()
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_PROF_EXOTIC), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING); 		
 	}	
     
+    eLink = SetEffectSpellId(eLink, VESTIGE_THETRIAD);
     ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));     
 }

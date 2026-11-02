@@ -805,6 +805,13 @@ void _UsePowerAux(object oManifester, object oMfToken, int nSpellId,
         // Queue the real manifestation
         //ActionCastSpell(nPower, nLevelOverride, 0, 0, METAMAGIC_NONE, CLASS_TYPE_INVALID, TRUE, TRUE, oTarget);
 
+        int bVestigePsiSu = (nSpellId >= 19000 && nSpellId <= 19200) ||
+                            GetLocalInt(oManifester, "BinderSuSLA") ||
+                            GetHasSpellEffect(VESTIGE_ARETE, oManifester) ||
+                            GetHasSpellEffect(VESTIGE_THETRIAD, oManifester) ||
+                            GetHasSpellEffect(VESTIGE_ABYSM, oManifester);
+        if (bVestigePsiSu)
+            AssignCommand(oManifester, ActionDoCommand(SetLocalInt(oManifester, "BinderSuSLA", TRUE)));
         if(nLevelOverride != 0)
             AssignCommand(oManifester, ActionDoCommand(SetLocalInt(oManifester, PRC_CASTERLEVEL_OVERRIDE, nLevelOverride)));
         if(GetIsObjectValid(oTarget))
@@ -813,6 +820,8 @@ void _UsePowerAux(object oManifester, object oMfToken, int nSpellId,
             AssignCommand(oManifester, ActionCastSpellAtLocation(nPower, lTarget, METAMAGIC_NONE, TRUE, PROJECTILE_PATH_TYPE_DEFAULT, TRUE));
         if(nLevelOverride != 0)
             AssignCommand(oManifester, ActionDoCommand(DeleteLocalInt(oManifester, PRC_CASTERLEVEL_OVERRIDE)));
+        if (bVestigePsiSu)
+            AssignCommand(oManifester, ActionDoCommand(DeleteLocalInt(oManifester, "BinderSuSLA")));
 
         // Destroy the manifestation token for this manifestation
         _DestroyManifestationToken(oManifester, oMfToken);

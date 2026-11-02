@@ -25,7 +25,9 @@ OnEnter
 void main()
 {
     //Declare major variables
-    object oBinder = GetLocalObject(GetModule(), "EurynomeCharm");
+    object oBinder = GetAreaOfEffectCreator(OBJECT_SELF);
+    if (!GetIsObjectValid(oBinder) || GetObjectType(oBinder) != OBJECT_TYPE_CREATURE)
+        oBinder = GetLocalObject(GetModule(), "EurynomeCharm");
     //FloatingTextStringOnCreature(GetName(oBinder)+" created this AoE", GetFirstPC());
 
     //Capture the first target object in the shape.

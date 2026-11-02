@@ -538,8 +538,6 @@ int GetBinderMaxVestigeLevelForNUI(object oBinder=OBJECT_SELF)
         nLevel += 2;
     int nRow = (nLevel > 40 ? 39 : (nLevel > 0 ? nLevel - 1 : 0));
     int nMax = StringToInt(Get2DACache("cls_bind_binder", "VestigeLvl", nRow));
-    if (nMax > 8)
-        nMax = 8;
     return nMax > 0 ? nMax : 1;
 }
 
@@ -594,7 +592,7 @@ json GetBinderFeatToVestigeDictionary(object oPlayer=OBJECT_SELF)
     json jCircles = JsonObject();
     int nVestigeRows = Get2DARowCount("vestiges");
     int nFeat;
-    for (nFeat = 9030; nFeat <= 9104; nFeat++)
+    for (nFeat = 9030; nFeat <= 9115; nFeat++)
     {
         string sFeatLabel = Get2DACache("feat", "LABEL", nFeat);
         int nVestige;

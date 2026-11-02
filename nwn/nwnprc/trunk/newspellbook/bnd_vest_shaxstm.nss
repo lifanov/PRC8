@@ -32,6 +32,9 @@ void main()
 
    	// The OnHit
    	object oItem = GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder);
+   	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder);
+   	SetLocalInt(oBinder, "ShaxStormStrikeArmed", TRUE);
+   	DelayCommand(6.0, DeleteLocalInt(oBinder, "ShaxStormStrikeArmed"));
    	IPSafeAddItemProperty(oItem, ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), 6.0, X2_IP_ADDPROP_POLICY_KEEP_EXISTING, FALSE, FALSE);
    	AddEventScript(oItem, EVENT_ITEM_ONHIT, "bnd_events", FALSE, FALSE);
 }

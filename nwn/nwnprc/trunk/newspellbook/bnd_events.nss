@@ -111,7 +111,8 @@ void AndrasInfluence(object oBinder)
 		SetLocalInt(oBinder, "AndrasCombat", nCount);
 		if (nCount >= 10)
 		{
-			ApplyEffectToObject(DURATION_TYPE_TEMPORARY, ExtraordinaryEffect(EffectExhausted()), oBinder, HoursToSeconds(1));
+			if (!GetHasSpellEffect(VESTIGE_AMUN_HER, oBinder) || GetIsVestigeExploited(oBinder, VESTIGE_AMUN_HER_FIRSTBORN_GUARDIAN))
+				ApplyEffectToObject(DURATION_TYPE_TEMPORARY, TagEffect(ExtraordinaryEffect(EffectExhausted()), "EffectExhausted"), oBinder, HoursToSeconds(1));
 			ApplyEffectToObject(DURATION_TYPE_TEMPORARY, ExtraordinaryEffect(EffectFrightened()), oBinder, RoundsToSeconds(d4()));
 		}
 	}
@@ -150,8 +151,9 @@ void EurynomePoisonBlood(object oBinder, object oTarget)
 
 void TenebrousVoid(object oBinder, object oTarget)
 {
-	if (!GetLocalInt(oBinder, "TenebrousVoidStrike"))
+	if (GetLocalInt(oBinder, "TenebrousVoidArmed") && !GetLocalInt(oBinder, "TenebrousVoidStrike"))
 	{
+		DeleteLocalInt(oBinder, "TenebrousVoidArmed");
 		int nDice = 1 + (GetBinderLevel(oBinder, VESTIGE_TENEBROUS)-7)/4;
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d8(nDice), DAMAGE_TYPE_COLD), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_FROST_L), oTarget);
@@ -189,12 +191,12 @@ void SavnokInfluence(object oBinder, object oItem)
 
 void ExpelledVestigeCleanup(object oBinder)
 {
-	if (!GetHasSpellEffect(VESTIGE_ANDROMALIUS, oBinder))
+	if (!GetHasSpellEffect(VESTIGE_ANDROMALIUS, oBinder) && GetLocalInt(oBinder, "AndroSneak"))
 	{
 		DeleteLocalInt(oBinder, "AndroSneak");
     	DelayCommand(0.1, ExecuteScript("prc_sneak_att", oBinder));    			
 	}
-	if (!GetHasSpellEffect(VESTIGE_MALPHAS, oBinder))
+	if (!GetHasSpellEffect(VESTIGE_MALPHAS, oBinder) && GetLocalInt(oBinder, "MalphasSneak"))
 	{
 		DeleteLocalInt(oBinder, "MalphasSneak");
     	DelayCommand(0.1, ExecuteScript("prc_sneak_att", oBinder));    			
@@ -210,28 +212,40 @@ void ExpelledVestigeCleanup(object oBinder)
 	}	
     if (!GetHasSpellEffect(VESTIGE_SAVNOK, oBinder) && GetIsObjectValid(GetItemPossessedBy(oBinder, "SavnokCallArmor")))
     {
-	    object oArmor = GetItemPossessedBy(oBinder, "SavnokCallArmor");
-		SetPlotFlag(oArmor, FALSE);
-		DestroyObject(oArmor);	        
+        SetLocalInt(oBinder, "SavnokDelay", TRUE);
+        DelayCommand(1.5, DeleteLocalInt(oBinder, "SavnokDelay"));
+        object oArmor = GetItemPossessedBy(oBinder, "SavnokCallArmor");
+        SetPlotFlag(oArmor, FALSE);
+        DestroyObject(oArmor);
     }
     if (!GetHasSpellEffect(VESTIGE_EURYNOME, oBinder) && GetIsObjectValid(GetItemPossessedBy(oBinder, "bnd_eury_hammer")))
     {
-	    object oHammer = GetItemPossessedBy(oBinder, "bnd_eury_hammer");
-		SetPlotFlag(oHammer, FALSE);
-		AssignCommand(oHammer, SetIsDestroyable(TRUE, TRUE, TRUE));
-		DestroyObject(oHammer);	        
+        SetLocalInt(oBinder, "EurynomeDelay", TRUE);
+        DelayCommand(1.5, DeleteLocalInt(oBinder, "EurynomeDelay"));
+        object oHammer = GetItemPossessedBy(oBinder, "bnd_eury_hammer");
+        SetPlotFlag(oHammer, FALSE);
+        AssignCommand(oHammer, SetIsDestroyable(TRUE, TRUE, TRUE));
+        DestroyObject(oHammer);
     }
+    if (!GetHasSpellEffect(VESTIGE_AMON, oBinder))
+        RemoveVestigeNaturalWeapons(oBinder, VESTIGE_AMON);
+    if (!GetHasSpellEffect(VESTIGE_IPOS, oBinder))
+        RemoveVestigeNaturalWeapons(oBinder, VESTIGE_IPOS);
+    if (!GetHasSpellEffect(VESTIGE_CHUPOCLOPS, oBinder))
+        RemoveVestigeNaturalWeapons(oBinder, VESTIGE_CHUPOCLOPS);
 	// Using Disguise Self strips the hide of all the vestige feats, this reapplies them
-	// Checks for having naberius, but not the disguise self feat
-	if (GetHasSpellEffect(VESTIGE_NABERIUS, oBinder) && !GetHasFeat(9033, oBinder))
+	// Checks for having naberius (and not having Disguise Self exploited), but missing the disguise self feat
+	if (GetHasSpellEffect(VESTIGE_NABERIUS, oBinder) &&
+	    GetLevelByClass(CLASS_TYPE_BINDER, oBinder) &&
+	    !GetIsVestigeExploited(oBinder, VESTIGE_NABERIUS_DISGUISE_SELF) &&
+	    !GetHasFeat(9033, oBinder))
 	{
     	int i;
-    	for(i = VESTIGE_AMON; i <= VESTIGE_ABYSM; i++)
+    	for(i = VESTIGE_AMON; i <= VESTIGE_ZURIEL; i++)
     	{
     		if(GetHasSpellEffect(i, oBinder)) 
     		{
-    			ApplyVestige(oBinder, i);
-    			//FloatingTextStringOnCreature("Applying vestige "+IntToString(i), oBinder, FALSE);
+    			RestoreVestigeSkinFeats(oBinder, i);
     		}
     	}	
 	} 
@@ -279,8 +293,9 @@ void ChupoclopsEth(object oBinder)
 
 void ShaxStormStrike(object oBinder, object oTarget)
 {
-	if (!GetLocalInt(oBinder, "ShaxStormStrike"))
+	if (GetLocalInt(oBinder, "ShaxStormStrikeArmed") && !GetLocalInt(oBinder, "ShaxStormStrike"))
 	{
+		DeleteLocalInt(oBinder, "ShaxStormStrikeArmed");
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(), DAMAGE_TYPE_SONIC), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SONIC), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(), DAMAGE_TYPE_ELECTRICAL), oTarget);
@@ -306,13 +321,16 @@ void VanusInfluence(object oBinder)
 		int nCombat = GetLocalInt(oBinder, "VanusInfluence");
 		int nCurrent = GetIsInCombat(oBinder);
 		// We just left combat
-		if (nCurrent == FALSE && nCombat == TRUE)
-		{
-			SetCutsceneMode(oBinder, TRUE);
-			FloatingTextStringOnCreature("Victory over my enemies!", oBinder);
-			AssignCommand(oBinder, ActionPlayAnimation(ANIMATION_LOOPING_TALK_LAUGHING, 1.0, 6.0));
-			DelayCommand(6.0, SetCutsceneMode(oBinder, FALSE));
-		}	
+			if (nCurrent == FALSE && nCombat == TRUE)
+			{
+				if (!GetCutsceneMode(oBinder))
+				{
+					SetCutsceneMode(oBinder, TRUE);
+					AssignCommand(oBinder, ActionPlayAnimation(ANIMATION_LOOPING_TALK_LAUGHING, 1.0, 6.0));
+					DelayCommand(6.0, SetCutsceneMode(oBinder, FALSE));
+				}
+				FloatingTextStringOnCreature("Victory over my enemies!", oBinder);
+			}	
 		//FloatingTextStringOnCreature("Vanus Combat State "+IntToString(nCurrent), oBinder); 
     	SetLocalInt(oBinder, "VanusInfluence", nCurrent);
     }
@@ -336,8 +354,9 @@ void CityDweller(object oBinder)
 
 void EligorChromatic(object oBinder, object oTarget)
 {
-	if (!GetLocalInt(oBinder, "EligorStrikeTimer"))
+	if (GetLocalInt(oBinder, "EligorStrikeArmed") && !GetLocalInt(oBinder, "EligorStrikeTimer"))
 	{
+		DeleteLocalInt(oBinder, "EligorStrikeArmed");
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(), GetLocalInt(oBinder, "EligorStrike")), oTarget);
 		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_FAERIE_FIRE), oTarget);
 		SetLocalInt(oBinder, "EligorStrikeTimer", TRUE);
@@ -503,6 +522,75 @@ void KarsiteOnHit(object oBinder, object oTarget)
 	}
 }
 
+void AmunFirstbornScrub(object oBinder)
+{
+    effect eChk = GetFirstEffect(oBinder);
+    while (GetIsEffectValid(eChk))
+    {
+        string sTag = GetEffectTag(eChk);
+        if (sTag == "PRCFatigue" || sTag == "PRCExhausted" || sTag == "PRC_Fatigue" || sTag == "PRC_Exhausted" || sTag == "Fatigue" || sTag == "Exhausted" || sTag == "EffectFatigued" || sTag == "EffectExhausted")
+        {
+            RemoveEffect(oBinder, eChk);
+        }
+        eChk = GetNextEffect(oBinder);
+    }
+}
+
+void AmunDelayDeathHeartbeat(object oBinder)
+{
+    if (!GetLocalInt(oBinder, "AmunDelayDeathActive"))
+        return;
+
+    int nMax = GetLocalInt(oBinder, "AmunDelayDeathMaxRounds");
+    if (nMax <= 0)
+        nMax = GetBinderLevel(oBinder, VESTIGE_AMUN_HER);
+    int nUsed = GetLocalInt(oBinder, "AmunDelayDeathRoundsUsed");
+
+    // If the Binder healed above 1 HP (or Gaia Troll regen unlocked), pause Delay Death consumption
+    if (GetCurrentHitPoints(oBinder) > 1 || HasOtherPersistentImmortality(oBinder))
+    {
+        DeleteLocalInt(oBinder, "AmunDelayDeathActive");
+        if (nUsed >= nMax && !HasAnyBinderImmortalProtection(oBinder))
+            SetImmortal(oBinder, FALSE);
+        return;
+    }
+
+    // If the round that just finished was the final daily round, expire Delay Death now
+    if (nUsed >= nMax)
+    {
+        DeleteLocalInt(oBinder, "AmunDelayDeathActive");
+        SetLocalInt(oBinder, "AmunDelayDeathRounds", 0);
+        FloatingTextStringOnCreature("Delay Death: All daily rounds exhausted!", oBinder, FALSE);
+        if (!HasAnyBinderImmortalProtection(oBinder))
+            SetImmortal(oBinder, FALSE);
+        return;
+    }
+
+    nUsed += 1;
+    SetLocalInt(oBinder, "AmunDelayDeathRoundsUsed", nUsed);
+    int nRem = PRCMax(0, nMax - nUsed);
+    SetLocalInt(oBinder, "AmunDelayDeathRounds", nRem);
+    FloatingTextStringOnCreature("Delay Death active (" + IntToString(nRem) + "/" + IntToString(nMax) + " rounds remaining today)", oBinder, FALSE);
+}
+
+void RestoreGaiaTrollRegenAfterFireAcid(object oCreature, int nLockGen)
+{
+    if (!GetIsObjectValid(oCreature) || GetLocalInt(oCreature, "GaiaRegenLockGen") != nLockGen)
+        return;
+    DeleteLocalInt(oCreature, "GaiaRegenFireAcidLock");
+    if (GetIsDead(oCreature))
+        return;
+
+    int nPool = GetLocalInt(oCreature, "GaiaRegenPool");
+    if (nPool > 0)
+    {
+        string sTag = GetIsObjectValid(GetLocalObject(oCreature, "GaiaRegenSourceBinder")) ? "GaiaSharedRegenEff" : "GaiaPlanetaryRegenEff";
+        SetCreatureGaiaRegenEff(oCreature, nPool, sTag, HoursToSeconds(24));
+    }
+    if (GetLocalInt(oCreature, "GaiaRegenActive") && GetPRCSwitch(PRC_GAIA_PLANETARY_HEALING_NERF) < 2)
+        SetImmortal(oCreature, TRUE);
+}
+
 //////////////////////////////////////////////////
 /*       Void Main and Event Triggers           */
 //////////////////////////////////////////////////
@@ -522,10 +610,13 @@ void main()
         case EVENT_ONHEARTBEAT:         oBinder = OBJECT_SELF;               break;
         case EVENT_ONPLAYERREST_FINISHED:   oBinder = GetLastBeingRested();  break;
         case EVENT_ONACQUIREITEM:       oBinder = GetModuleItemAcquiredBy(); break;
+        case EVENT_VIRTUAL_ONDAMAGED:   oBinder = OBJECT_SELF;               break;
 
         default:
             oBinder = OBJECT_SELF;
     }
+    if (!GetIsObjectValid(oBinder))
+        oBinder = OBJECT_SELF;
 
     object oItem;
 	object oSkin = GetPCSkin(oBinder);
@@ -546,10 +637,24 @@ void main()
         	SetLocalInt(oBinder, CALL_UNARMED_FEATS, TRUE);
         	SetLocalInt(oBinder, CALL_UNARMED_FISTS, TRUE); 
         }
+        if (GetLocalInt(oBinder, "GaiaRegenActive") ||
+            GetHasSpellEffect(VESTIGE_GAIA, oBinder) ||
+            GetHasSpellEffect(VESTIGE_AMUN_HER, oBinder) ||
+            GetIsObjectValid(GetLocalObject(oBinder, "ZurielSacrificeBinder")))
+        {
+            AddEventScript(oBinder, EVENT_VIRTUAL_ONDAMAGED, "bnd_events", TRUE, FALSE);
+            AddEventScript(oBinder, EVENT_NPC_ONDAMAGED, "bnd_events", TRUE, FALSE);
+            if ((GetLocalInt(oBinder, "GaiaRegenActive") && !GetLocalInt(oBinder, "GaiaRegenFireAcidLock") && GetPRCSwitch(PRC_GAIA_PLANETARY_HEALING_NERF) < 2) ||
+                HasActiveDelayDeathImmortal(oBinder))
+            {
+                SetImmortal(oBinder, TRUE);
+            }
+        }
     }
     else if(nEvent == EVENT_ITEM_ONHIT)
     {
         oItem          = GetSpellCastItem();
+        if (!GetIsObjectValid(oItem)) oItem = GetLocalObject(oBinder, "PRC_ONHIT_ITEM_OVERRIDE");
         object oTarget = PRCGetSpellTargetObject();
         if(DEBUG) DoDebug("bnd_events: OnHit:\n"
                         + "oBinder = " + DebugObject2Str(oBinder) + "\n"
@@ -567,6 +672,21 @@ void main()
         {
         	if (GetHasSpellEffect(VESTIGE_VANUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_DISDAIN)) VanusDisdain(oBinder, oTarget);
         	if (GetHasSpellEffect(VESTIGE_MARCHOSIAS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_RETRIBUTION)) MarchosiasRetribution(oBinder, oTarget);
+        	if (GetHasSpellEffect(VESTIGE_GAIA, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_GAIA_EARTHS_FURY))
+        	{
+        		int nGaiaOnHitRace = MyPRCGetRacialType(oTarget);
+        		if ((nGaiaOnHitRace == RACIAL_TYPE_ABERRATION || nGaiaOnHitRace == RACIAL_TYPE_CONSTRUCT ||
+        		     nGaiaOnHitRace == RACIAL_TYPE_OOZE || nGaiaOnHitRace == RACIAL_TYPE_UNDEAD) &&
+        		    GetIsImmune(oTarget, IMMUNITY_TYPE_CRITICAL_HIT, oBinder))
+        		{
+        			// Gaia's Earth's FuryOnHit: bypasses native Bioware critical/sneak immunity on weapon hits
+        			int nSneakDice = GetTotalSneakAttackDice(oBinder);
+        			if (nSneakDice > 0 && GetCanSneakAttack(oTarget, oBinder))
+        			{
+        				ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(nSneakDice), DAMAGE_TYPE_BASE_WEAPON), oTarget);
+        			}
+        		}
+        	}
         }	
         // Melee weapon checks
         if(IPGetIsMeleeWeapon(oItem))
@@ -597,39 +717,27 @@ void main()
         // Melee weapon checks
         if(IPGetIsMeleeWeapon(oItem))
         {         
-        	if (GetHasSpellEffect(VESTIGE_AYM, oBinder) && GetLevelByClass(CLASS_TYPE_BINDER, oBinder) && GetBinderLevel(oBinder, VESTIGE_AYM) >= 10 && !GetIsVestigeExploited(oBinder, VESTIGE_AYM_RUINOUS_ATTACK))
-        	{
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       		}  
-        	if (GetHasSpellEffect(VESTIGE_RONOVE, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_RONOVE_COLD_IRON))
-        	{
-        		int nBonus = 1;
-        		if (GetBinderLevel(oBinder, VESTIGE_RONOVE) >= 7) nBonus = 3;
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(nBonus), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(nBonus), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       		}  
-       		if ((GetHasSpellEffect(VESTIGE_VANUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_DISDAIN)) ||
-       		    (GetHasSpellEffect(VESTIGE_MARCHOSIAS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_RETRIBUTION)) ||
-       		    (GetRacialType(oBinder) == RACIAL_TYPE_KARSITE)) 
-       		{
-            	AddEventScript(oItem, EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
+            ApplyBinderWeaponDRBypass(oBinder, oItem);
+            if ((GetHasSpellEffect(VESTIGE_VANUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_DISDAIN)) ||
+                (GetHasSpellEffect(VESTIGE_MARCHOSIAS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_RETRIBUTION)) ||
+                (GetHasSpellEffect(VESTIGE_GAIA, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_GAIA_EARTHS_FURY)) ||
+                (GetRacialType(oBinder) == RACIAL_TYPE_KARSITE)) 
+            {
+                AddEventScript(oItem, EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
                 IPSafeAddItemProperty(oItem, ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING, FALSE, FALSE);       		
             }    
-       	}
-       	// Any weapon
-       	if (GetIsWeapon(oItem))
-       	{
-			if (GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder))       	
-			{
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       			IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);          	
-       		}	
-       	}
+        }
+        // Ranged weapon check for Knight of the Sacred Seal
+        else if (GetIsWeapon(oItem) && GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder))
+        {
+            IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
+            IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);          	
+        }
        	if (GetWeaponRanged(oItem))
        	{
        		if ((GetHasSpellEffect(VESTIGE_VANUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_VANUS_DISDAIN)) ||
-       		    (GetHasSpellEffect(VESTIGE_MARCHOSIAS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_RETRIBUTION)) )   
+       		    (GetHasSpellEffect(VESTIGE_MARCHOSIAS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_MARCHOSIAS_RETRIBUTION)) ||
+       		    (GetHasSpellEffect(VESTIGE_GAIA, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_GAIA_EARTHS_FURY)) )   
        		{
 	        	IPSafeAddItemProperty(oItem, ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING, FALSE, FALSE);
             	AddEventScript(oItem, EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
@@ -698,8 +806,6 @@ void main()
         		IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_FINESSE), 5.999, X2_IP_ADDPROP_POLICY_REPLACE_EXISTING);    	
         }	        
         if (GetHasSpellEffect(VESTIGE_ANDRAS, oBinder) && !GetLocalInt(oBinder, "PactQuality"+IntToString(VESTIGE_ANDRAS))) AndrasInfluence(oBinder);
-        if (GetHasSpellEffect(VESTIGE_TENEBROUS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_SEE_DARKNESS)) ActionCastSpellOnSelf(SPELL_DARKVISION);
-        if (GetHasSpellEffect(VESTIGE_GERYON, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_GERYON_DARKNESS)) ActionCastSpellOnSelf(SPELL_DARKVISION);
 		if (GetIsPatronVestigeBound(oBinder) && GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder) >= 5)
 		{
 			ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectDamageReduction(10, DAMAGE_POWER_PLUS_ONE), oBinder, 6.0);
@@ -708,6 +814,15 @@ void main()
 		if (GetHasSpellEffect(VESTIGE_CHUPOCLOPS_ETHEREAL_WATCHER, oBinder)) ChupoclopsEth(oBinder);
 		if (GetHasSpellEffect(VESTIGE_VANUS, oBinder)) VanusInfluence(oBinder);
 		if (GetHasSpellEffect(VESTIGE_DESHARIS, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_DESHARIS_CITY_DWELLER)) CityDweller(oBinder);
+		if (GetHasSpellEffect(VESTIGE_GAIA, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_GAIA_PLANETARY_HEALING))
+			ReconcileGaiaTrollImmunity(oBinder);
+		if (GetHasSpellEffect(VESTIGE_AMUN_HER, oBinder) || GetLocalInt(oBinder, "AmunDelayDeathActive"))
+		{
+			if (GetHasSpellEffect(VESTIGE_AMUN_HER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_AMUN_HER_FIRSTBORN_GUARDIAN))
+				AmunFirstbornScrub(oBinder);
+			if (!GetIsVestigeExploited(oBinder, VESTIGE_AMUN_HER_DELAY_DEATH))
+				AmunDelayDeathHeartbeat(oBinder);
+		}
 	}	
     else if(nEvent == EVENT_ONPLAYERREST_FINISHED)    
     {
@@ -720,6 +835,7 @@ void main()
     	DeleteLocalInt(oBinder, "AndrasMount");
     	DeleteLocalInt(oBinder, "AmonRam");
     	DeleteLocalInt(oBinder, "ExploitVestige");
+    	RemoveVestigeNaturalWeapons(oBinder, 0);
     	if (GetLevelByClass(CLASS_TYPE_ANIMA_MAGE, oBinder))
     	{
     		SetLocalInt(oBinder, "BinderRested", TRUE);
@@ -731,6 +847,20 @@ void main()
     	DeleteLocalInt(oBinder, "PRC_WoLUses" + IntToString(VESTIGE_THE_TRIAD_SMITE));
     	DeleteLocalInt(oBinder, "PRC_WoLUses" + IntToString(19139));
     	DeleteLocalInt(oBinder, "ZceryllTS");
+    	DeleteLocalInt(oBinder, "TkhalSphereRoundsUsed");
+    	DeleteLocalInt(oBinder, "ZurielBronzeBodyRoundsUsed");
+    	DeleteLocalInt(oBinder, "AmunDelayDeathRoundsUsed");
+    	DeleteLocalInt(oBinder, "AmunDelayDeathActive");
+    	if (GetHasSpellEffect(VESTIGE_AMUN_HER, oBinder) && !GetIsVestigeExploited(oBinder, VESTIGE_AMUN_HER_DELAY_DEATH))
+    	{
+    		int nAmunMax = GetBinderLevel(oBinder, VESTIGE_AMUN_HER);
+    		SetLocalInt(oBinder, "AmunDelayDeathMaxRounds", nAmunMax);
+    		SetLocalInt(oBinder, "AmunDelayDeathRounds", nAmunMax);
+    		SetImmortal(oBinder, TRUE);
+    	}
+    	object oSph = GetLocalObject(oBinder, "TkhalSphereObj");
+    	if (GetIsObjectValid(oSph)) DestroyObject(oSph);
+    	DeleteLocalObject(oBinder, "TkhalSphereObj");
     	if (GetLevelByClass(CLASS_TYPE_TENEBROUS_APOSTATE, oBinder)) ReapplyTenebrous(oBinder);
     }     
     else if(nEvent == EVENT_ONACQUIREITEM)    
@@ -763,7 +893,173 @@ void main()
 				IPSafeAddItemProperty(oItem, ItemPropertyLimitUseByClass(CLASS_TYPE_BINDER), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);   
 			}
 		}	
-    }      
-}
+    }
+    else if(nEvent == EVENT_VIRTUAL_ONDAMAGED || nEvent == EVENT_NPC_ONDAMAGED)
+    {
+        // 1. Zuriel's Ultimate Sacrifice: Redirect damage dealt to a visible ally by a single attack, spell, or ability onto the Binder instead (even if it kills the Binder)
+        object oSacBinder = GetLocalObject(oBinder, "ZurielSacrificeBinder");
+        int bIsCircularSharePain = (GetLocalInt(oBinder, "SharePainRedirecting") && GetLocalObject(oBinder, "SharePainSource") == oSacBinder);
+        if (!bIsCircularSharePain && GetIsObjectValid(oSacBinder) && oSacBinder != oBinder)
+        {
+            int bHasSacEff = FALSE;
+            effect eSacChk = GetFirstEffect(oBinder);
+            while (GetIsEffectValid(eSacChk))
+            {
+                if (GetEffectTag(eSacChk) == "ZurielUltimateSacrificeEff")
+                {
+                    bHasSacEff = TRUE;
+                    break;
+                }
+                eSacChk = GetNextEffect(oBinder);
+            }
+            if (bHasSacEff && (GetHasSpellEffect(VESTIGE_ZURIEL, oSacBinder) || GetLocalObject(oSacBinder, "ZurielUltimateSacrificeTarget") == oBinder) && !GetIsDead(oSacBinder))
+            {
+                int nRedirectDmg = GetTotalDamageDealt();
+                if (nRedirectDmg > 0)
+                {
+                    // Heal the warded ally for 100% of the damage from this single attack/spell/ability
+                    ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectHeal(nRedirectDmg), oBinder);
+                    ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_HEALING_S), oBinder);
 
-	
+                    // Consume the single-attack ward and restore the ally's immortality state
+                    effect eRemSac = GetFirstEffect(oBinder);
+                    while (GetIsEffectValid(eRemSac))
+                    {
+                        if (GetEffectTag(eRemSac) == "ZurielUltimateSacrificeEff")
+                            RemoveEffect(oBinder, eRemSac);
+                        eRemSac = GetNextEffect(oBinder);
+                    }
+                    DeleteLocalObject(oBinder, "ZurielSacrificeBinder");
+                    DeleteLocalObject(oSacBinder, "ZurielUltimateSacrificeTarget");
+                    int bKeepAllyImm = GetLocalInt(oBinder, "ZurielSacPrevImmortal")
+                        || (GetLocalInt(oBinder, "GaiaRegenActive") && !GetLocalInt(oBinder, "GaiaRegenFireAcidLock") && GetPRCSwitch(PRC_GAIA_PLANETARY_HEALING_NERF) < 2)
+                        || HasActiveDelayDeathImmortal(oBinder);
+                    DeleteLocalInt(oBinder, "ZurielSacPrevImmortal");
+                    if (!bKeepAllyImm)
+                        SetImmortal(oBinder, FALSE);
+
+                    // Transfer the damage to the Binder preserving the per-damage-type breakdown (Ruling 4)
+                    int nSumTyped = 0;
+                    int nBitIdx;
+                    for (nBitIdx = 0; nBitIdx < 13; nBitIdx++)
+                    {
+                        int nDType = 1 << nBitIdx;
+                        int nPart = GetDamageDealtByType(nDType);
+                        if (nPart > 0)
+                        {
+                            nSumTyped += nPart;
+                            int nApplyType = (nDType == DAMAGE_TYPE_BASE_WEAPON) ? DAMAGE_TYPE_SLASHING : nDType;
+                            ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(nPart, nApplyType, DAMAGE_POWER_ENERGY), oSacBinder);
+                        }
+                    }
+                    if (nRedirectDmg > nSumTyped)
+                    {
+                        ApplyEffectToObject(
+                            DURATION_TYPE_INSTANT,
+                            EffectDamage(nRedirectDmg - nSumTyped, DAMAGE_TYPE_MAGICAL, DAMAGE_POWER_ENERGY),
+                            oSacBinder
+                        );
+                    }
+                    ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_DIVINE_STRIKE_HOLY), oSacBinder);
+                    FloatingTextStringOnCreature(
+                        "Ultimate Sacrifice redirected " + IntToString(nRedirectDmg) + " damage from " + GetName(oBinder) + " to you!",
+                        oSacBinder, FALSE
+                    );
+                    return;
+                }
+            }
+            else
+            {
+                DeleteLocalObject(oBinder, "ZurielSacrificeBinder");
+                int bKeepAllyImm = GetLocalInt(oBinder, "ZurielSacPrevImmortal")
+                    || (GetLocalInt(oBinder, "GaiaRegenActive") && !GetLocalInt(oBinder, "GaiaRegenFireAcidLock") && GetPRCSwitch(PRC_GAIA_PLANETARY_HEALING_NERF) < 2)
+                    || HasActiveDelayDeathImmortal(oBinder);
+                DeleteLocalInt(oBinder, "ZurielSacPrevImmortal");
+                if (!bKeepAllyImm)
+                    SetImmortal(oBinder, FALSE);
+            }
+        }
+
+        // 2. Gaia's Planetary Healing (controlled by PRC_GAIA_PLANETARY_HEALING_NERF: 0 = all shared >= 1 pt are Trolls, 1 = Option 1a single Troll, 2 = fast healing only):
+        // Reconcile switch state first in case PRC_GAIA_PLANETARY_HEALING_NERF was modified mid-session.
+        int bWasGaiaActive = GetLocalInt(oBinder, "GaiaRegenActive");
+        object oGaiaOwner = GetLocalObject(oBinder, "GaiaRegenSourceBinder");
+        if (!GetIsObjectValid(oGaiaOwner) && GetHasSpellEffect(VESTIGE_GAIA, oBinder))
+            oGaiaOwner = oBinder;
+        if (GetIsObjectValid(oGaiaOwner))
+            ReconcileGaiaTrollImmunity(oGaiaOwner);
+
+        if (bWasGaiaActive && !GetLocalInt(oBinder, "GaiaRegenActive") && !HasAnyBinderImmortalProtection(oBinder) && GetCurrentHitPoints(oBinder) <= 1)
+        {
+            ApplyEffectToObject(DURATION_TYPE_INSTANT, SupernaturalEffect(EffectDeath(FALSE, TRUE)), oBinder);
+            return;
+        }
+
+        if (GetPRCSwitch(PRC_GAIA_PLANETARY_HEALING_NERF) < 2 && GetLocalInt(oBinder, "GaiaRegenActive"))
+        {
+            int nBypass = GetDamageDealtByType(DAMAGE_TYPE_FIRE) + GetDamageDealtByType(DAMAGE_TYPE_ACID);
+            if (nBypass > 0)
+            {
+                string sRegTag = GetIsObjectValid(GetLocalObject(oBinder, "GaiaRegenSourceBinder")) ? "GaiaSharedRegenEff" : "GaiaPlanetaryRegenEff";
+                effect eRem = GetFirstEffect(oBinder);
+                while (GetIsEffectValid(eRem))
+                {
+                    if (GetEffectTag(eRem) == sRegTag)
+                        RemoveEffect(oBinder, eRem);
+                    eRem = GetNextEffect(oBinder);
+                }
+                int nLockGen = GetLocalInt(oBinder, "GaiaRegenLockGen") + 1;
+                SetLocalInt(oBinder, "GaiaRegenLockGen", nLockGen);
+                SetLocalInt(oBinder, "GaiaRegenFireAcidLock", TRUE);
+                DelayCommand(6.0f, RestoreGaiaTrollRegenAfterFireAcid(oBinder, nLockGen));
+
+                if (!HasAnyBinderImmortalProtection(oBinder))
+                {
+                    SetImmortal(oBinder, FALSE);
+                    if (GetCurrentHitPoints(oBinder) <= 1)
+                    {
+                        ApplyEffectToObject(DURATION_TYPE_INSTANT, SupernaturalEffect(EffectDeath(FALSE, TRUE)), oBinder);
+                        return;
+                    }
+                }
+            }
+            else if (!GetLocalInt(oBinder, "GaiaRegenFireAcidLock"))
+            {
+                if (GetCurrentHitPoints(oBinder) <= 1 && !GetLocalInt(oBinder, "GaiaRegenKnockdownLock"))
+                {
+                    SetLocalInt(oBinder, "GaiaRegenKnockdownLock", TRUE);
+                    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, ExtraordinaryEffect(EffectKnockdown()), oBinder, 6.0f);
+                    DelayCommand(6.0f, DeleteLocalInt(oBinder, "GaiaRegenKnockdownLock"));
+                }
+            }
+        }
+
+        // 3. Amun-her Khepeshef's Reactive Delay Death:
+        // Stays dormant until a hit drops the Binder to 1 HP (while no other persistent immortality is active),
+        // then activates and ticks down the 1 round/level daily pool only while at 1 HP.
+        if (CanTriggerAmunDelayDeath(oBinder) && GetCurrentHitPoints(oBinder) <= 1)
+        {
+            if (!GetLocalInt(oBinder, "AmunDelayDeathActive"))
+            {
+                int nMax = GetLocalInt(oBinder, "AmunDelayDeathMaxRounds");
+                if (nMax <= 0)
+                    nMax = GetBinderLevel(oBinder, VESTIGE_AMUN_HER);
+                int nUsed = GetLocalInt(oBinder, "AmunDelayDeathRoundsUsed") + 1;
+                SetLocalInt(oBinder, "AmunDelayDeathRoundsUsed", nUsed);
+                int nRem = PRCMax(0, nMax - nUsed);
+                SetLocalInt(oBinder, "AmunDelayDeathRounds", nRem);
+                SetLocalInt(oBinder, "AmunDelayDeathActive", TRUE);
+                SetImmortal(oBinder, TRUE);
+
+                if (nUsed >= nMax)
+                {
+                    FloatingTextStringOnCreature("Delay Death triggered (final daily round active)!", oBinder, FALSE);
+                }
+                else
+                {
+                    FloatingTextStringOnCreature("Delay Death triggered! (" + IntToString(nRem) + "/" + IntToString(nMax) + " rounds remaining today)", oBinder, FALSE);
+                }
+            }
+        }
+    }
+}

@@ -46,26 +46,23 @@ void main()
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_PROTECTION_ENERGY_COLD), EffectPact(oBinder));
     
+    if (!GetIsVestigeExploited(oBinder, VESTIGE_IPOS_REND))  
+    {
+        IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_REND), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    eLink = SetEffectSpellId(eLink, VESTIGE_IPOS);
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));
     if (!GetIsVestigeExploited(oBinder, VESTIGE_IPOS_CLAWS))  
     {
         string sResRef = "prc_claw_1d6l_";
         // Gets up to the proper size
         int nSize = PRCGetCreatureSize(oBinder) + 1;
         sResRef += GetAffixForSize(nSize);
-        AddNaturalPrimaryWeapon(oBinder, sResRef, 2); 
-
-		DelayCommand(3.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder), ItemPropertyAttackBonus(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));
-       	DelayCommand(3.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder), ItemPropertyAttackPenalty(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));
-		DelayCommand(3.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oBinder), ItemPropertyAttackBonus(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));
-       	DelayCommand(3.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oBinder), ItemPropertyAttackPenalty(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));       	
+        IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_PROF_CREATURE), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+        DeletePersistantLocalInt(oBinder, "NaturalWeaponPlayerOverride");
+        AddNaturalPrimaryWeapon(oBinder, sResRef, 2, TRUE);
     }	
-	if (!GetIsVestigeExploited(oBinder, VESTIGE_IPOS_INSIGHT))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_IPOS_INSIGHT), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
-	if (!GetIsVestigeExploited(oBinder, VESTIGE_IPOS_REND))  
-	{
-		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_REND), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
-       	DelayCommand(3.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder), ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));
-		DelayCommand(3.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oBinder), ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));		
-	}	
+	if (!GetIsVestigeExploited(oBinder, VESTIGE_IPOS_INSIGHT))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_IPOS_INSIGHT), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);	
 	
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+          
 }

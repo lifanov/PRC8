@@ -94,8 +94,9 @@ void RunTestSuite_BinderNUI_PhaseB(object oBinder)
               GetBinderActiveSpellCount(oBinder), 17);
     AssertInt("NUI-07h: ShouldSplitBinderSpellbookByLevel switches to TRUE at 17 (> 15) abilities",
               ShouldSplitBinderSpellbookByLevel(oBinder), TRUE);
-    AssertInt("NUI-07i: GetMinSpellLevel is 0 and GetMaxSpellLevel is 8 when split by vestige level",
-              GetMinSpellLevel(CLASS_TYPE_BINDER) * 10 + GetMaxSpellLevel(CLASS_TYPE_BINDER), 8);
+    int nExpectedSplitMax = GetBinderMaxVestigeLevelForNUI(oBinder);
+    AssertInt("NUI-07i: GetMinSpellLevel is 0 and GetMaxSpellLevel is " + IntToString(nExpectedSplitMax) + " when split by vestige level",
+              GetMinSpellLevel(CLASS_TYPE_BINDER) * 10 + GetMaxSpellLevel(CLASS_TYPE_BINDER), nExpectedSplitMax);
     AssertInt("NUI-07j: Circle 1 has 10 (Naberius L1), Circle 4 has 4 (Tenebrous L4), Circle 5 has 3 (Dantalion L5)",
               JsonGetLength(GetSpellListForCircle(oBinder, CLASS_TYPE_BINDER, 1)) * 100
               + JsonGetLength(GetSpellListForCircle(oBinder, CLASS_TYPE_BINDER, 4)) * 10
@@ -170,8 +171,9 @@ void RunTestSuite_BinderNUI(object oApply, object oBinder, object oTarget)
               nMinLvl, 1);
     AssertInt("NUI-01b: GetMaxSpellLevel(CLASS_TYPE_BINDER) defaults to 1 when <= 15 abilities are active",
               nMaxLvl, 1);
-    AssertInt("NUI-01c: GetBinderMaxVestigeLevelForNUI reaches Circle 8 at EBL 17+",
-              nExpectedMaxVL, 8);
+    int nTargetMaxVL = GetHitDice(oBinder) >= 21 ? 9 : 8;
+    AssertInt("NUI-01c: GetBinderMaxVestigeLevelForNUI reaches max vestige circle (" + IntToString(nTargetMaxVL) + ")",
+              nExpectedMaxVL, nTargetMaxVL);
 
     // -------------------------------------------------------------------------
     // NUI-02: GetBinderSpellCircle maps vestige abilities to Circles 1-8

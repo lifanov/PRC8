@@ -60,5 +60,6 @@ void main()
 		SetLocalInt(oBinder, "AretePsion", GetBinderLevel(oBinder, VESTIGE_ARETE));
 	}	
     
+    eLink = SetEffectSpellId(eLink, VESTIGE_ARETE);
     ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));     
 }

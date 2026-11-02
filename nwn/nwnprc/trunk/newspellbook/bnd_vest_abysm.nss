@@ -43,5 +43,6 @@ void main()
 		SetLocalInt(oBinder, "AbysmPsion", GetBinderLevel(oBinder, VESTIGE_ABYSM));
 	}	
     
+    eLink = SetEffectSpellId(eLink, VESTIGE_ABYSM);
     ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));     
 }

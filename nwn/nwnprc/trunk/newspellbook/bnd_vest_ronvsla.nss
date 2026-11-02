@@ -17,7 +17,7 @@ void main()
 {
     object oBinder = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_RONOVE);
-    int nSLA = GetSpellId();
+    int nSLA = PRCGetSpellId();
     
     // All of these are under the same cooldown
     if (nSLA == VESTIGE_RONOVE_BULLRUSH)
@@ -28,6 +28,8 @@ void main()
     switch(nSLA){
         case VESTIGE_RONOVE_FARHAND:
         {
+            SetLocalInt(oBinder, "BinderSuSLA", TRUE);
+            DelayCommand(6.0, DeleteLocalInt(oBinder, "BinderSuSLA"));
             UsePower(POWER_FARHAND, CLASS_TYPE_PSION, TRUE, nBinderLevel);
             break;
         } 

@@ -27,5 +27,6 @@ void main()
 	object oBinder = OBJECT_SELF;
 	if(!TakeMoveAction(oBinder)) return;
 	effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_SANCTUARY), EffectEthereal());
+	eLink = SetEffectSpellId(eLink, VESTIGE_CHUPOCLOPS_ETHEREAL_WATCHER);
 	SPApplyEffectToObject(DURATION_TYPE_PERMANENT, SupernaturalEffect(eLink), oBinder);	
 }

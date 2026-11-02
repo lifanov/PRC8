@@ -135,26 +135,73 @@ void EquipNaturalWeaponCheck(object oPC, object oItem)
     //        EquipNaturalWeaponCheck(oPC, oItem));
 }
 
+void ApplyVestigePrimaryNaturalWeaponProps(object oPC, object oWeapon, string sResRef)
+{
+    if (!GetIsObjectValid(oWeapon))
+        return;
+
+    // Amon's Ram Attack (+0.5x Str piercing bonus when used as primary gore attack)
+    if (FindSubString(sResRef, "prc_mino_gore_") == 0 && GetHasSpellEffect(19024, oPC))
+    {
+        int nStrHalf = GetAbilityModifier(ABILITY_STRENGTH, oPC) / 2;
+        if (nStrHalf > 0)
+        {
+            int nBonus = IPGetDamageBonusConstantFromNumber(nStrHalf);
+            if (nBonus != -1)
+                IPSafeAddItemProperty(oWeapon, ItemPropertyDamageBonus(IP_CONST_DAMAGETYPE_PIERCING, nBonus), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);
+        }
+    }
+
+    // Ipos's Cold Iron Claws (+3/-3 DR bypass, or +5/-5 with Aym, plus Rend OnHit hook)
+    if (FindSubString(sResRef, "prc_claw_1d6l_") == 0 && GetHasSpellEffect(19047, oPC))
+    {
+        int nDRBypass = 3;
+        if (GetHasSpellEffect(19025, oPC) &&
+            GetLevelByClass(CLASS_TYPE_BINDER, oPC) > 0 &&
+            GetLocalInt(oPC, "ExploitVestige") != 5 &&
+            !GetLocalInt(oPC, "ExploitVestige5"))
+        {
+            nDRBypass = 5;
+        }
+        IPSafeAddItemProperty(oWeapon, ItemPropertyAttackBonus(nDRBypass), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);
+        IPSafeAddItemProperty(oWeapon, ItemPropertyAttackPenalty(nDRBypass), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);
+        if (GetLevelByClass(CLASS_TYPE_BINDER, oPC) > 0 &&
+            GetLocalInt(oPC, "ExploitVestige") != 126 &&
+            !GetLocalInt(oPC, "ExploitVestige126"))
+        {
+            IPSafeAddItemProperty(oWeapon, ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING, FALSE, FALSE);
+            AddEventScript(oWeapon, EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
+        }
+    }
+}
+
 object EquipNaturalWeapon(object oPC, string sResRef)
 {
-    object oObject = GetItemPossessedBy(oPC, sResRef);
-	if (DEBUG) DoDebug("EquipNaturalWeapon Step #1 ResRef "+sResRef);
-    if(GetIsObjectValid(oObject))
+    object oCurL = GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oPC);
+    object oObject = OBJECT_INVALID;
+    if (DEBUG) DoDebug("EquipNaturalWeapon Step #1 ResRef "+sResRef);
+    if (GetIsObjectValid(oCurL) && (GetResRef(oCurL) == sResRef || GetTag(oCurL) == sResRef))
     {
-        if(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oPC) == oObject)
-            return oObject;
-
-        MyDestroyObject(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oPC));
+        oObject = oCurL;
     }
     else
     {
-        oObject = CreateItemOnObject(sResRef, oPC);
-        SetIdentified(oObject, TRUE);
+        oObject = GetItemPossessedBy(oPC, sResRef);
+        if (GetIsObjectValid(oCurL) && oCurL != oObject)
+            MyDestroyObject(oCurL);
+        if (!GetIsObjectValid(oObject))
+        {
+            oObject = CreateItemOnObject(sResRef, oPC);
+            SetIdentified(oObject, TRUE);
+        }
+        if (DEBUG) DoDebug("EquipNaturalWeapon Step #2");
+        AssignCommand(oPC, ActionEquipItem(oObject, INVENTORY_SLOT_CWEAPON_L));
+        ForceEquip(oPC, oObject, INVENTORY_SLOT_CWEAPON_L);
+        FloatingTextStringOnCreature("Equipped "+GetName(oObject)+" as Primary Natural Weapon", oPC, FALSE);
     }
-	if (DEBUG) DoDebug("EquipNaturalWeapon Step #2");
-    ForceEquip(oPC, oObject, INVENTORY_SLOT_CWEAPON_L);
-    //AssignCommand(oPC, DelayCommand(10.0, EquipNaturalWeaponCheck(oPC, oObject)));
-    FloatingTextStringOnCreature("Equipped "+GetName(oObject)+" as Primary Natural Weapon", oPC, FALSE);
+    ApplyVestigePrimaryNaturalWeaponProps(oPC, oObject, sResRef);
+    SetLocalObject(oPC, "EquippedPrimaryNatWeapL", oObject);
+    DeleteLocalObject(oPC, "EquippedPrimaryNatWeapR");
     return oObject;
 }
 
@@ -314,21 +361,32 @@ void AddNaturalPrimaryWeapon(object oPC, string sResRef, int nCount = 1, int nFo
     if (DEBUG) DoDebug("AddNaturalPrimaryWeapon Step #1");
     if(!array_exists(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS))
         array_create(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS);
-    //check if it was already added
+
     int i;
+    int bAnyActive = FALSE;
     for(i=0;i<array_get_size(oPC, ARRAY_NAT_PRI_WEAP_RESREF);i++)
     {
         string sTest = array_get_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, i);
+        if (sTest != "")
+            bAnyActive = TRUE;
         if(sTest == sResRef)
+        {
+            if (nForceUse)
+                SetPrimaryNaturalWeapon(oPC, i);
             return;
+        }
     }
+    if (!bAnyActive)
+        nFirstNaturalWeapon = TRUE;
+
     if (DEBUG) DoDebug("AddNaturalPrimaryWeapon Step #2");
+    int nNewIndex = array_get_size(oPC, ARRAY_NAT_PRI_WEAP_RESREF);
     //add it/them
-    array_set_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, array_get_size(oPC, ARRAY_NAT_PRI_WEAP_RESREF), sResRef);
+    array_set_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, nNewIndex, sResRef);
     array_set_int(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS, array_get_size(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS), nCount);
-    //if this is the first natural weapon, use it    
-    if((nFirstNaturalWeapon && !GetLevelByClass(CLASS_TYPE_MONK) && !GetLevelByClass(CLASS_TYPE_BRAWLER)) || nForceUse)
-        SetPrimaryNaturalWeapon(oPC, 0);
+    //if this is the first natural weapon or forced, use it at nNewIndex
+    if((nFirstNaturalWeapon && !GetLevelByClass(CLASS_TYPE_MONK, oPC) && !GetLevelByClass(CLASS_TYPE_BRAWLER, oPC)) || nForceUse)
+        SetPrimaryNaturalWeapon(oPC, nNewIndex);
 }
 
 void RemoveNaturalPrimaryWeapon(object oPC, string sResRef)
@@ -342,12 +400,10 @@ void RemoveNaturalPrimaryWeapon(object oPC, string sResRef)
     {
         string sTempResRef = array_get_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, nPos);
         if(sResRef == sTempResRef)
-            break;
-    }
-    if(nPos < array_get_size(oPC, ARRAY_NAT_PRI_WEAP_RESREF))
-    {
-        array_set_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, array_get_size(oPC, ARRAY_NAT_PRI_WEAP_RESREF), "");
-        array_set_int(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS, array_get_size(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS), 0);
+        {
+            array_set_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, nPos, "");
+            array_set_int(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS, nPos, 0);
+        }
     }
 }
 
@@ -363,37 +419,21 @@ int GetIsUsingPrimaryNaturalWeapons(object oPC)
         return FALSE;
     //check if the local was set
     return GetLocalInt(oPC, NATURAL_WEAPON_ATTACK_COUNT);
-    /*
-    string sResRef = GetResRef(oObject);
-    int i;
-    for(i=0;i<array_get_size(oPC, ARRAY_NAT_PRI_WEAP_RESREF);i++)
-    {
-        string sTest = array_get_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, i);
-        if(sTest == sResRef)
-            return TRUE;
-    }
-    return FALSE;
-    */
 }
 
 void SetPrimaryNaturalWeaponAttacks(object oPC, int nIndex)
 {
-	int nAttackCount = array_get_int(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS, nIndex);
+    int nAttackCount = array_get_int(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS, nIndex);
     //set the number of attacks correctly
-    //note this function does set the number, not BAB
-    //note this function does work on PCs, despite the description
-    //dont set it directly, instead set the local which is checked in prc_bab_caller
     SetLocalInt(oPC, NATURAL_WEAPON_ATTACK_COUNT, 1);
     if (DEBUG) DoDebug("SetPrimaryNaturalWeaponAttacks nAttackCount "+IntToString(nAttackCount));
-    //rather than using SetBaseAttackBonus, use an effect instead
-    //this makes it all at full AB without the -5 a time penalty
+    // Always strip previous WP_PrimaryNaturalWeapEffect first so switching from 2 attacks to 1 attack removes the extra attack
+    object oWP = GetObjectToApplyNewEffect("WP_PrimaryNaturalWeapEffect", oPC, TRUE);
     if(nAttackCount > 1)
     {
-        //get the object thats going to apply the effect
-        //this strips previous effects too
-        object oWP = GetObjectToApplyNewEffect("WP_PrimaryNaturalWeapEffect", oPC, TRUE);
         AssignCommand(oWP, ActionDoCommand(ApplyEffectToObject(DURATION_TYPE_PERMANENT, SupernaturalEffect(EffectModifyAttacks(nAttackCount-1)), oPC)));
     }
+    ExecuteScript("prc_bab_caller", oPC);
 }    
 
 void SetPrimaryNaturalWeapon(object oPC, int nIndex)
@@ -402,17 +442,24 @@ void SetPrimaryNaturalWeapon(object oPC, int nIndex)
         array_create(oPC, ARRAY_NAT_PRI_WEAP_RESREF);
     if(!array_exists(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS))
         array_create(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS);
-	if (DEBUG) DoDebug("SetPrimaryNaturalWeapon Step #1");
+    if (DEBUG) DoDebug("SetPrimaryNaturalWeapon Step #1");
     int nOverride = GetPersistantLocalInt(oPC, "NaturalWeaponPlayerOverride");
     if (DEBUG) DoDebug("SetPrimaryNaturalWeapon nIndex "+IntToString(nIndex)+", nOverride "+IntToString(nOverride));
-    if(nOverride) nIndex = nOverride;
+    if (nOverride == -1)
+        nIndex = -1;
+    else if (nOverride > 0)
+        nIndex = nOverride - 1;
     if(nIndex == -1)
     {
         //remove natural weapons
         DestroyObject(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oPC));
         DestroyObject(GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oPC));
         DestroyObject(GetItemInSlot(INVENTORY_SLOT_CWEAPON_B, oPC));
+        GetObjectToApplyNewEffect("WP_PrimaryNaturalWeapEffect", oPC, TRUE);
         DeleteLocalInt(oPC, NATURAL_WEAPON_ATTACK_COUNT);
+        DeleteLocalObject(oPC, "EquippedPrimaryNatWeapL");
+        DeleteLocalObject(oPC, "EquippedPrimaryNatWeapR");
+        ExecuteScript("prc_bab_caller", oPC);
         return;
     }
     string sResRef = array_get_string(oPC, ARRAY_NAT_PRI_WEAP_RESREF, nIndex);
@@ -420,6 +467,31 @@ void SetPrimaryNaturalWeapon(object oPC, int nIndex)
     if(sResRef == "")
         return;
     object oNaturalWeapon = EquipNaturalWeapon(oPC, sResRef);
+    int nAttackCount = array_get_int(oPC, ARRAY_NAT_PRI_WEAP_ATTACKS, nIndex);
+    if (nAttackCount >= 2)
+    {
+        object oCurR = GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oPC);
+        object oWeapR = OBJECT_INVALID;
+        if (GetIsObjectValid(oCurR) && (GetResRef(oCurR) == sResRef || GetTag(oCurR) == sResRef))
+        {
+            oWeapR = oCurR;
+        }
+        else
+        {
+            if (GetIsObjectValid(oCurR))
+                MyDestroyObject(oCurR);
+            oWeapR = CreateItemOnObject(sResRef, oPC);
+            SetIdentified(oWeapR, TRUE);
+            AssignCommand(oPC, ActionEquipItem(oWeapR, INVENTORY_SLOT_CWEAPON_R));
+            ForceEquip(oPC, oWeapR, INVENTORY_SLOT_CWEAPON_R);
+        }
+        ApplyVestigePrimaryNaturalWeaponProps(oPC, oWeapR, sResRef);
+        SetLocalObject(oPC, "EquippedPrimaryNatWeapR", oWeapR);
+    }
+    else if (GetIsObjectValid(GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oPC)))
+    {
+        MyDestroyObject(GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oPC));
+    }
     SetPrimaryNaturalWeaponAttacks(oPC, nIndex);
 }
 

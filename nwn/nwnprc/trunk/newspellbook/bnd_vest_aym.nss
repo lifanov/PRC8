@@ -58,18 +58,13 @@ void main()
 		if (!GetIsVestigeExploited(oBinder, VESTIGE_AYM_RUINOUS_ATTACK))
 		{
     		oItem = GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder);
-        	if(IPGetIsMeleeWeapon(oItem) && GetBinderLevel(oBinder, VESTIGE_AYM) >= 10)
-        	{         
-   				IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-   				IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       		}    	
+        	if(IPGetIsMeleeWeapon(oItem))
+        		DelayCommand(0.05, ApplyBinderWeaponDRBypass(oBinder, oItem));
     		oItem = GetItemInSlot(INVENTORY_SLOT_LEFTHAND, oBinder);
-        	if(IPGetIsMeleeWeapon(oItem) && GetBinderLevel(oBinder, VESTIGE_AYM) >= 10)
-        	{         
-   				IPSafeAddItemProperty(oItem, ItemPropertyAttackBonus(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-   				IPSafeAddItemProperty(oItem, ItemPropertyAttackPenalty(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
-       		}     	
+        	if(IPGetIsMeleeWeapon(oItem))
+        		DelayCommand(0.05, ApplyBinderWeaponDRBypass(oBinder, oItem));
        	}	
     }	
+    eLink = SetEffectSpellId(eLink, VESTIGE_AYM);
     ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
 }

@@ -38,7 +38,11 @@ void main()
         // Apply effects
         SPApplyEffectToObject(DURATION_TYPE_INSTANT, eHealLink, oManifester);
         ApplyEffectToObject(DURATION_TYPE_INSTANT, eDamageVis, oTarget);
+        SetLocalInt(oTarget, "SharePainRedirecting", TRUE);
+        SetLocalObject(oTarget, "SharePainSource", oManifester);
         AvoidDR(oTarget, nDamage);
+        DeleteLocalInt(oTarget, "SharePainRedirecting");
+        DeleteLocalObject(oTarget, "SharePainSource");
 
         // If the target died, remove the event hook immediately. The monitor will take care of the rest
         if(GetIsDead(oTarget))
@@ -51,6 +55,7 @@ void AvoidDR(object oTarget, int nDamage)
     int nCurHP         = GetCurrentHitPoints(oTarget);
     int nTargetHP      = nCurHP - nDamage;
     int nDamageToApply = nDamage;
+    int bHadSacrificeWard = GetIsObjectValid(GetLocalObject(oTarget, "ZurielSacrificeBinder"));
     effect eDamage;
 
     // Try magical damage
@@ -58,7 +63,7 @@ void AvoidDR(object oTarget, int nDamage)
     ApplyEffectToObject(DURATION_TYPE_INSTANT, eDamage, oTarget);
 
     // Check if the target's HP dropped enough. Skip if the target died on the way
-    if(GetCurrentHitPoints(oTarget) > nTargetHP && !GetIsDead(oTarget))
+    if(GetCurrentHitPoints(oTarget) > nTargetHP && !GetIsDead(oTarget) && !bHadSacrificeWard && !(GetImmortal(oTarget) && GetCurrentHitPoints(oTarget) <= 1))
     {
         // Didn't, try again, this time with Divine damage
         nDamageToApply = GetCurrentHitPoints(oTarget) - nTargetHP;
@@ -67,7 +72,7 @@ void AvoidDR(object oTarget, int nDamage)
         ApplyEffectToObject(DURATION_TYPE_INSTANT, eDamage, oTarget);
 
         // Check if the target's HP dropped enough. Skip if the target died on the way
-        if(GetCurrentHitPoints(oTarget) > nTargetHP && !GetIsDead(oTarget))
+        if(GetCurrentHitPoints(oTarget) > nTargetHP && !GetIsDead(oTarget) && !bHadSacrificeWard && !(GetImmortal(oTarget) && GetCurrentHitPoints(oTarget) <= 1))
         {
             // Didn't, try again, this time with Positive damage
             nDamageToApply = GetCurrentHitPoints(oTarget) - nTargetHP;
