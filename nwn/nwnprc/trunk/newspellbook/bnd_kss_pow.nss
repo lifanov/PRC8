@@ -10,6 +10,7 @@ Vestige's Power (+2 STR, CON, +10 speed, +4 will saves for 1 round, 5 round cool
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 	
 	if(GetIsPatronVestigeBound(oBinder))

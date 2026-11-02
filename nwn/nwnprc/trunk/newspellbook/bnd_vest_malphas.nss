@@ -30,6 +30,7 @@ Sneak Attack: You deal an extra 1d6 points of damage plus 1d6 points per four ef
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_MALPHAS);
 
@@ -57,5 +58,5 @@ void main()
     	}	
     }	
     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

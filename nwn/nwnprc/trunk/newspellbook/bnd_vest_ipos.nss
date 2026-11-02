@@ -31,7 +31,7 @@ Colossal 4d6
 
 Flash of Insight: As a swift action, you gain a true seeing effect (as the spell) for a duration of 1 round. Once you have used this ability, you cannot do so again for 5 rounds.
 
-Ipos’s Influence: Your affiliation with Ipos allows you to draw more power from the vestiges to which you are bound. The saving throw DC (if any) of each special ability granted by your 
+Iposs Influence: Your affiliation with Ipos allows you to draw more power from the vestiges to which you are bound. The saving throw DC (if any) of each special ability granted by your 
 vestiges increases by 1. Treat your effective binder level as one higher than normal for the purpose of determining the effects of vestige special abilities.
 
 Rend: When you hit one foe with two or more claw attacks, you automatically deal double the damage of a normal claw attack (including your Strength modifier) in addition to your normal damage.
@@ -42,6 +42,7 @@ Rend: When you hit one foe with two or more claw attacks, you automatically deal
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_PROTECTION_ENERGY_COLD), EffectPact(oBinder));
@@ -51,7 +52,7 @@ void main()
         IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_REND), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     }
     eLink = SetEffectSpellId(eLink, VESTIGE_IPOS);
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));
     if (!GetIsVestigeExploited(oBinder, VESTIGE_IPOS_CLAWS))  
     {
         string sResRef = "prc_claw_1d6l_";

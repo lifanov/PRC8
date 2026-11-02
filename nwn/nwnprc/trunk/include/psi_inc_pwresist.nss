@@ -28,6 +28,13 @@ const int POWER_RESIST_PASS = 0;
 int
 PRCResistPower(object oCaster, object oTarget)
 {
+    int nCheckSpellId = PRCGetSpellId(oCaster);
+    if (GetLocalInt(oCaster, "BinderSuSLA") || (nCheckSpellId >= 19020 && nCheckSpellId <= 19200))
+    {
+        if (GetHasSpellEffect(2076, oTarget) || GetHasSpellEffect(14215, oTarget) || GetPersistantLocalInt(oTarget, "NullPsionicsField") || GetLocalInt(oTarget, "BinderInAMF"))
+            return POWER_RESIST_PASS;
+        return POWER_RESIST_FAIL;
+    }
     return ResistSpell(oCaster, oTarget);
 }
 
@@ -129,6 +136,13 @@ PRCShowPowerResist(object oCaster, object oTarget, int nResist, float fDelay = 0
 int
 PRCMyResistPower(object oCaster, object oTarget, int nEffCasterLvl=0, float fDelay = 0.0)
 {
+    int nCheckSpellId = PRCGetSpellId(oCaster);
+    if (GetLocalInt(oCaster, "BinderSuSLA") || (nCheckSpellId >= 19020 && nCheckSpellId <= 19200))
+    {
+        if (GetHasSpellEffect(2076, oTarget) || GetHasSpellEffect(14215, oTarget) || GetPersistantLocalInt(oTarget, "NullPsionicsField") || GetLocalInt(oTarget, "BinderInAMF"))
+            return POWER_RESIST_PASS;
+        return POWER_RESIST_FAIL;
+    }
     int nResist = POWER_RESIST_FAIL;
     int nCasterCheck = nEffCasterLvl + d20(1);
     int nTargetPR = PRCGetPowerResistance(oTarget, oCaster);

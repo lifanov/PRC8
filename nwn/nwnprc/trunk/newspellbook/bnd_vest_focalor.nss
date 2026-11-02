@@ -16,9 +16,9 @@ Granted Abilities:
 Focalor gives you the ability to breathe water, strike foes down with lightning, blind enemies with a puff of your breath, and cause creatures to be stricken with grief in your presence.
 
 Aura of Sadness: You emit an aura of depression and anguish that overtakes even the strongest-willed creatures. Every adjacent creature is overcome with grief, which manifests as a 
-–2 penalty on attack rolls, saving throws, and skill checks, for as long as it remains adjacent to you. You can suppress or activate this ability as a standard action. Aura of sadness is a mind-affecting ability.
+2 penalty on attack rolls, saving throws, and skill checks, for as long as it remains adjacent to you. You can suppress or activate this ability as a standard action. Aura of sadness is a mind-affecting ability.
 
-Focalor’s Breath: As a standard action, you can exhale toward a single living target within 30 feet. That target is blinded for 1 round unless it succeeds on a Fortitude save. 
+Focalors Breath: As a standard action, you can exhale toward a single living target within 30 feet. That target is blinded for 1 round unless it succeeds on a Fortitude save. 
 Once you have used this ability, you cannot do so again for 5 rounds.
 
 Lightning Strike: Once per round as a standard action, you can call down a bolt of lightning that strikes any target you designate, as long as it is within 10 feet per effective 
@@ -32,6 +32,7 @@ Water Breathing: You can breathe both water and air easily
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_PROTECTION_ENERGY_ELECT), EffectPact(oBinder));
@@ -51,5 +52,5 @@ void main()
     	if (!GetIsVestigeExploited(oBinder, VESTIGE_FOCALOR_BREATH)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_FOCALOR_BREATH), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     }	
     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

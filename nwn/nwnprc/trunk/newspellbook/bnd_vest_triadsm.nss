@@ -1,8 +1,10 @@
+#include "bnd_inc_bndfunc"
 #include "prc_inc_smite"
 #include "prc_inc_template"
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_THETRIAD)) return;
     object oTarget = PRCGetSpellTargetObject(); 

@@ -7,7 +7,7 @@ Tenebrous, once a powerful demon prince, offers dominion over darkness and death
 
 Vestige Level: 4th
 Binding DC: 21
-Special Requirement: You must draw Tenebrous’s seal at night.
+Special Requirement: You must draw Tenebrouss seal at night.
 
 Influence: While influenced by Tenebrous, you are filled with a sense of detachment and an aching feeling of loss and abandonment. 
 Tenebrous requires that you never be the first to act in combat. If your initiative check result is the highest, you must delay until someone else takes a turn.
@@ -24,6 +24,7 @@ can charge your weapon for an entire round. Once you have used this ability, you
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!TakeSwiftAction(oBinder)) return;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_TENEBROUS)) return;
@@ -44,7 +45,7 @@ void main()
 		else if (nTier == 2) nDam = 41; // 3d8  (EBL 15)
 		else if (nTier == 1) nDam = DAMAGE_BONUS_2d8; // 2d8 (EBL 11)
 		
-		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectDamageIncrease(nDam, DAMAGE_TYPE_COLD), oBinder, 6.0);
+		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectDamageIncrease(nDam, DAMAGE_TYPE_COLD)), oBinder, 6.0);
 	}
 	else
 	{

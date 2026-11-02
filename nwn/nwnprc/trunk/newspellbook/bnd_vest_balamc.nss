@@ -9,18 +9,19 @@ Vestige Level: 5th
 Binding DC: 25
 Special Requirement: Balam requires a sacrifice of her summoner. In the process of calling her, you must deal 1 point of slashing damage to yourself.
 
-Influence: Balam’s influence causes you to distrust clerics, paladins, and other devotees of deities. Whenever you enter a temple or some other holy or unholy site, Balam requires that you spit on the floor and utter an invective about the place.
+Influence: Balams influence causes you to distrust clerics, paladins, and other devotees of deities. Whenever you enter a temple or some other holy or unholy site, Balam requires that you spit on the floor and utter an invective about the place.
 
 Granted Abilities: 
 Balam grants you the power to predict future events. She also teaches cunning and finesse, and gives you the ability to freeze foes with a glance.
 
-Balam’s Cunning: You reroll your next failed saving throw. Once you have used this ability, you cannot do so again for 5 rounds.
+Balams Cunning: You reroll your next failed saving throw. Once you have used this ability, you cannot do so again for 5 rounds.
 */
 
 #include "bnd_inc_bndfunc"
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 	if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_BALAM)) return;
 

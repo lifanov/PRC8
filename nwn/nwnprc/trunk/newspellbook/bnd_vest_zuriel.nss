@@ -5,6 +5,7 @@ Zuriel, the Bronze God (Epic Vestige, Level 9, DC 43)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject();
     object oSkin = GetPCSkin(oBinder);
 

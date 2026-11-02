@@ -21,6 +21,7 @@ Phantasmal Killer: This ability functions like the phantasmal killer spell. Once
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_HAURES)) return;
     DoRacialSLA(SPELL_PHANTASMAL_KILLER, GetBinderLevel(oBinder, VESTIGE_HAURES), GetBinderDC(oBinder, VESTIGE_HAURES));    

@@ -6,7 +6,7 @@ Haagenti, Mother of Minotaurs
 Haagenti tricked the god of frost giants and paid a terrible price for that deed. She girds her summoners for battle and gives them the power to confuse foes.
 
 Granted Abilities: 
-Haagenti grants you some of Thrym’s skill with arms and armor, plus her own aversion to transformation and the ability to inflict a state of confusion upon others.
+Haagenti grants you some of Thryms skill with arms and armor, plus her own aversion to transformation and the ability to inflict a state of confusion upon others.
 
 Confusing Touch: You can confuse by touch. The target of your touch attack must succeed on a Will save or become confused for 1 round per three effective binder 
 levels you possess. When you attain an effective binder level of 19th, this ability functions as a maze spell. Once you have used this ability, 
@@ -19,6 +19,7 @@ you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject(); 
 	int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_HAAGENTI);
@@ -62,7 +63,7 @@ void main()
         		    AssignCommand(oTarget, ClearAllActions());
 
         		    // Make the character ghost for the duration of the maze. Apply here so the effect gets a spellID association
-        		    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectCutsceneGhost(), oTarget, 600.0f);
+        		    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectCutsceneGhost()), oTarget, 600.0f);
 
         		    // Apply some VFX
         		    DoMazeVFX(GetLocation(oTarget));

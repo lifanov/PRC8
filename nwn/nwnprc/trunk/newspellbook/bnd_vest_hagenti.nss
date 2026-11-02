@@ -12,10 +12,10 @@ Special Requirement: To summon Haagenti, you must be Large.
 Influence: You feel ashamed and occasionally bashful in the presence of beautiful creatures. In addition, Haagenti requires that you give deference to any 
 creature you perceive as more attractive or charismatic than yourself. This deference might take the form of a bow, a salute, opening a door for the creature
 in question, not speaking until spoken to, or any other gesture that acknowledges the creature as superior to you. In any case, you must constantly treat any 
-such creature with respect or suffer the penalty for defying Haagenti’s influence.
+such creature with respect or suffer the penalty for defying Haagentis influence.
 
 Granted Abilities: 
-Haagenti grants you some of Thrym’s skill with arms and armor, plus her own aversion to transformation and the ability to inflict a state of confusion upon others.
+Haagenti grants you some of Thryms skill with arms and armor, plus her own aversion to transformation and the ability to inflict a state of confusion upon others.
 
 Confusing Touch: You can confuse by touch. The target of your touch attack must succeed on a Will save or become confused for 1 round per three effective binder 
 levels you possess. When you attain an effective binder level of 19th, this ability functions as a maze spell. Once you have used this ability, 
@@ -32,6 +32,7 @@ Weapon Proficiency: You are proficient with the battleaxe, greataxe, handaxe, an
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_CHILL_SHIELD), EffectPact(oBinder));
@@ -55,5 +56,5 @@ void main()
     	if (!GetIsVestigeExploited(oBinder, VESTIGE_HAAGENTI_CONFUSE)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_HAAGENTI_TOUCH), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     }	
     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

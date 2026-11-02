@@ -9,16 +9,16 @@ Vestige Level: 4th
 Binding DC: 20
 Special Requirement: Buer requires that her seal be drawn outdoors.
 
-Influence: Under Buer’s influence, you are plagued by momentary memory lapses. For an instant, you might forget even a piece of information as familiar as the 
+Influence: Under Buers influence, you are plagued by momentary memory lapses. For an instant, you might forget even a piece of information as familiar as the 
 name of a friend or family member. Furthermore, since Buer abhors the needless death of living creatures other than animals and vermin, the first melee 
 attack you make against such a foe must be for nonlethal damage. In addition, Buer requires that you not make any coup de grace attacks.
 
 Granted Abilities: 
 Buer grants you healing powers, the ability to ignore toxins and ailments, and skills that help you navigate the natural world.
 
-Buer’s Knowledge: You gain a +4 bonus on Heal, Lore, and Animal Empathy checks.
+Buers Knowledge: You gain a +4 bonus on Heal, Lore, and Animal Empathy checks.
 
-Buer’s Purity: You have immunity to disease and poison.
+Buers Purity: You have immunity to disease and poison.
 
 Delay Diseases and Poisons: Each ally within 30 feet of you gains immunity to poison and disease. 
 
@@ -35,6 +35,7 @@ Track: You gain the Track feat.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_BUER);
     int nBonus = 1;
@@ -61,5 +62,5 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_BUER_HEALING_GIFT)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_BUER_HEAL), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     if (!GetIsVestigeExploited(oBinder, VESTIGE_BUER_TRACK)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_TRACK), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

@@ -8,6 +8,7 @@
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     int nCasterLevel = GetBinderLevel(oBinder, VESTIGE_ACERERAK);
     int nDC = GetBinderDC(oBinder, VESTIGE_ACERERAK);

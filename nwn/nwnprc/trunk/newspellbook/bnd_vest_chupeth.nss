@@ -10,7 +10,7 @@ Vestige Level: 6th
 Binding DC: 25
 Special Requirement: Chupoclops hates Amon for some unknown reason and will not answer your call if you are already bound to him.
 
-Influence: While under the influence of Chupoclops, you can’t help but be pessimistic. At best, you are quietly resigned to your own failure, and at 
+Influence: While under the influence of Chupoclops, you cant help but be pessimistic. At best, you are quietly resigned to your own failure, and at 
 worst, you spread your doubts to others, trying to convince them of the hopelessness of their goals. In addition, Chupoclops requires that you voluntarily fail all saving throws against fear effects.
 
 Granted Abilities: 
@@ -24,6 +24,7 @@ combat causes you to return to the Material Plane. Once you have returned to the
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 	if(!TakeMoveAction(oBinder)) return;
 	effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_SANCTUARY), EffectEthereal());

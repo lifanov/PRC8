@@ -290,6 +290,8 @@ int DruidSpontSummon(object oCaster, int nCastingClass, int nSpellID, int nSpell
 
 int ArcaneSpellFailure(object oCaster, int nCastingClass, int nSpellLevel, int nMetamagic, string sComponents)
 {
+    if(GetLocalInt(oCaster, "BinderSuSLA") || (PRCGetSpellId(oCaster) >= 19020 && PRCGetSpellId(oCaster) <= 19200))
+        return FALSE;
     if(!GetIsArcaneClass(nCastingClass))
         return FALSE;
     
@@ -512,6 +514,8 @@ int ArcaneSpellFailure(object oCaster, int nCastingClass, int nSpellLevel, int n
 
 int SilenceDeafnessFailure(object oCaster, int nSpellLevel, int nMetamagic, string sComponents)
 {
+    if(GetLocalInt(oCaster, "BinderSuSLA") || (PRCGetSpellId(oCaster) >= 19020 && PRCGetSpellId(oCaster) <= 19200))
+        return FALSE;
     if(FindSubString(sComponents, "V") == -1)
         return FALSE;
 
@@ -2222,6 +2226,8 @@ int ClassSLAStore(object oCaster, int nSpellID, int nCastingClass, int nSpellLev
 
 int PnPSomaticComponents(object oCaster, object oSpellCastItem, string sComponent, int nMetamagic)
 {
+    if(GetLocalInt(oCaster, "BinderSuSLA") || (PRCGetSpellId(oCaster) >= 19020 && PRCGetSpellId(oCaster) <= 19200))
+        return TRUE;
     if(GetPRCSwitch(PRC_PNP_SOMATIC_COMPOMENTS) || GetPRCSwitch(PRC_PNP_SOMATIC_ITEMS))
     {
         object oItem = GetItemInSlot(INVENTORY_SLOT_LEFTHAND, oCaster);
@@ -2276,8 +2282,9 @@ int PnPSomaticComponents(object oCaster, object oSpellCastItem, string sComponen
 
 int PRCSpellEffects(object oCaster, object oTarget, int nSpellID, int nSpellLevel, int nCastingClass, int bSpellIsHostile, int nMetamagic)
 {
+    int bIsBinderSu = GetLocalInt(oCaster, "BinderSuSLA") || (nSpellID >= 19020 && nSpellID <= 19200);
     // Pnp Tensers Transformation
-    if(GetPRCSwitch(PRC_PNP_TENSERS_TRANSFORMATION))
+    if(!bIsBinderSu && GetPRCSwitch(PRC_PNP_TENSERS_TRANSFORMATION))
 	{
         if(GetHasSpellEffect(SPELL_TENSERS_TRANSFORMATION, oCaster))  
         {  
@@ -2381,7 +2388,9 @@ int PRCSpellEffects(object oCaster, object oTarget, int nSpellID, int nSpellLeve
 
     // Null Psionics Field/Anti-Magic Field
     if(GetHasSpellEffect(SPELL_ANTIMAGIC_FIELD, oCaster)
-    || GetHasSpellEffect(POWER_NULL_PSIONICS_FIELD, oCaster))
+    || GetHasSpellEffect(POWER_NULL_PSIONICS_FIELD, oCaster)
+    || GetPersistantLocalInt(oCaster, "NullPsionicsField")
+    || GetLocalInt(oCaster, "BinderInAMF"))
     {
          return FALSE;
     }
@@ -2423,7 +2432,7 @@ int PRCSpellEffects(object oCaster, object oTarget, int nSpellID, int nSpellLeve
     }
 
     // Ectoplasmic Shambler
-    if(GetLocalInt(oCaster, "PRC_IsInEctoplasmicShambler"))
+    if(!bIsBinderSu && GetLocalInt(oCaster, "PRC_IsInEctoplasmicShambler"))
     {
         if(!GetIsSkillSuccessful(oCaster, SKILL_CONCENTRATION, (15 + nSpellLevel)))
         {
@@ -2433,7 +2442,7 @@ int PRCSpellEffects(object oCaster, object oTarget, int nSpellID, int nSpellLeve
     }
 
     // Jarring Song
-    if(GetHasSpellEffect(SPELL_VIRTUOSO_JARRING_SONG, oCaster))
+    if(!bIsBinderSu && GetHasSpellEffect(SPELL_VIRTUOSO_JARRING_SONG, oCaster))
     {
         if(!GetIsSkillSuccessful(oCaster, SKILL_CONCENTRATION, (15 + nSpellLevel)))
         {
@@ -2572,6 +2581,8 @@ int CorruptOrSanctified(object oCaster, int nSpellID, int nCasterAlignment, int 
 
 int GrappleConc(object oCaster, int nSpellLevel)
 {
+    if(GetLocalInt(oCaster, "BinderSuSLA") || (PRCGetSpellId(oCaster) >= 19020 && PRCGetSpellId(oCaster) <= 19200))
+        return TRUE;
     if(GetLocalInt(oCaster, "IsGrappled"))
     {
         return GetIsSkillSuccessful(oCaster, SKILL_CONCENTRATION, (20 + nSpellLevel));

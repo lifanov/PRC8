@@ -9,7 +9,7 @@ Vestige Level: 5th
 Binding DC: 25
 Special Requirement: No
 
-Influence: Otiax’s motives remain a mystery, but its influence is clear. When confronted with unopened doors or gates, you become agitated and nervous. This emotional 
+Influence: Otiaxs motives remain a mystery, but its influence is clear. When confronted with unopened doors or gates, you become agitated and nervous. This emotional 
 state lasts until the door or gate is opened, or until you can no longer see it. Furthermore, Otiax cannot abide a lock remaining secured. Thus, whenever you see a 
 key, Otiax requires that you use it to open the corresponding lock.
 
@@ -24,6 +24,7 @@ level. Once you have used this ability, you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     //Declare major variables
     object oBinder = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_OTIAX);

@@ -2,8 +2,8 @@
 Scion of Dantalion - Dantalion's Glare
 
 From 4th level on, you can use
-a standard action to intensify Dantalion’s sign and glare
-through its eyes. The starry voids in the eyes of Dantalion’s
+a standard action to intensify Dantalions sign and glare
+through its eyes. The starry voids in the eyes of Dantalions
 sign blaze forth with the brightness of an exploding star,
 affecting all creatures in a 30-foot cone. Every creature within
 this area must succeed on a Fortitude save (DC 10 + 1/2 your
@@ -18,6 +18,7 @@ Strat 10/03/21
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     location lTarget = PRCGetSpellTargetLocation();
     float fRange = FeetToMeters(30.0);    
@@ -31,7 +32,7 @@ void main()
         if(oTarget != oBinder && !PRCMySavingThrow(SAVING_THROW_FORT, oTarget, nDC, SAVING_THROW_TYPE_NONE))
         {
             ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_BLIND_DEAF_M), oTarget);
-            ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectBlindness(), oTarget, RoundsToSeconds(d4()));
+            ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectBlindness()), oTarget, RoundsToSeconds(d4()));
         }
         oTarget = MyNextObjectInShape(SHAPE_SPELLCONE, fRange, lTarget, FALSE, OBJECT_TYPE_CREATURE);
     }   

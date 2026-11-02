@@ -6,6 +6,7 @@ Grants 100% immunity to the chosen element. 5-round cooldown on switching.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     int nSpellId = PRCGetSpellId();
     if (!BindAbilCooldown(oBinder, VESTIGE_GAIA_ELEM_MASTER_SPELL, VESTIGE_GAIA)) return;

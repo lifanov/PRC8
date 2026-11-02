@@ -16,11 +16,11 @@ In his first life, Eligor was a skilled horseman, and in his second, he served t
  
 Chromatic Strike: As a free action, you can charge a melee attack with acid, cold, electricity, or fire. Your next melee attack deals an extra 1d6 points of damage of the chosen energy type. You can charge a single melee attack only once.
  
-Eligor’s Skill in the Saddle: You gain the benefits of the Mounted Combat and Mounted Archery feats.
+Eligors Skill in the Saddle: You gain the benefits of the Mounted Combat and Mounted Archery feats.
  
-Eligor’s Strength: You gain a +4 bonus to Strength.
+Eligors Strength: You gain a +4 bonus to Strength.
  
-Eligor’s Resilience: You gain a +3 enhancement bonus to natural armor. This bonus improves to +4 at 16th level and to +5 at 20th level.
+Eligors Resilience: You gain a +3 enhancement bonus to natural armor. This bonus improves to +4 at 16th level and to +5 at 20th level.
  
 Heavy Armor Proficiency: You are proficient with heavy armor.
 */
@@ -29,6 +29,7 @@ Heavy Armor Proficiency: You are proficient with heavy armor.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_ELIGOR);
     int nBonus = 3;

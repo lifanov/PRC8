@@ -303,6 +303,17 @@ void SPApplyEffectToObject(int nDurationType, effect eEffect, object oTarget, fl
     int bDispellable = TRUE, int nSpellID = -1, int nCasterLevel = -1, object oCaster = OBJECT_SELF)
 {
     if (-1 == nSpellID) nSpellID = PRCGetSpellId();
+    int bIsBinderSu = GetLocalInt(oCaster, "BinderSuSLA") || GetLocalInt(OBJECT_SELF, "BinderSuSLA") || (nSpellID >= 19020 && nSpellID <= 19200);
+    if (bIsBinderSu)
+    {
+        if (GetHasSpellEffect(2076, oTarget) || GetHasSpellEffect(14215, oTarget) || GetPersistantLocalInt(oTarget, "NullPsionicsField") || GetLocalInt(oTarget, "BinderInAMF"))
+            return;
+        if (nDurationType != DURATION_TYPE_INSTANT)
+        {
+            eEffect = SupernaturalEffect(eEffect);
+            bDispellable = FALSE;
+        }
+    }
 
     //if it was cast from the new spellbook, remove previous effects
     //if(GetLocalInt(OBJECT_SELF, "UsingActionCastSpell"))

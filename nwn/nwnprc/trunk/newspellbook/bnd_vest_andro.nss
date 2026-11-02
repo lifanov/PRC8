@@ -3,21 +3,21 @@
 
 Andromalius, the Repentant Rogue
   
-Once the favorite of the god Olidammara, Andromalius now exists as a vestige. His granted abilities help his summoners beat rogues and ne’er-do-wells at their own game.
+Once the favorite of the god Olidammara, Andromalius now exists as a vestige. His granted abilities help his summoners beat rogues and neer-do-wells at their own game.
 
 Vestige Level: 3rd
 Binding DC: 20
 Special Requirement: No
 
-Influence: When influenced by Andromalius, you become a devious mischief-maker who delights in causing small calamities—especially misunderstandings between 
+Influence: When influenced by Andromalius, you become a devious mischief-maker who delights in causing small calamitiesespecially misunderstandings between 
 friends and incidents of mistaken identity. However, Andromalius cannot now abide acts of theft, so he forbids you to steal from a creature, take an item 
-from a dead body, or remove someone else’s possession from a location without permission so long as you are under the jurisdiction of an authority whose 
+from a dead body, or remove someone elses possession from a location without permission so long as you are under the jurisdiction of an authority whose 
 laws expressly forbid such activities. By the same logic, you cannot take possession of any object that you know to be stolen.
 
 Granted Abilities: 
 The abilities that Andromalius grants help you catch thieves and return stolen goods, discover wickedness and underhanded dealings, and punish wrongdoers. 
 
-Jester’s Mirth: As a standard action, you can cause an opponent to break into uncontrollable laughter. This ability functions like a Tasha’s hideous 
+Jesters Mirth: As a standard action, you can cause an opponent to break into uncontrollable laughter. This ability functions like a Tashas hideous 
 laughter spell (caster level equals your effective binder level). 
 
 Locate Item: At will, you can cast locate object.
@@ -34,6 +34,7 @@ For every five effective binder levels you possess beyond 5th, your sneak attack
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject();
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_ANDROMALIUS);
 
@@ -62,5 +63,5 @@ void main()
     		DelayCommand(0.1, ExecuteScript("prc_sneak_att", oBinder));    	
     	}	
     }	
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

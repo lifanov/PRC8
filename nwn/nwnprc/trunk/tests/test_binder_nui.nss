@@ -76,7 +76,7 @@ void RunTestSuite_BinderNUI_PhaseC(object oBinder)
     // -------------------------------------------------------------------------
     // Cap test character at Binder 20 before BinderNUIBuildHomeMaps on pre-epic
     // branches where cls_bind_binder.2da rows 21-40 still have MaxSoulBinding=0.
-    if(GetHitDice(oBinder) > 20)
+    if(GetMaxVestigeCount(oBinder) == 0 && GetHitDice(oBinder) > 20)
         SetXP(oBinder, 190000);
     BinderNUIBuildHomeMaps(oBinder);
     json jBindMap = GetLocalJson(oBinder, PRC_BINDER_NUI_HOME_BIND_MAP_VAR);

@@ -2,7 +2,7 @@
 Tenebrous Apostate - Destroy/Empower Undead
 
 At 3rd level, you gain additional power over mindless undead. You can use two turn or rebuke attempts as a 
-single standard action, each dealing (or healing) damage as per the Tenebrous’s rebuke ability, except that
+single standard action, each dealing (or healing) damage as per the Tenebrouss rebuke ability, except that
 the damage applies only to mindless undead. Neutral characters use the turn effect, evil characters the rebuke.
 
 Strat 05/03/21
@@ -59,6 +59,7 @@ void DestroyEmpower(object oBinder)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     object oTarget    = PRCGetSpellTargetObject();
 

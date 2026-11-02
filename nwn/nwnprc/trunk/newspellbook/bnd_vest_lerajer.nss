@@ -1,3 +1,4 @@
+#include "bnd_inc_bndfunc"
 /*
 03/02/21 by Stratovarius
 
@@ -5,7 +6,7 @@ Leraje, the Green Herald
   
 Once a favored servant of the primary deity of the elves, Leraje allowed her pride to become her downfall. 
 Leraje gives her summoners the ability to bring a bow to hand at will, to fire it with accuracy, and to 
-damage a foe’s sense of self with it. In addition, she gives her hosts keen vision in darkness and skill at hiding.
+damage a foes sense of self with it. In addition, she gives her hosts keen vision in darkness and skill at hiding.
 
 Vestige Level: 1st
 Binding DC: 15
@@ -18,6 +19,7 @@ Ricochet: As a standard action, you can make a ranged attack against two adjacen
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder    = OBJECT_SELF;
     object oTarget       = PRCGetSpellTargetObject();
 	object oWeapon       = GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder);

@@ -21,7 +21,7 @@ void DantalionOverwhelm(object oBinder, object oTarget, int nDC)
     	if(!PRCMySavingThrow(SAVING_THROW_WILL, oTarget, nDC, SAVING_THROW_TYPE_NONE))
     	{
     		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(PSI_IMP_CONCUSSION_BLAST), oTarget);
-    		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectDazed(), oTarget, RoundsToSeconds(d4()));
+    		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectDazed()), oTarget, RoundsToSeconds(d4()));
     	}	
     	else // Enemy succeeded on saving throw here
     	{
@@ -34,6 +34,7 @@ void DantalionOverwhelm(object oBinder, object oTarget, int nDC)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject(); 
     int nDC = 10 + GetBinderLevel(oBinder, VESTIGE_DANTALION)/2 + GetAbilityModifier(ABILITY_CHARISMA, oBinder);

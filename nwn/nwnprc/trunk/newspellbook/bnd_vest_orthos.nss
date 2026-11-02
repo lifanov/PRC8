@@ -21,7 +21,7 @@ Blindsight: You gain blindsight.
 Displacement: You surround yourself with a light-bending glamer that makes it difficult for others to surmise your true location. Any melee or ranged attack directed at you has a 50% miss chance.
 
 Whirlwind Breath: As a standard action, you can exhale a scouring blast of wind in a 60-foot cone. Your whirlwind breath deals 1d6 points of damage per binder level you possess. 
-Every creature in the area can attempt a Reflex save to halve the damage, and must also succeed on a Fortitude save or be knocked prone and moved 1d4×10 feet away from you. 
+Every creature in the area can attempt a Reflex save to halve the damage, and must also succeed on a Fortitude save or be knocked prone and moved 1d410 feet away from you. 
 Once you have used this ability, you cannot do so again for 5 rounds.
 */
 
@@ -29,6 +29,7 @@ Once you have used this ability, you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 	
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_AIR1), EffectPact(oBinder));
@@ -59,7 +60,7 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_ORTHOS_DISPLACEMENT)) eLink = EffectLinkEffects(eLink, EffectConcealment(50));
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_ORTHOS_BREATH))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_ORTHOS_BREATH), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
     ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_WIND), oBinder);
     ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SOUND_SYMBOL_STUNNING), oBinder);
 }

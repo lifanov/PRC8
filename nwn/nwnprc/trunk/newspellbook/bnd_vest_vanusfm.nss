@@ -9,7 +9,7 @@ Vestige Level: 6th
 Binding DC: 29
 Special Requirement: Vanus refuses to appear when summoned indoors, and will only answer the summoner's call when well away from buildings.
 
-Influence: Under the influence of Vanus, you take every opportunity to revel. Even small victories seem like cause for grand celebrations, and if you’re happy, you want everyone around to share your joy. If you see others in the act of celebration, you must join in. If you achieve victory in combat, you must immediately spend a full-round action crowing about your triumph.
+Influence: Under the influence of Vanus, you take every opportunity to revel. Even small victories seem like cause for grand celebrations, and if youre happy, you want everyone around to share your joy. If you see others in the act of celebration, you must join in. If you achieve victory in combat, you must immediately spend a full-round action crowing about your triumph.
 
 Granted Abilities: 
 Vanus grants you tremendous hearing, the ability to foment fear by your presence alone, skill at fighting foes weaker than yourself, and the power to free allies from imprisonment.
@@ -22,13 +22,14 @@ Free Ally: You may designate any ally to gain the benefits of the freedom of mov
 
 Noble Disdain: When attacking a foe of fewer Hit Dice than yourself with a ranged or melee weapon, you deal +1d6 points of damage.
 
-Vanus’s Ears: Being bound to Vanus grants you a +10 bonus on Listen checks.
+Vanuss Ears: Being bound to Vanus grants you a +10 bonus on Listen checks.
 */
 
 #include "bnd_inc_bndfunc"
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject();
     if (oBinder == oTarget) return;

@@ -7,10 +7,10 @@ Gnomes rarely earn a reputation for their military might, but Halphax is one of 
   
 Vestige Level: 8th
 Binding DC: 32
-Special Requirement: Halphax’s sign must be drawn inside a building.
+Special Requirement: Halphaxs sign must be drawn inside a building.
   
 Influence: In his time as a vestige, Halphax seems to have lost all memory of his life as well as any feeling of guilt or shame for his actions. Thus, when you are under his influence, 
-you lose any normal sense of shame or embarrassment. However, if someone threatens a hostage you care about—be it a creature or an item—Halphax requires that you accede to the hostage taker’s demands.
+you lose any normal sense of shame or embarrassment. However, if someone threatens a hostage you care aboutbe it a creature or an itemHalphax requires that you accede to the hostage takers demands.
   
 Granted Abilities: 
 Halphax grants you great knowledge of mechanical arts as well as the power to imprison foes, build defenses, and gird your body with the hardness of stone.
@@ -25,6 +25,7 @@ its save, you must wait 1d4 rounds before using the ability again. You cannot im
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
   	object oBinder = OBJECT_SELF;
   	if(GetLocalInt(oBinder, "HalphaxDelay")) return;
   	object oTarget = PRCGetSpellTargetObject();

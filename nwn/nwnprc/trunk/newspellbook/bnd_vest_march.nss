@@ -9,11 +9,11 @@ Vestige Level: 7th
 Binding DC: 30
 Special Requirement: No
   
-Influence: Marchosias’s influence makes you debonair and sly, as though you have some trick up your sleeve and the knowledge of it makes you confident. 
+Influence: Marchosiass influence makes you debonair and sly, as though you have some trick up your sleeve and the knowledge of it makes you confident. 
 In addition, Marchosias requires that you use the death attack he grants you against any foe you catch unawares.
   
 Granted Abilities: 
-Marchosias gives you an assassin’s skill at killing, plus the ability to assume gaseous form and the power to charm foes.
+Marchosias gives you an assassins skill at killing, plus the ability to assume gaseous form and the power to charm foes.
 
 Death Attack: If you have sneak attack, you gain the Death Attack ability, as per the assassin class.
 
@@ -30,6 +30,7 @@ Silent and Sure: You gain a +16 competence bonus on Hide and Move Silently check
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_FLAMING_SPHERE), EffectPact(oBinder));
@@ -72,5 +73,5 @@ void main()
     	eLink = EffectLinkEffects(eLink, EffectSkillIncrease(SKILL_MOVE_SILENTLY, 16));
     }	
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

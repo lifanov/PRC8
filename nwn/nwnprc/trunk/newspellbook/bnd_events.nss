@@ -653,6 +653,7 @@ void main()
     }
     else if(nEvent == EVENT_ITEM_ONHIT)
     {
+        if (GetIsBinderInAntimagicField(oBinder)) return;
         oItem          = GetSpellCastItem();
         if (!GetIsObjectValid(oItem)) oItem = GetLocalObject(oBinder, "PRC_ONHIT_ITEM_OVERRIDE");
         object oTarget = PRCGetSpellTargetObject();
@@ -808,7 +809,7 @@ void main()
         if (GetHasSpellEffect(VESTIGE_ANDRAS, oBinder) && !GetLocalInt(oBinder, "PactQuality"+IntToString(VESTIGE_ANDRAS))) AndrasInfluence(oBinder);
 		if (GetIsPatronVestigeBound(oBinder) && GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder) >= 5)
 		{
-			ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectDamageReduction(10, DAMAGE_POWER_PLUS_ONE), oBinder, 6.0);
+			ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectDamageReduction(10, DAMAGE_POWER_PLUS_ONE)), oBinder, 6.0);
 			IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(IP_CONST_FEAT_OUTSIDER_RACIAL_TYPE), 5.999, X2_IP_ADDPROP_POLICY_KEEP_EXISTING);    	
 		}
 		if (GetHasSpellEffect(VESTIGE_CHUPOCLOPS_ETHEREAL_WATCHER, oBinder)) ChupoclopsEth(oBinder);

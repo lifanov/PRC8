@@ -5,7 +5,7 @@ Leraje, the Green Herald
   
 Once a favored servant of the primary deity of the elves, Leraje allowed her pride to become her downfall. 
 Leraje gives her summoners the ability to bring a bow to hand at will, to fire it with accuracy, and to 
-damage a foe’s sense of self with it. In addition, she gives her hosts keen vision in darkness and skill at hiding.
+damage a foes sense of self with it. In addition, she gives her hosts keen vision in darkness and skill at hiding.
 
 Vestige Level: 1st
 Binding DC: 15
@@ -14,7 +14,7 @@ Special Requirement: Leraje hates Amon for some unknown reason and will not answ
 Influence: While influenced by Leraje, she requires that you not attack any elf or creature of elven blood, including half-elves and members of the various elf subraces, such as drow.
 
 Granted Abilities: 
-You gain supernatural powers related to Leraje’s skills in life, as well as the ability to fire arrows that literally wound your target’s pride.
+You gain supernatural powers related to Lerajes skills in life, as well as the ability to fire arrows that literally wound your targets pride.
 
 Hide Bonus: You gain a +4 competence bonus on Hide checks.
 
@@ -33,6 +33,7 @@ with any of these weapons, you instead gain a +1 competence bonus on attack roll
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_MARK_OF_THE_HUNTER), EffectPact(oBinder));
@@ -71,5 +72,5 @@ void main()
     	if (!GetIsVestigeExploited(oBinder, VESTIGE_LERAJE_LOW_LIGHT_VISION)) EffectLinkEffects(eLink, EffectUltravision());
     }	
     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));  
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));  
 }

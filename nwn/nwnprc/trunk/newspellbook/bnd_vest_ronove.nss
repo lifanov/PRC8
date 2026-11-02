@@ -8,9 +8,9 @@ grants her summoners the power to move objects at a distance, to strike with the
 
 Vestige Level: 1st
 Binding DC: 15
-Special Requirement: Ronove’s seal must be drawn in the soil under the open sky.
+Special Requirement: Ronoves seal must be drawn in the soil under the open sky.
 
-Influence: Ronove’s influence makes you think that others doubt your abilities and competence. Despite what anyone says, you feel the constant need to prove your worth. 
+Influence: Ronoves influence makes you think that others doubt your abilities and competence. Despite what anyone says, you feel the constant need to prove your worth. 
 In addition, Ronove requires that you consume neither food nor beverages (including potions) for the entire time you remain bound to her.
 
 Granted Abilities: 
@@ -20,10 +20,10 @@ Cold Iron and Magic Attacks: Your melee attacks count as +1 for the purpose of o
 count as +3 for the purpose of overcoming damage reduction.
 
 Far Hand: As a swift action, you can lift and move an unattended object as per the Far Hand psionic power. Alternatively, you can use the telekinetic force to
-push a creature as a standard action. The force deals 1d6 points of damage to the target and initiates a bull rush, using the force’s Strength modifier and adding a +2 bonus. 
+push a creature as a standard action. The force deals 1d6 points of damage to the target and initiates a bull rush, using the forces Strength modifier and adding a +2 bonus. 
 Once you have used your far hand in this way, you cannot use it again for 5 rounds. The force is considered Medium in size, and it has a Strength score equal to your effective binder level.
 
-Ronove’s Fists: You gain the benefit of the Improved Unarmed Strike feat. Your unarmed strikes deal damage as those of a monk of a level equal to your effective binder level. 
+Ronoves Fists: You gain the benefit of the Improved Unarmed Strike feat. Your unarmed strikes deal damage as those of a monk of a level equal to your effective binder level. 
 This ability does not grant you any other abilities of a monk, such as flurry of blows.
 
 Sprint: You gain a +10-foot enhancement bonus to your base land speed.
@@ -33,6 +33,7 @@ Sprint: You gain a +10-foot enhancement bonus to your base land speed.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_PROT_IRON_SKIN), EffectPact(oBinder));
@@ -78,5 +79,5 @@ void main()
     }	
     
     eLink = SetEffectSpellId(eLink, VESTIGE_RONOVE);
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

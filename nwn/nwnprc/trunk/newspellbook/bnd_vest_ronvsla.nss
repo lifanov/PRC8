@@ -4,7 +4,7 @@
  *
  
 Far Hand: As a swift action, you can lift and move an unattended object as per the Far Hand psionic power. Alternatively, you can use the telekinetic force to
-push a creature as a standard action. The force deals 1d6 points of damage to the target and initiates a bull rush, using the force’s Strength modifier and adding a +2 bonus. 
+push a creature as a standard action. The force deals 1d6 points of damage to the target and initiates a bull rush, using the forces Strength modifier and adding a +2 bonus. 
 Once you have used your far hand in this way, you cannot use it again for 5 rounds. The force is considered Medium in size, and it has a Strength score equal to your effective binder level.
  
  */
@@ -15,6 +15,7 @@ Once you have used your far hand in this way, you cannot use it again for 5 roun
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_RONOVE);
     int nSLA = PRCGetSpellId();

@@ -5,6 +5,7 @@ Amun-her Khepeshef, the Desecrated Scion (Epic Vestige, Level 9, DC 47)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject();
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_AMUN_HER);
     object oSkin = GetPCSkin(oBinder);

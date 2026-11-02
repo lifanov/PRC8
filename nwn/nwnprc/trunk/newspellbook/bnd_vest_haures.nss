@@ -17,7 +17,7 @@ Haures shields your mind with his madness, allows you to move like a ghost, give
 
 Inaccessible Mind: You are protected from any effort to detect, influence, or read your emotions or thoughts, and you have immunity to any mind-affecting spells and abilities.
 
-Incorporeal Movement: When moving, you become nearly incorporeal and can ignore the effects of difficult terrain. You can even move through an enemy’s space, but not through walls or other solid barriers. 
+Incorporeal Movement: When moving, you become nearly incorporeal and can ignore the effects of difficult terrain. You can even move through an enemys space, but not through walls or other solid barriers. 
 
 Major Image: You can create an illusion at will, as though you had cast mislead (caster level equals your effective binder level). Once you have used this ability, you cannot do so again for 5 rounds.
 
@@ -29,6 +29,7 @@ Phantasmal Killer: This ability functions like the phantasmal killer spell. Once
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_RAINBOW_PATTERN), EffectPact(oBinder));
@@ -42,5 +43,5 @@ void main()
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_HAURES_IMAGE))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_HAURES_IMAGE ),   HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_HAURES_KILLER)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_HAURES_KILLER),   HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

@@ -20,20 +20,21 @@ destroy it with a touch, and use any magic item with ease. He even provides incr
 
 Heavy Magic: The save DC for each effect of every magic item you use increases by 2.
 
-Karsus’s Senses: You can cast detect magic at will.
+Karsuss Senses: You can cast detect magic at will.
 
-Karsus’s Touch: You can produce a dispel magic effect with a touch. To do so, you must make a successful melee touch attack that does not 
+Karsuss Touch: You can produce a dispel magic effect with a touch. To do so, you must make a successful melee touch attack that does not 
 provoke attacks of opportunity. You can then make a dispel check (1d20 + your effective binder level, maximum +20) against each ongoing 
-spell currently in effect on the target. You can use Karsus’s touch a number of times per day equal to your effective binder level. 
+spell currently in effect on the target. You can use Karsuss touch a number of times per day equal to your effective binder level. 
 Once you have used this ability, you cannot do so again for 5 rounds.
 
-Karsus’s Will: You can use wands and staves as if you were a wizard.
+Karsuss Will: You can use wands and staves as if you were a wizard.
 */
 
 #include "bnd_inc_bndfunc"
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(PSI_DUR_DISPELLING_BUFFER), EffectPact(oBinder));
@@ -60,5 +61,5 @@ void main()
     	// Karsus's Will in bnd_events onacquire
     }	
     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

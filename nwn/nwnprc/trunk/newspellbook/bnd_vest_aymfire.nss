@@ -1,3 +1,4 @@
+#include "bnd_inc_bndfunc"
 /*
 03/02/21 by Stratovarius
 
@@ -11,6 +12,7 @@ Halo of Fire: At will, you can shroud yourself in a wreath of flame. Any opponen
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject(); 
     int nAttack = PRCDoMeleeTouchAttack(oTarget);

@@ -9,7 +9,7 @@ Vestige Level: 6th
 Binding DC: 26
 Special Requirement: No
 
-Influence: While under Shax’s influence, you become possessive and stingy, particularly about territory—be it actual land or simply a room in an inn. In addition, her influence requires you to demand compensation for any service rendered and to tax any use of your territory. However, you can accept nearly any item of value—be it material goods or a service—as payment.
+Influence: While under Shaxs influence, you become possessive and stingy, particularly about territorybe it actual land or simply a room in an inn. In addition, her influence requires you to demand compensation for any service rendered and to tax any use of your territory. However, you can accept nearly any item of valuebe it material goods or a serviceas payment.
 
 Granted Abilities: 
 Shax grants you the ability to strike foes with sonic force and electricity. She also gives you immunity to electricity and allows you to move freely despite restraints.
@@ -25,6 +25,7 @@ Storm Strike: As a swift action, you can charge a melee attack or melee touch at
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_STORM_OF_VENGEANCE), EffectPact(oBinder));
@@ -34,5 +35,5 @@ void main()
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_STORM_STRIKE)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_SHAX_STRIKE),  HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	
     eLink = SetEffectSpellId(eLink, VESTIGE_SHAX);
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

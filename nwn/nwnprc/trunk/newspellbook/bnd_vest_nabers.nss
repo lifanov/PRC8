@@ -21,7 +21,7 @@ Disguise Self: You can alter the appearance of your form as a standard action. T
 
 Faster Ability Healing: You heal 1 point in each damaged ability score every round, and 1 point in all drained ability scores every hour.
 
-Naberius’s Skills: At the time you make your pact, you can choose a number of skills equal to your Constitution bonus (if any). 
+Naberiuss Skills: At the time you make your pact, you can choose a number of skills equal to your Constitution bonus (if any). 
 Your choices must be skills in which you have no ranks. For the duration of the binding, you can make skill checks with your chosen 
 skills even though you are untrained. If your Constitution modifier decreases after you make the pact, you lose the ability to make 
 untrained checks with an equal number of the chosen skills. Lost skills are chosen randomly, and they remain inaccessible to you until you make another pact with Naberius.
@@ -30,13 +30,14 @@ Persuasive Words: You can direct a verbal command at a single living target with
 A successful Will save negates the effect. When your effective binder level reaches 14th, your words become even more persuasive and this ability functions like the suggestion spell. Once you have used this ability, you cannot do so again for 5 rounds.
 
 Silver Tongue: You can take 10 on Diplomacy and Bluff checks even if distracted or threatened. In addition, you can 
-make a rushed Diplomacy check as a standard action and take no penalty. (Normally, a rushed Diplomacy check requires a full-round action and imposes a –10 penalty on the check.)
+make a rushed Diplomacy check as a standard action and take no penalty. (Normally, a rushed Diplomacy check requires a full-round action and imposes a 10 penalty on the check.)
 */
 
 #include "bnd_inc_bndfunc"
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_MAGIC_RESISTANCE_SILENT), EffectPact(oBinder));

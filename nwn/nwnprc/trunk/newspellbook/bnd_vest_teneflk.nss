@@ -7,7 +7,7 @@ Tenebrous, once a powerful demon prince, offers dominion over darkness and death
 
 Vestige Level: 4th
 Binding DC: 21
-Special Requirement: You must draw Tenebrous’s seal at night.
+Special Requirement: You must draw Tenebrouss seal at night.
 
 Influence: While influenced by Tenebrous, you are filled with a sense of detachment and an aching feeling of loss and abandonment. 
 Tenebrous requires that you never be the first to act in combat. If your initiative check result is the highest, you must delay until someone else takes a turn.
@@ -23,6 +23,7 @@ Vessel of Emptiness: You can use the flicker shadow magic mystery once per day. 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder      = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_TENEBROUS);
     int nUses = 1;
@@ -46,7 +47,7 @@ void main()
     	float fDur = 6.0 * nBinderLevel;
     	object oSkin = GetPCSkin(oBinder);
     	ActionDoCommand(AddItemProperty(DURATION_TYPE_TEMPORARY, ItemPropertyBonusFeat(IP_CONST_FEAT_MYST_FLICKER), oSkin, fDur));
-    	ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectVisualEffect(PSI_DUR_TEMPORAL_ACCELERATION), oBinder, fDur);
+    	ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectVisualEffect(PSI_DUR_TEMPORAL_ACCELERATION)), oBinder, fDur);
     	SetLocalInt(oBinder, "TenebrousFlicker", nBinderLevel);
     	DelayCommand(fDur, DeleteLocalInt(oBinder, "TenebrousFlicker"));
     }    

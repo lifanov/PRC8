@@ -12,6 +12,7 @@ effect MakeEarthsFuryForRace(int nRace)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject();
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_GAIA);
     object oSkin = GetPCSkin(oBinder);

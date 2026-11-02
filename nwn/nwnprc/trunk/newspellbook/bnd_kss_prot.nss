@@ -13,6 +13,7 @@ Vestige's Protection Aura (as above, but affects all adjacent friends)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 	int nKSSLvl = GetLevelByClass(CLASS_TYPE_KNIGHT_SACRED_SEAL, oBinder);
 	int nCHAmod = PRCMax(1, GetAbilityModifier(ABILITY_CHARISMA, oBinder));

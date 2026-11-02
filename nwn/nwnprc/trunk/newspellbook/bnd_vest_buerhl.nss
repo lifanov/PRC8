@@ -9,7 +9,7 @@ Vestige Level: 4th
 Binding DC: 20
 Special Requirement: Buer requires that her seal be drawn outdoors.
 
-Influence: Under Buer’s influence, you are plagued by momentary memory lapses. For an instant, you might forget even a piece of information as familiar as the 
+Influence: Under Buers influence, you are plagued by momentary memory lapses. For an instant, you might forget even a piece of information as familiar as the 
 name of a friend or family member. Furthermore, since Buer abhors the needless death of living creatures other than animals and vermin, the first melee 
 attack you make against such a foe must be for nonlethal damage. In addition, Buer requires that you not make any coup de grace attacks.
 
@@ -25,6 +25,7 @@ again for 5 rounds. Both uses of the ability channel positive energy and deal a 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
   	object oBinder = OBJECT_SELF;
   	if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_BUER)) return;
   	object oTarget = PRCGetSpellTargetObject();

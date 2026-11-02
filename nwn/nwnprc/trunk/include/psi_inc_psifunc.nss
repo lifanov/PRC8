@@ -1041,8 +1041,21 @@ void UsePower(int nPower, int nClass, int bIsPsiLike = FALSE, int nLevelOverride
     int nSpellID       = PRCGetSpellId();
     int nManifDur      = StringToInt(Get2DACache("spells", "ConjTime", nPower)) + StringToInt(Get2DACache("spells", "CastTime", nPower));
     int bQuicken       = FALSE;
-    
-    
+    int bVestigePsiSu  = (nSpellID >= 19000 && nSpellID <= 19200) ||
+                         GetLocalInt(oManifester, "BinderSuSLA") ||
+                         GetHasSpellEffect(VESTIGE_ARETE, oManifester) ||
+                         GetHasSpellEffect(VESTIGE_THETRIAD, oManifester) ||
+                         GetHasSpellEffect(VESTIGE_ABYSM, oManifester);
+    if (bVestigePsiSu)
+    {
+        if (GetHasSpellEffect(2076, oManifester) || GetHasSpellEffect(14215, oManifester) || GetPersistantLocalInt(oManifester, "NullPsionicsField") || GetLocalInt(oManifester, "BinderInAMF"))
+        {
+            FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", oManifester, FALSE);
+            return;
+        }
+        nManifDur = 0;
+        SetLocalInt(oManifester, "BinderSuSLA", TRUE);
+    }
     if (GetLocalInt(oManifester, "MindStabDur")) nManifDur = 0;
 
     // Normally swift action powers check

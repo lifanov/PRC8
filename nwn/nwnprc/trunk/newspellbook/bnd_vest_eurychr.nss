@@ -9,7 +9,7 @@ Vestige Level: 4th
 Binding DC: 21
 Special Requirement: Eurynome hates Amon for some unknown reason and will not answer your call if you are already bound to him.
 
-Influence: Eurynome’s influence makes you paranoid and ungrateful; you see secret motives and possible betrayals behind every action. Eurynome requires that you not 
+Influence: Eurynomes influence makes you paranoid and ungrateful; you see secret motives and possible betrayals behind every action. Eurynome requires that you not 
 attack a foe unless an ally has already done so. If no allies are present, she makes no such requirement
 
 Granted Abilities: 
@@ -24,6 +24,7 @@ OnEnter
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     //Declare major variables
     object oBinder = OBJECT_SELF;
     //FloatingTextStringOnCreature(GetName(oBinder)+" created this AoE", GetFirstPC());

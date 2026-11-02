@@ -41,6 +41,7 @@
 */
 
 #include "prc_craft_inc"
+#include "bnd_inc_bndfunc"
 #include "inc_npc"
 
 int GetIsExempt(object oItem)
@@ -220,6 +221,7 @@ void main()
 
         // Remove all non-extraordinary effects
         RemoveEffectsNPF(oEnter);
+        SuppressBinderVestigesInAMF(oEnter);
 
         // Apply absolute spell failure and spell immunity
         effect eLink = EffectSpellResistanceIncrease(100);

@@ -7,17 +7,17 @@ Gnomes rarely earn a reputation for their military might, but Halphax is one of 
   
 Vestige Level: 8th
 Binding DC: 32
-Special Requirement: Halphax’s sign must be drawn inside a building.
+Special Requirement: Halphaxs sign must be drawn inside a building.
   
 Influence: In his time as a vestige, Halphax seems to have lost all memory of his life as well as any feeling of guilt or shame for his actions. Thus, when you are under his influence, 
-you lose any normal sense of shame or embarrassment. However, if someone threatens a hostage you care about—be it a creature or an item—Halphax requires that you accede to the hostage taker’s demands.
+you lose any normal sense of shame or embarrassment. However, if someone threatens a hostage you care aboutbe it a creature or an itemHalphax requires that you accede to the hostage takers demands.
   
 Granted Abilities: 
 Halphax grants you great knowledge of mechanical arts as well as the power to imprison foes, build defenses, and gird your body with the hardness of stone.
 
 Damage Reduction: You gain damage reduction 10/+5. 
 
-Halphax’s Knowledge: You gain a +16 bonus on Lore checks.
+Halphaxs Knowledge: You gain a +16 bonus on Lore checks.
 
 Imprison: As a standard action, you can make a melee touch attack to imprison your target. If you hit, the target must make a Fortitude saving throw or be imprisoned. 
 This ability functions like the imprisonment spell, except that the imprisonment lasts for a number of rounds equal to your effective binder level. If a target makes 
@@ -32,6 +32,7 @@ Secure Shelter: At will as a standard action, you can cast Mordenkainen's Magnif
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 	
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_STONE5), EffectPact(oBinder));
@@ -43,5 +44,5 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_HALPHAX_BARRIER))   IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_HALPHAX_BARRIER ), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     if (!GetIsVestigeExploited(oBinder, VESTIGE_HALPHAX_SHELTER))   IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_HALPHAX_SHELTER ), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);  
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

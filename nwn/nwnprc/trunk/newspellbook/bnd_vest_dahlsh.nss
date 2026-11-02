@@ -19,6 +19,7 @@ void DispelMonitor(object oBinder, object oTarget, int nSpellID, int nBinderLeve
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject();
     int nDC        = GetBinderDC(oBinder, VESTIGE_DAHLVERNAR);
@@ -44,8 +45,8 @@ void main()
     	SetLocalObject(oBinder, "PRC_Power_SharePain_Target", oTarget);
 
     	// Do VFX for the monitor to look for
-    	ApplyEffectToObject(DURATION_TYPE_PERMANENT, eDurNeg, oTarget);
-    	ApplyEffectToObject(DURATION_TYPE_PERMANENT, eDurPos, oBinder);
+    	ApplyEffectToObject(DURATION_TYPE_PERMANENT, SupernaturalEffect(eDurNeg), oTarget);
+    	ApplyEffectToObject(DURATION_TYPE_PERMANENT, SupernaturalEffect(eDurPos), oBinder);
 
     	// Start effect end monitor
     	DelayCommand(6.0f, DispelMonitor(oBinder, oTarget, nSpellID, nBinderLevel));

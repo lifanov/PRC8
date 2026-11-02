@@ -97,6 +97,7 @@ void BronzeBodyTick(object oBinder, int nGen)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     int nEBL = GetBinderLevel(oBinder, VESTIGE_ZURIEL);
 

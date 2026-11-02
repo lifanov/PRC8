@@ -9,13 +9,13 @@ Vestige Level: 2nd
 Binding DC: 20
 Special Requirement: No
 
-Influence: Savnok’s influence makes you headstrong and recalcitrant. Once you make up your mind about a particular issue, very little can change your thoughts on the matter. 
+Influence: Savnoks influence makes you headstrong and recalcitrant. Once you make up your mind about a particular issue, very little can change your thoughts on the matter. 
 In addition, whenever you don armor, employ a shield, or wear any other item that improves your AC, Savnok requires that you not remove that protection for any reason.
 
 Granted Abilities: 
-Savnok grants you abilities associated with his death and the command of allies’ positions.
+Savnok grants you abilities associated with his death and the command of allies positions.
 
-Call Armor: At will as a full-round action, you can summon a suit of full plate armor, which appears about your body. As you attain higher effective binder levels, the armor’s
+Call Armor: At will as a full-round action, you can summon a suit of full plate armor, which appears about your body. As you attain higher effective binder levels, the armors
 quality improves, as given on the following table. At 5th level, it becomes +1. At 9th level, +2. At 13th level, it grants immunity to sneak attacks. At 17th level, +4. 
 At 20th level, immunity to critical hits. You can dismiss the armor with another full-round action.
 
@@ -24,7 +24,7 @@ Heavy Armor Proficiency: You are proficient with heavy armor.
 Move Ally: You can instantly swap positions with any visible willing ally within 5 feet per two effective binder levels of your position. Using this ability is a standard action
 at first, though at 13th level you can use it as a swift action. Once you have used this ability, you cannot do so again for 5 rounds.
 
-Savnok’s Armor: While wearing your called armor, you can ignore some of the damage from attacks by nonpiercing weapons. When you first gain the ability to summon Savnok, 
+Savnoks Armor: While wearing your called armor, you can ignore some of the damage from attacks by nonpiercing weapons. When you first gain the ability to summon Savnok, 
 this ability gives you damage reduction 1/piercing, and the value improves by +1 for every four effective binder levels you possess.
 */
 
@@ -32,6 +32,7 @@ this ability gives you damage reduction 1/piercing, and the value improves by +1
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_SAVNOK);
     

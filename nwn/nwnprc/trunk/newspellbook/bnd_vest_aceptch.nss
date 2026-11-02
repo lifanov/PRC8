@@ -3,7 +3,7 @@
 
 Acererak, the Devourer
   
-Acererak, a half-human lich, grasped at godlike power only to lose his grip on reality. As a vestige, he grants abilities that are similar to a lich’s powers.
+Acererak, a half-human lich, grasped at godlike power only to lose his grip on reality. As a vestige, he grants abilities that are similar to a lichs powers.
 
 Vestige Level: 5th
 Binding DC: 25
@@ -41,6 +41,7 @@ void RecurringSave(object oTarget, int nSpell, int nDC, object oBinder)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
   	object oBinder = OBJECT_SELF;
   	if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_ACERERAK)) return;
   	object oTarget = PRCGetSpellTargetObject();

@@ -29,6 +29,7 @@ Fiend's Heart: You share some of the defensive benefits of the balor once bound 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 	int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_ASHARDALON);
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_PROTECTION_ENERGY_FIRE), EffectPact(oBinder));
@@ -47,6 +48,6 @@ void main()
     }	
    
     eLink = EffectLinkEffects(eLink, EffectVisualEffect(VFX_DUR_PRISMATIC_SPHERE));
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
     ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_DRAGONBLAST), oBinder);
 }

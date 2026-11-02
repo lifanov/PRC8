@@ -9,11 +9,11 @@ Vestige Level: 7th
 Binding DC: 30
 Special Requirement: No
   
-Influence: Marchosias’s influence makes you debonair and sly, as though you have some trick up your sleeve and the knowledge of it makes you confident. In addition, 
+Influence: Marchosiass influence makes you debonair and sly, as though you have some trick up your sleeve and the knowledge of it makes you confident. In addition, 
 Marchosias requires that you use the death attack he grants you against any foe you catch unawares.
   
 Granted Abilities: 
-Marchosias gives you an assassin’s skill at killing, plus the ability to assume gaseous form and the power to charm foes.
+Marchosias gives you an assassins skill at killing, plus the ability to assume gaseous form and the power to charm foes.
 
 Smoke Form: You can assume the form of a smoke cloud at will, like the gaseous form spell. You can suppress or activate this ability as a standard action. 
 Once you have returned to your normal form from smoke form, you cannot do so again for 5 rounds.
@@ -36,6 +36,7 @@ void MarchosiasLock(object oBinder, int nSpell)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 
     if (GetHasSpellEffect(SPELL_GASEOUS_FORM, oBinder))

@@ -814,10 +814,16 @@ void DoRacialSLA(int nSpellID, int nCasterlevel = 0, int nTotalDC = 0, int bInst
             +StringToInt(Get2DACache("spells", "Innate", nSpellID))
             +GetAbilityModifier(ABILITY_CHARISMA);
 
-    int nSLAMM = METAMAGIC_NONE;
-    if (bIsVestigeSu && GetLocalInt(OBJECT_SELF, "ZurielBronzeBodyActive"))
+    if (bIsVestigeSu && (GetHasSpellEffect(2076, OBJECT_SELF) || GetHasSpellEffect(14215, OBJECT_SELF) || GetPersistantLocalInt(OBJECT_SELF, "NullPsionicsField") || GetLocalInt(OBJECT_SELF, "BinderInAMF")))
     {
-        nSLAMM = METAMAGIC_STILL;
+        FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE);
+        return;
+    }
+
+    int nSLAMM = METAMAGIC_NONE;
+    if (bIsVestigeSu)
+    {
+        nSLAMM = METAMAGIC_STILL | METAMAGIC_SILENT;
         bInstantCast = TRUE;
     }
 

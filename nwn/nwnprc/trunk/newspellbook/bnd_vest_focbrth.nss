@@ -6,7 +6,7 @@ Focalor, Prince of Tears
 Granted Abilities: 
 Focalor gives you the ability to breathe water, strike foes down with lightning, blind enemies with a puff of your breath, and cause creatures to be stricken with grief in your presence.
 
-Focalor’s Breath: As a standard action, you can exhale toward a single living target within 30 feet. That target is blinded for 1 round unless it succeeds on a Fortitude save. 
+Focalors Breath: As a standard action, you can exhale toward a single living target within 30 feet. That target is blinded for 1 round unless it succeeds on a Fortitude save. 
 Once you have used this ability, you cannot do so again for 5 rounds.
 */
 
@@ -14,6 +14,7 @@ Once you have used this ability, you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     //Declare major variables
     object oBinder = OBJECT_SELF;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_FOCALOR)) return;
@@ -29,7 +30,7 @@ void main()
     {
         // Apply effects to the currently selected target.
         SPApplyEffectToObject(DURATION_TYPE_INSTANT, eVis, oTarget);
-        SPApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectBlindness(), oTarget, 6.0);
+        SPApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectBlindness()), oTarget, 6.0);
     }
 
 }

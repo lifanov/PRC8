@@ -7,9 +7,9 @@ Agares died at the hands of his allies for a wrong he did not commit. As a vesti
 
 Vestige Level: 4th
 Binding DC: 22
-Special Requirement: You must draw Agares’s seal upon either the earth or an expanse of unworked stone.
+Special Requirement: You must draw Agaress seal upon either the earth or an expanse of unworked stone.
 
-Influence: Agares’s loyalty in life and his anger at the betrayal perpetrated by his lieutenants has become a hatred of falsehood. When influenced
+Influence: Agaress loyalty in life and his anger at the betrayal perpetrated by his lieutenants has become a hatred of falsehood. When influenced
 by Agares, you speak forthrightly and with confidence. You cannot use the Bluff skill, and when asked a direct question, you must answer truthfully and directly.
 
 Granted Abilities: 
@@ -23,6 +23,7 @@ The size of the earth elemental you can summon depends on your effective binder 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     DelayCommand(HoursToSeconds(1), DeleteLocalInt(oBinder, "AgaresDelay"));
     DelayCommand(HoursToSeconds(1), FloatingTextStringOnCreature("You can now resummon your elemental companion!", oBinder, FALSE));

@@ -35,6 +35,7 @@ can attempt a Will save to negate the effect.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_BLOOD_FOUNTAIN), EffectPact(oBinder));
@@ -57,5 +58,5 @@ void main()
     	if (!GetIsVestigeExploited(oBinder, VESTIGE_DAHLVERNAR_SHIELD_SELF)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_DAHLVER_SHARE), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     }	
     
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

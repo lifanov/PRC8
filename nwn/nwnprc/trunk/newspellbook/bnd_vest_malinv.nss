@@ -26,6 +26,7 @@ void MalphasInvisLock(object oBinder, int nSpell)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder    = OBJECT_SELF;
     int nSpell = GetSpellId(); 
     if (GetLocalInt(oBinder, "Bind"+IntToString(nSpell))) return;
@@ -42,6 +43,6 @@ void main()
     eLink = EffectLinkEffects(eLink, eInvis);
 	
     SPApplyEffectToObject(DURATION_TYPE_INSTANT, ExtraordinaryEffect(eImpact), oBinder);
-    SPApplyEffectToObject(DURATION_TYPE_TEMPORARY, ExtraordinaryEffect(eLink), oBinder, RoundsToSeconds(nBinderLevel));
+    SPApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, RoundsToSeconds(nBinderLevel));
     MalphasInvisLock(oBinder, nSpell);
 }

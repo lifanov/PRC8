@@ -23,6 +23,7 @@ Damage reduction 1/-
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject();
     if (!GetIsObjectValid(oBinder)) oBinder = OBJECT_SELF;
 
