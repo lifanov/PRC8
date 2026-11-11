@@ -3054,6 +3054,15 @@ const string PRC_GAIA_PLANETARY_HEALING_NERF        = "PRC_GAIA_PLANETARY_HEALIN
  */
 const string PRC_TKHAL_SPHERE_DISINTEGRATE          = "PRC_TKHAL_SPHERE_DISINTEGRATE";
 
+/**
+ * Enables epic level progression (EBL 21-40) for pre-epic vestige abilities
+ * whose progression tables in Tome of Magic stopped at level 17-20 (such as
+ * Savnok's Call Armor, Eligor's Resilience, Tenebrous's Vessel of Emptiness,
+ * Eurynome's Maul, Agares's Elemental Companion, Zceryll's Alien Form, and
+ * Ronove's Fists). Defaults to 1 (ON) via personal_switch.2da and prc_onmodload.
+ * Set to 0 to enforce strict pre-epic table caps on those abilities.
+ */
+const string PRC_EPIC_VESTIGE_SCALING               = "PRC_EPIC_VESTIGE_SCALING";
 
 
 

@@ -46,7 +46,17 @@ void main()
     	int nHD = GetHitDice(oBinder);
     	int nResist;
     	effect eDR;
-    	if (nHD >= 12)
+    	if (GetIsEpicVestigeScalingEnabled() && nHD >= 32)
+    	{
+    	    eDR = EffectDamageReduction(20, DAMAGE_POWER_PLUS_FIVE);
+    	    nResist = 40;
+    	}
+    	else if (GetIsEpicVestigeScalingEnabled() && nHD >= 24)
+    	{
+    	    eDR = EffectDamageReduction(15, DAMAGE_POWER_PLUS_FOUR);
+    	    nResist = 30;
+    	}
+    	else if (nHD >= 12)
     	{
     	    eDR = EffectDamageReduction(10, DAMAGE_POWER_PLUS_THREE);
     	    nResist = 20;

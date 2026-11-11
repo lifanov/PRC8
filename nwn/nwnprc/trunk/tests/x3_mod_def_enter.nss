@@ -87,6 +87,7 @@ void FinishTestHarness()
 #include "test_bnd_base"
 #include "test_bnd_natw"
 #include "test_binder_su"
+#include "test_bnd_scale"
 #include "test_bnd_epft"
 #include "test_bnd_epvst"
 
@@ -102,6 +103,7 @@ void RunAllTestSuites(object oPC)
     DelayCommand(13.5, RunTestSuite_BinderBasic(oHelper, oPC, oTarget));
     DelayCommand(18.0, RunTestSuite_BinderNatWeap(oHelper, oPC, oTarget));
     DelayCommand(22.5, RunTestSuite_BinderSu(oHelper, oPC, oTarget));
+    DelayCommand(27.0, RunTestSuite_BinderScaling(oHelper, oPC, oTarget));
     DelayCommand(30.5, RunTestSuite_BinderEpicFeats(oHelper, oPC, oTarget));
     DelayCommand(30.6, RunTestSuite_BinderEpicVestiges(oHelper, oPC, oTarget));
     DelayCommand(32.5, FinishTestHarness());

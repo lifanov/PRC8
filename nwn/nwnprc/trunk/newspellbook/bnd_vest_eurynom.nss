@@ -9,7 +9,7 @@ Vestige Level: 4th
 Binding DC: 21
 Special Requirement: Eurynome hates Amon for some unknown reason and will not answer your call if you are already bound to him.
 
-Influence: Eurynomes influence makes you paranoid and ungrateful; you see secret motives and possible betrayals behind every action. Eurynome requires that you not 
+Influence: Eurynome’s influence makes you paranoid and ungrateful; you see secret motives and possible betrayals behind every action. Eurynome requires that you not 
 attack a foe unless an ally has already done so. If no allies are present, she makes no such requirement
 
 Granted Abilities: 
@@ -19,12 +19,12 @@ Animal Friend: All animals automatically have an initial attitude of friendly to
 
 Damage Reduction: You gain damage reduction 2/+3.
 
-Eurynomes Maul: You summon a magic warhammer (1d8+1d4 bludgeoning damage, 3 crit). You are proficient with this weapon and can wield it without penalty. Your warhammers 
+Eurynome’s Maul: You summon a magic warhammer (1d8+1d4 bludgeoning damage, ×3 crit). You are proficient with this weapon and can wield it without penalty. Your warhammer’s 
 exact bonus and abilities depend on your effective binder level, according to the following table.
 Effective Binder Level Warhammer Summoned
 10th or lower +1 warhammer
-11th14th +1 anarchic warhammer
-15th18th +1 anarchic adamantine warhammer
+11th–14th +1 anarchic warhammer
+15th–18th +1 anarchic adamantine warhammer
 19th or higher +3 anarchic adamantine warhammer
 
 Poison Blood: While you are bound to Eurynome, your blood becomes poisonous. Any creature that makes a bite attack against you must immediately make a successful 
@@ -84,7 +84,12 @@ void main()
     	AssignCommand(oHammer, SetIsDestroyable(FALSE, FALSE, FALSE));
     	DelayCommand(0.25, AssignCommand(oBinder, ActionEquipItem(oHammer, INVENTORY_SLOT_RIGHTHAND))); 
     	
-    	if (nBinderLevel >= 19) IPSafeAddItemProperty(oHammer, ItemPropertyEnhancementBonus(3), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);
+    	int nMaulEnh = 1;
+    	if (GetIsEpicVestigeScalingEnabled() && nBinderLevel >= 23)
+    		nMaulEnh = PRCMin(8, 3 + ((nBinderLevel - 19) / 4));
+    	else if (nBinderLevel >= 19)
+    		nMaulEnh = 3;
+    	if (nMaulEnh > 1) IPSafeAddItemProperty(oHammer, ItemPropertyEnhancementBonus(nMaulEnh), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);
     	if (nBinderLevel >= 15)
     	{
 			IPSafeAddItemProperty(oHammer, ItemPropertyAttackBonus(5), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE);        	
@@ -107,5 +112,6 @@ void main()
     	AddEventScript(GetItemInSlot(INVENTORY_SLOT_CHEST, oBinder), EVENT_ITEM_ONHIT, "bnd_events", TRUE, FALSE);
     }	
 	
+    eLink = SetEffectSpellId(eLink, VESTIGE_EURYNOME);
     ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

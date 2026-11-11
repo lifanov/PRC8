@@ -7,7 +7,7 @@ Tenebrous, once a powerful demon prince, offers dominion over darkness and death
 
 Vestige Level: 4th
 Binding DC: 21
-Special Requirement: You must draw Tenebrous’s seal at night.
+Special Requirement: You must draw Tenebrouss seal at night.
 
 Influence: While influenced by Tenebrous, you are filled with a sense of detachment and an aching feeling of loss and abandonment. 
 Tenebrous requires that you never be the first to act in combat. If your initiative check result is the highest, you must delay until someone else takes a turn.
@@ -33,12 +33,19 @@ void main()
 
 	if (nBinderLevel >= 11)
 	{
-		int nDam = DAMAGE_BONUS_1d8;
-		if ((nBinderLevel-7)/4 >= 3) nDam = 42; //4d8
-		else if ((nBinderLevel-7)/4 >= 2) nDam = 41; //3d8
-		else if ((nBinderLevel-7)/4 >= 1) nDam = DAMAGE_BONUS_2d8;
-		
-		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectDamageIncrease(nDam, DAMAGE_TYPE_COLD)), oBinder, 6.0);
+		int nEffLvl = GetIsEpicVestigeScalingEnabled() ? nBinderLevel : PRCMin(20, nBinderLevel);
+		int nDice = 1 + ((nEffLvl - 7) / 4);
+		if (nDice > 10) nDice = 10;
+		while (nDice > 0)
+		{
+			int nChunk = (nDice >= 4) ? 4 : nDice;
+			int nDamConst = DAMAGE_BONUS_1d8;
+			if      (nChunk == 4) nDamConst = 42; // 4d8
+			else if (nChunk == 3) nDamConst = 41; // 3d8
+			else if (nChunk == 2) nDamConst = DAMAGE_BONUS_2d8; // 2d8
+			ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectDamageIncrease(nDamConst, DAMAGE_TYPE_COLD)), oBinder, 6.0);
+			nDice -= nChunk;
+		}
 	}
 	else
 	{

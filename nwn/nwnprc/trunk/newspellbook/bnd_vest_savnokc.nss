@@ -16,16 +16,17 @@ At 20th level, immunity to critical hits. You can dismiss the armor with another
 void SavnokDamageResist(object oBinder, object oArmor, int nLevel)
 {
     int nDR = IP_CONST_DAMAGERESIST_1;
-    if (nLevel >= 36)      nDR = IP_CONST_DAMAGERESIST_10;
-    else if (nLevel >= 32) nDR = IP_CONST_DAMAGERESIST_9;
-    else if (nLevel >= 28) nDR = IP_CONST_DAMAGERESIST_8;
-    else if (nLevel >= 24) nDR = IP_CONST_DAMAGERESIST_7;
-    else if (nLevel >= 20) nDR = IP_CONST_DAMAGERESIST_6;
-    else if (nLevel >= 16) nDR = IP_CONST_DAMAGERESIST_5;
+    int nCapLevel = GetIsEpicVestigeScalingEnabled() ? nLevel : PRCMin(20, nLevel);
+    if (nCapLevel >= 36)      nDR = IP_CONST_DAMAGERESIST_10;
+    else if (nCapLevel >= 32) nDR = IP_CONST_DAMAGERESIST_9;
+    else if (nCapLevel >= 28) nDR = IP_CONST_DAMAGERESIST_8;
+    else if (nCapLevel >= 24) nDR = IP_CONST_DAMAGERESIST_7;
+    else if (nCapLevel >= 20) nDR = IP_CONST_DAMAGERESIST_6;
+    else if (nCapLevel >= 16) nDR = IP_CONST_DAMAGERESIST_5;
     else if (nLevel >= 12) nDR = IP_CONST_DAMAGERESIST_4;
     else if (nLevel >= 8)  nDR = IP_CONST_DAMAGERESIST_3;
     else if (nLevel >= 4)  nDR = IP_CONST_DAMAGERESIST_2;
-													   
+                                                       
     AddItemProperty(DURATION_TYPE_PERMANENT, ItemPropertyDamageResistance(IP_CONST_DAMAGETYPE_SLASHING, nDR), oArmor);
     AddItemProperty(DURATION_TYPE_PERMANENT, ItemPropertyDamageResistance(IP_CONST_DAMAGETYPE_BLUDGEONING, nDR), oArmor);
 }
@@ -33,37 +34,41 @@ void SavnokDamageResist(object oBinder, object oArmor, int nLevel)
 void main()
 {
     if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
-	object oBinder = OBJECT_SELF;
-	
+    object oBinder = OBJECT_SELF;
+    
     object oArmor = GetItemPossessedBy(oBinder, "SavnokCallArmor");
     if (GetIsObjectValid(oArmor))
     {
-    	SetLocalInt(oBinder, "SavnokDelay", TRUE);
-    	DelayCommand(1.5, DeleteLocalInt(oBinder, "SavnokDelay"));
-    	SetPlotFlag(oArmor, FALSE);
-		DestroyObject(oArmor);	
-	}	
-	else
-	{
-		int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_SAVNOK);
-		oArmor = CreateItemOnObject("nw_aarcl007", oBinder, 1, "SavnokCallArmor");
-		if (nBinderLevel >= 17) IPSafeAddItemProperty(oArmor, ItemPropertyACBonus(4));
-		else if (nBinderLevel >= 9) IPSafeAddItemProperty(oArmor, ItemPropertyACBonus(2));
-		else if (nBinderLevel >= 5) IPSafeAddItemProperty(oArmor, ItemPropertyACBonus(1));
-		if (nBinderLevel >= 13) IPSafeAddItemProperty(oArmor, ItemPropertyImmunityMisc(IP_CONST_IMMUNITYMISC_BACKSTAB));
-		if (nBinderLevel >= 20) IPSafeAddItemProperty(oArmor, ItemPropertyImmunityMisc(IP_CONST_IMMUNITYMISC_CRITICAL_HITS));
-		
-    	if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder))	
-    	{
-    		if (!GetIsVestigeExploited(oBinder, VESTIGE_SAVNOK_SAVNOKS_ARMOR)) SavnokDamageResist(oBinder, oArmor, nBinderLevel);
-    	}
-		
+        SetLocalInt(oBinder, "SavnokDelay", TRUE);
+        DelayCommand(1.5, DeleteLocalInt(oBinder, "SavnokDelay"));
+        SetPlotFlag(oArmor, FALSE);
+        DestroyObject(oArmor);
+    }
+    else
+    {
+        int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_SAVNOK);
+        oArmor = CreateItemOnObject("nw_aarcl007", oBinder, 1, "SavnokCallArmor");
+        int nACBonus = 0;
+        if (GetIsEpicVestigeScalingEnabled() && nBinderLevel >= 21)
+            nACBonus = PRCMin(9, 4 + ((nBinderLevel - 17) / 4));
+        else if (nBinderLevel >= 17) nACBonus = 4;
+        else if (nBinderLevel >= 9)  nACBonus = 2;
+        else if (nBinderLevel >= 5)  nACBonus = 1;
+        if (nACBonus > 0) IPSafeAddItemProperty(oArmor, ItemPropertyACBonus(nACBonus));
+        if (nBinderLevel >= 13) IPSafeAddItemProperty(oArmor, ItemPropertyImmunityMisc(IP_CONST_IMMUNITYMISC_BACKSTAB));
+        if (nBinderLevel >= 20) IPSafeAddItemProperty(oArmor, ItemPropertyImmunityMisc(IP_CONST_IMMUNITYMISC_CRITICAL_HITS));
+        
+        if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder))
+        {
+            if (!GetIsVestigeExploited(oBinder, VESTIGE_SAVNOK_SAVNOKS_ARMOR)) SavnokDamageResist(oBinder, oArmor, nBinderLevel);
+        }
+        
         SetDroppableFlag(oArmor, FALSE);
-        SetItemCursedFlag(oArmor, TRUE); 	
+        SetItemCursedFlag(oArmor, TRUE);
         SetPlotFlag(oArmor, TRUE);
-		SetName(oArmor, "Savnok's Gift");
-		SetLocalInt(oBinder, "SavnokDelay", TRUE);
-		DelayCommand(1.5, DeleteLocalInt(oBinder, "SavnokDelay"));		
-		AssignCommand(oBinder, ActionEquipItem(oArmor, INVENTORY_SLOT_CHEST));
-	}	
+        SetName(oArmor, "Savnok's Gift");
+        SetLocalInt(oBinder, "SavnokDelay", TRUE);
+        DelayCommand(1.5, DeleteLocalInt(oBinder, "SavnokDelay"));
+        AssignCommand(oBinder, ActionEquipItem(oArmor, INVENTORY_SLOT_CHEST));
+    }
 }

@@ -302,6 +302,7 @@ int HasActiveZurielSacrificeWard(object oCreature);
 int HasOtherPersistentImmortality(object oCreature);
 int CanTriggerAmunDelayDeath(object oCreature);
 int HasAnyBinderImmortalProtection(object oCreature);
+int GetIsEpicVestigeScalingEnabled();
 void ScrubVestigeSkinFeats(object oBinder, int nVestige);
 void ScrubAllUnboundVestigeSkinFeats(object oBinder);
 void CleanupAndrasMount(object oBinder);
@@ -552,6 +553,21 @@ void ReconcileGaiaTrollImmunity(object oBinder)
             }
         }
     }
+}
+
+int GetIsEpicVestigeScalingEnabled()
+{
+    object oMod = GetModule();
+    if (!GetLocalInt(oMod, "PRC_EPIC_VESTIGE_SCALING_INIT"))
+    {
+        SetLocalInt(oMod, "PRC_EPIC_VESTIGE_SCALING_INIT", TRUE);
+        string sDef = Get2DAString("personal_switch", "SwitchValue", 77);
+        if (sDef == "0")
+            SetPRCSwitch(PRC_EPIC_VESTIGE_SCALING, 0);
+        else if (!GetPRCSwitch(PRC_EPIC_VESTIGE_SCALING))
+            SetPRCSwitch(PRC_EPIC_VESTIGE_SCALING, 1);
+    }
+    return GetPRCSwitch(PRC_EPIC_VESTIGE_SCALING) > 0;
 }
 
 void AmunFirstbornScrub(object oTarget)

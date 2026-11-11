@@ -124,7 +124,8 @@ void EurynomePoisonBloodDelay(object oBinder, object oTarget, int nDC)
 {
 	if(!PRCMySavingThrow(SAVING_THROW_FORT, oTarget, nDC, SAVING_THROW_TYPE_POISON))
 	{
-		int nDice = PRCMin(5, GetBinderLevel(oBinder, VESTIGE_EURYNOME)/3);
+		int nMaxDice = GetIsEpicVestigeScalingEnabled() ? 13 : 5;
+		int nDice = PRCMin(nMaxDice, GetBinderLevel(oBinder, VESTIGE_EURYNOME)/3);
     	ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_ACID_S), oTarget);
     	ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDamage(d6(nDice), DAMAGE_TYPE_ACID), oTarget);
     }
