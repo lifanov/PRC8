@@ -222,7 +222,8 @@ void main()
 
                 AddChoice(GetStringByStrRef(STRREF_YES), TRUE, oBinder); // "Yes"
                 AddChoice("Rushed Bind (Bind in one round, but take a -10 penalty on your binding check)", 2, oBinder);
-                if (GetHasFeat(FEAT_RAPID_PACT_MAKING, oBinder) && !GetLocalInt(oBinder, "RapidPactMaking")) AddChoice("Rapid Pact Making (Bind in one round, no penalty on your binding check)", 3, oBinder);
+                if (GetHasFeat(FEAT_EPIC_RAPID_PACT_MAKING, oBinder)) AddChoice("Epic Rapid Pact Making (Bind in one round, no penalty on your binding check; at will)", 3, oBinder);
+                else if (GetHasFeat(FEAT_RAPID_PACT_MAKING, oBinder) && !GetLocalInt(oBinder, "RapidPactMaking")) AddChoice("Rapid Pact Making (Bind in one round, no penalty on your binding check)", 3, oBinder);
                 AddChoice(GetStringByStrRef(STRREF_NO), FALSE, oBinder); // "No"
             }
             // Pact Augment stage
@@ -278,7 +279,7 @@ void main()
                 
                 int i, nEvoLevel;
                 string sAbil;
-                for(i = 0; i < 150 ; i++)
+                for(i = 0; i < 200 ; i++)
                 {
                     nEvoLevel = StringToInt(Get2DACache("vestigeabil", "VestigeNum", i));
                     // Skip any that don't belong to the right vestige

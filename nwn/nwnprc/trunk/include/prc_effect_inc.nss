@@ -513,7 +513,12 @@ effect EffectShaken(){
 // are no longer fatigued.
 effect EffectFatigue(){
     effect eBlank;
-    if (GetLevelByClass(CLASS_TYPE_BATTLESMITH, PRCGetSpellTargetObject()) >= 3) return eBlank;
+    object oFatTarget = PRCGetSpellTargetObject();
+    if (!GetIsObjectValid(oFatTarget)) oFatTarget = OBJECT_SELF;
+    if (GetLevelByClass(CLASS_TYPE_BATTLESMITH, oFatTarget) >= 3) return eBlank;
+    if ((GetHasSpellEffect(VESTIGE_AMUN_HER, oFatTarget) && !GetLocalInt(oFatTarget, "ExploitVestige_" + IntToString(VESTIGE_AMUN_HER_FIRSTBORN_GUARDIAN)) && GetLocalInt(oFatTarget, "ExploitVestige") != VESTIGE_AMUN_HER_FIRSTBORN_GUARDIAN) ||
+        GetHasSpellEffect(VESTIGE_AMUN_FIRSTBORN_SPELL, oFatTarget))
+        return eBlank;
 
     effect eReturn = EffectAbilityDecrease(ABILITY_STRENGTH, 2);
            eReturn = EffectLinkEffects(eReturn, EffectAbilityDecrease(ABILITY_DEXTERITY, 2));
@@ -529,7 +534,12 @@ effect EffectFatigue(){
 // cause fatigue.
 effect EffectExhausted(){
     effect eBlank;
-    if (GetLevelByClass(CLASS_TYPE_BATTLESMITH, PRCGetSpellTargetObject()) >= 3) return eBlank;
+    object oExhTarget = PRCGetSpellTargetObject();
+    if (!GetIsObjectValid(oExhTarget)) oExhTarget = OBJECT_SELF;
+    if (GetLevelByClass(CLASS_TYPE_BATTLESMITH, oExhTarget) >= 3) return eBlank;
+    if ((GetHasSpellEffect(VESTIGE_AMUN_HER, oExhTarget) && !GetLocalInt(oExhTarget, "ExploitVestige_" + IntToString(VESTIGE_AMUN_HER_FIRSTBORN_GUARDIAN)) && GetLocalInt(oExhTarget, "ExploitVestige") != VESTIGE_AMUN_HER_FIRSTBORN_GUARDIAN) ||
+        GetHasSpellEffect(VESTIGE_AMUN_FIRSTBORN_SPELL, oExhTarget))
+        return eBlank;
     
 	if (GetLocalInt(PRCGetSpellTargetObject(), "IncarnumDefenseLE")) return EffectFatigue();
 

@@ -37,7 +37,7 @@ void SpellRemovalCheck(object oCaster, object oTarget)
 
     // D&D 3.0 lycanthropy cures. Only an afflicted template can be
     // removed; a natural lycanthrope is unaffected.
-    if(nSpellID == SPELL_REMOVE_DISEASE || nSpellID == SPELL_HEAL)
+    if(nSpellID == SPELL_REMOVE_DISEASE || nSpellID == SPELL_HEAL || nSpellID == VESTIGE_AMUN_BURST_OF_LIFE_SPELL)
         PRCWWTryCure(oCaster, oTarget, PRC_WW_CURE_EARLY_CLERIC);
     else if(nSpellID == SPELL_REMOVE_CURSE)
         PRCWWTryCure(oCaster, oTarget, PRC_WW_CURE_FULL_MOON);
@@ -103,7 +103,7 @@ void SpellRemovalCheck(object oCaster, object oTarget)
     }
 
     //Greater Restoration
-    if(nSpellID == SPELL_GREATER_RESTORATION)
+    if(nSpellID == SPELL_GREATER_RESTORATION || nSpellID == VESTIGE_AMUN_BURST_OF_LIFE_SPELL)
     {
         //Ghoul Gauntlet
         if(GetHasSpellEffect(SPELL_GHOUL_GAUNTLET, oTarget))
@@ -153,9 +153,11 @@ int GetShouldNotBeRemoved(effect eEff)
         return TRUE;
         
 	int nEffSpellId = GetEffectSpellId(eEff);
-	if((nEffSpellId >= VESTIGE_AMON && nEffSpellId <= VESTIGE_ABYSM) ||
+	if((nEffSpellId >= VESTIGE_AMON && nEffSpellId <= VESTIGE_ZURIEL) ||
 	   nEffSpellId == VESTIGE_PACT_AUGMENTATION ||
-	   GetEffectTag(eEff) == "BinderPactAugmentEff")
+	   GetEffectTag(eEff) == "BinderPactAugmentEff" ||
+	   nEffSpellId == VESTIGE_GAIA_VOICE_SPELL ||
+	   nEffSpellId == VESTIGE_TKHAL_MADNESS_SPELL)
 		return TRUE;
 		
 	if(GetEffectSpellId(eEff) >= MELD_ACROBAT_BOOTS && MELD_ELDER_SPIRIT >= GetEffectSpellId(eEff))

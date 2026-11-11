@@ -1383,17 +1383,19 @@ public class EntryGeneration {
                 continue;
             }
 
+            boolean isFeatEpic = classFeat.isEpic;
             // If the feat has a master, replace it with the master in the listing to prevent massive spammage
             if (classFeat.master != null) {
                 // Only add masterfeats to the list once.
                 if (masterFeatsUsed.contains(classFeat.master)) continue;
                 masterFeatsUsed.add(classFeat.master);
+                if (classFeat.master.entryNum != 52) isFeatEpic = classFeat.master.isEpic;
                 classFeat = classFeat.master;
             }
 
             // Freely selectable feats become available at L1
             if (grantedLevel == -1) {
-                if (classFeat.isEpic) {
+                if (isFeatEpic) {
                     // Epic feats should be shown to become available on the level that is the first after the class's normal progression ends
                     // Sanity check here against bad class entries causing index violations
                     grantedLevel = Math.min(epicLevel + 1, maxLevel);

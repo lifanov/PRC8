@@ -340,15 +340,15 @@ void RunTestSuite_BinderBasic(object oHelper, object oBinder, object oTarget)
         GetHasFeat(9033, oBinder) && GetHasFeat(9034, oBinder));
     ScrubVestigeSkinFeats(oBinder, VESTIGE_NABERIUS);
 
-    // BF-03d: Shared skin feat (IP_CONST_FEAT_BLINDFIGHT) is preserved when scrubbing Chupoclops while Ipos is still bound
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(EffectVisualEffect(VFX_DUR_CESSATE_POSITIVE)), VESTIGE_IPOS), oBinder, 60.0f);
-    RestoreVestigeSkinFeats(oBinder, VESTIGE_CHUPOCLOPS);
-    RestoreVestigeSkinFeats(oBinder, VESTIGE_IPOS);
-    ScrubVestigeSkinFeats(oBinder, VESTIGE_CHUPOCLOPS);
-    AssertTrue("BF-03d: ScrubVestigeSkinFeats(VESTIGE_CHUPOCLOPS) preserves shared FEAT_BLIND_FIGHT while VESTIGE_IPOS is still bound",
-        GetHasFeat(FEAT_BLIND_FIGHT, oBinder));
-    RemoveSpellEffectsByID(oBinder, VESTIGE_IPOS);
-    ScrubVestigeSkinFeats(oBinder, VESTIGE_IPOS);
+    // BF-03d: Shared skin feat (IP_CONST_FEAT_TRACK) is preserved when scrubbing Buer while Gaia is still bound
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(EffectVisualEffect(VFX_DUR_CESSATE_POSITIVE)), VESTIGE_GAIA), oBinder, 60.0f);
+    RestoreVestigeSkinFeats(oBinder, VESTIGE_BUER);
+    RestoreVestigeSkinFeats(oBinder, VESTIGE_GAIA);
+    ScrubVestigeSkinFeats(oBinder, VESTIGE_BUER);
+    AssertTrue("BF-03d: ScrubVestigeSkinFeats(VESTIGE_BUER) preserves shared FEAT_TRACK while VESTIGE_GAIA is still bound",
+        GetHasFeat(FEAT_TRACK, oBinder) && !GetHasFeat(9052, oBinder));
+    RemoveSpellEffectsByID(oBinder, VESTIGE_GAIA);
+    ScrubVestigeSkinFeats(oBinder, VESTIGE_GAIA);
 
     // BF-14: Per-ability ExploitVestige_<id> multi-vestige support & ClearExploitVestigeState
     SetLocalInt(oBinder, "ExploitVestige_19070", TRUE);

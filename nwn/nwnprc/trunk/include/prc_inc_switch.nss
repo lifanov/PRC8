@@ -3024,6 +3024,37 @@ const string PRC_ALLOWED_TO_REMOVE_FRIENDLY_SPELLS  = "PRC_ALLOWED_TO_REMOVE_FRI
  */
 const string PRC_ALLOWED_TO_SEE_HOSTILE_SPELLS = "PRC_ALLOWED_TO_SEE_HOSTILE_SPELLS";
 
+/******************************************************************************\
+*                             Epic Binder Switches                             *
+\******************************************************************************/
+
+/**
+ * Controls Gaia's Planetary Healing regeneration behavior:
+ * 0 (Default): Classic NWN Troll regeneration (EffectRegenerate + SetImmortal
+ *              overcome by Fire/Acid for 1 round) for the Binder and every
+ *              ally holding at least 1 shared point of regeneration.
+ * 1 (Option 1a): Single-creature Troll cap. The Binder keeps Troll regeneration
+ *                down to 1 point, or a single ally gets Troll regeneration if
+ *                all Planetary Healing points (EBL / 4) are shared to that ally;
+ *                split points grant fast healing (EffectRegenerate) only.
+ * 2 (Fast Healing Only): Grants EffectRegenerate (1 HP/round per point) to the
+ *                        Binder and shared allies with no SetImmortal death-prevention.
+ */
+const string PRC_GAIA_PLANETARY_HEALING_NERF        = "PRC_GAIA_PLANETARY_HEALING_NERF";
+
+/**
+ * Controls Tkhaluuljin's Sphere of Annihilation duration and contact effect:
+ * 0 (Default): Web-enhancement behavior (1 round/EBL per day pool; instant
+ *              no-save annihilation on contact; auto-dismisses when returning
+ *              to the Binder out of combat).
+ * 1 (3.5e Disintegrate): Removes the 1 round/EBL daily limit (the Sphere stays
+ *                        active while bound and follows the Binder out of combat
+ *                        until dismissed) and deals 40d6 magical damage on contact
+ *                        with a Fortitude save vs. vestige DC for 5d6 damage (0 on Mettle).
+ */
+const string PRC_TKHAL_SPHERE_DISINTEGRATE          = "PRC_TKHAL_SPHERE_DISINTEGRATE";
+
+
 
 
 

@@ -344,6 +344,7 @@ int FindUnarmedDamage(object oCreature)
     else if (iMonk > 20) iMonk = 20;
     
     // Ronove is in place of monk, does not stack
+    if (iRonove > 20) iRonove = 20;
     if (iRonove > iMonk) iMonk = iRonove;
 	
     // Monk damage calculation

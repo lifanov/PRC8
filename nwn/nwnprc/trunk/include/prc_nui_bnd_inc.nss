@@ -343,7 +343,7 @@ void BinderNUIBuildHomeMaps(object oPC)
 
     SetLocalInt(oPC, "BinderCheckingMenuReqs", TRUE);
     int i;
-    for (i = 1; i < 50; i++)
+    for (i = 1; i <= 44; i++)
     {
         string sSpell = Get2DACache("vestiges", "SpellID", i);
         if (sSpell == "")
@@ -405,7 +405,7 @@ void BinderNUIBuildExploitChoices(object oPC, int nVestigeRow)
     json jMap = JsonArray();
     json jNames = JsonArray();
     int i;
-    for (i = 0; i < 150; i++)
+    for (i = 0; i < 200; i++)
     {
         int nOwner = StringToInt(Get2DACache("vestigeabil", "VestigeNum", i));
         if (nOwner < nVestigeRow)
@@ -434,7 +434,14 @@ void BinderNUIBuildMethodChoices(object oPC)
     jNames = JsonArrayInsert(jNames, JsonString(
         "Rushed bind (one round, -10 binding check)"
     ));
-    if (GetHasFeat(FEAT_RAPID_PACT_MAKING, oPC)
+    if (GetHasFeat(FEAT_EPIC_RAPID_PACT_MAKING, oPC))
+    {
+        jMap = JsonArrayInsert(jMap, JsonInt(PRC_BINDER_NUI_METHOD_RAPID));
+        jNames = JsonArrayInsert(jNames, JsonString(
+            "Epic Rapid Pact Making (one round, no check penalty; at will)"
+        ));
+    }
+    else if (GetHasFeat(FEAT_RAPID_PACT_MAKING, oPC)
         && !GetLocalInt(oPC, "RapidPactMaking"))
     {
         jMap = JsonArrayInsert(jMap, JsonInt(PRC_BINDER_NUI_METHOD_RAPID));
@@ -605,7 +612,7 @@ void BinderNUIBuildExploitSpellChoices(object oPC)
             && JsonObjectGet(jSeen, sKey) == JsonNull())
         {
             jSeen = JsonObjectSet(jSeen, sKey, JsonBool(TRUE));
-            string sName = GetStringByStrRef(StringToInt(Get2DAString("spells", "Name", nSpell)));
+            string sName = GetStringByStrRef(StringToInt(Get2DACache("spells", "Name", nSpell)));
             if (sName != "")
             {
                 jMap = JsonArrayInsert(jMap, JsonInt(nSpell));
@@ -703,6 +710,7 @@ string BinderNUIValidateDraft(object oPC)
         || nMethod > PRC_BINDER_NUI_METHOD_RAPID)
         return "Choose a binding method.";
     if (nMethod == PRC_BINDER_NUI_METHOD_RAPID
+        && !GetHasFeat(FEAT_EPIC_RAPID_PACT_MAKING, oPC)
         && (!GetHasFeat(FEAT_RAPID_PACT_MAKING, oPC)
             || GetLocalInt(oPC, "RapidPactMaking")))
         return "Rapid Pact Making is not currently available.";
@@ -809,6 +817,8 @@ void BinderNUICleanupFailedBinding(object oPC)
         DeleteLocalInt(oPC, PRC_BINDER_NUI_PENDING_SPELL_VAR);
     }
     DeleteLocalInt(oPC, "RushedBinding");
+    if (GetHasFeat(FEAT_EPIC_RAPID_PACT_MAKING, oPC))
+        DeleteLocalInt(oPC, "RapidPactMaking");
 }
 
 void BinderNUIClearRitualState(object oPC)
@@ -865,7 +875,7 @@ int BinderNUIBeginExpel(object oPC)
         SendMessageToPC(oPC, "You need the Expel Vestige feat to do that.");
         return FALSE;
     }
-    if (GetFeatRemainingUses(FEAT_EXPEL_VESTIGE, oPC) <= 0)
+    if (!GetHasFeat(FEAT_EPIC_EXPEL_VESTIGE, oPC) && GetFeatRemainingUses(FEAT_EXPEL_VESTIGE, oPC) <= 0)
     {
         SendMessageToPC(oPC, "You have already used Expel Vestige today.");
         return FALSE;
@@ -873,7 +883,7 @@ int BinderNUIBeginExpel(object oPC)
 
     // A radial activation would spend the same once-per-day feat use before
     // its conversation starts.  The NUI must account for that engine cost.
-    DecrementRemainingFeatUses(oPC, FEAT_EXPEL_VESTIGE);
+    if (!GetHasFeat(FEAT_EPIC_EXPEL_VESTIGE, oPC)) DecrementRemainingFeatUses(oPC, FEAT_EXPEL_VESTIGE);
     int nGeneration = GetLocalInt(oPC, PRC_BINDER_NUI_RITUAL_GEN_VAR) + 1;
     SetLocalInt(oPC, PRC_BINDER_NUI_RITUAL_GEN_VAR, nGeneration);
     SetLocalInt(oPC, PRC_BINDER_NUI_RITUAL_TYPE_VAR, PRC_BINDER_NUI_RITUAL_EXPEL);
@@ -963,6 +973,8 @@ void BinderNUIBindTick(object oPC, int nTime, int nVestigeRow, int nRitualType, 
         // but its automatic-good-pact branches return early.  Do not let a
         // NUI attempt leak either marker into the next pact.
         DeleteLocalInt(oPC, "RushedBinding");
+        if (GetHasFeat(FEAT_EPIC_RAPID_PACT_MAKING, oPC))
+            DeleteLocalInt(oPC, "RapidPactMaking");
         DeleteLocalInt(oPC, "ExploitVestigeTemp");
         if (nRitualType == PRC_BINDER_NUI_RITUAL_EXPEL)
         {

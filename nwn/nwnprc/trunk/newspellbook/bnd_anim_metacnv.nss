@@ -91,13 +91,13 @@ void main()
                 SetHeader(sToken);
                 
     			int i, nCount;
-    			for(i = VESTIGE_AMON; i <= VESTIGE_ABYSM; i++)
+    			for(i = VESTIGE_AMON; i <= VESTIGE_ZURIEL; i++)
     			{
     				if(GetHasSpellEffect(i, oBinder))
     					AddChoice(GetStringByStrRef(StringToInt(Get2DACache("Spells", "Name", i))), i, oBinder);
     			}		
 
-                MarkStageSetUp(STAGE_SELECT_METAMAGIC, oBinder);
+                MarkStageSetUp(STAGE_SELECT_VESTIGE, oBinder);
             }
             else if(nStage == STAGE_SELECT_METAMAGIC)
             {
@@ -112,7 +112,7 @@ void main()
 				if (GetHasFeat(FEAT_SILENCE_SPELL, oBinder))  AddChoice("Silent",   5, oBinder);	
 				if (GetHasFeat(FEAT_STILL_SPELL, oBinder))    AddChoice("Still",    6, oBinder);	
 
-                MarkStageSetUp(STAGE_SELECT_VESTIGE, oBinder);
+                MarkStageSetUp(STAGE_SELECT_METAMAGIC, oBinder);
             }            
         }
 
@@ -152,6 +152,7 @@ void main()
 			PRCRemoveSpellEffects(nVestige, oBinder, oBinder);
 			GZPRCRemoveSpellEffects(nVestige, oBinder, FALSE);
 			ScrubVestigeSkinFeats(oBinder, nVestige);
+			CleanupEpicVestigeState(oBinder, nVestige, FALSE);
 			DelayCommand(RoundsToSeconds(5), ReapplyVestige(oBinder, nVestige));
            	
            	if (nChoice == 1) 

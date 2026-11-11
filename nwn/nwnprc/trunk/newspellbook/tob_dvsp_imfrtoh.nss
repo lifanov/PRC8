@@ -30,6 +30,7 @@
 
 #include "tob_inc_tobfunc"
 #include "tob_movehook"
+#include "bnd_inc_bndfunc"
 ////#include "prc_alterations"
 
 void main()
@@ -42,9 +43,19 @@ void main()
 	// Saving Throw
 	if (!PRCMySavingThrow(SAVING_THROW_FORT, oInitiator, nDC))
 	{
-		// Now you die
-		SetImmortal(oInitiator, FALSE);
-		SPApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDeath(TRUE), oInitiator);
+		if (HasAnyBinderImmortalProtection(oInitiator))
+		{
+			// Protected against HP death by a Binder ability (Gaia Regeneration, Amun-her Delay Death, or Zuriel Ultimate Sacrifice);
+			// end the Immortal Fortitude stance without applying EffectDeath.
+			DeleteLocalInt(oInitiator, "DSImmortalFortSave");
+			PRCRemoveEffectsFromSpell(oInitiator, MOVE_DS_IMMORTAL_FORTITUDE);
+		}
+		else
+		{
+			// Now you die
+			SetImmortal(oInitiator, FALSE);
+			SPApplyEffectToObject(DURATION_TYPE_INSTANT, EffectDeath(TRUE), oInitiator);
+		}
 	}
 	else // 3 saves and you're out
 	{
@@ -58,7 +69,8 @@ void main()
 			// Remove the stance
 			PRCRemoveEffectsFromSpell(oInitiator, MOVE_DS_IMMORTAL_FORTITUDE);
 			// Got to remove this as well
-			SetImmortal(oInitiator, FALSE);
+			if (!HasAnyBinderImmortalProtection(oInitiator))
+				SetImmortal(oInitiator, FALSE);
 			FloatingTextStringOnCreature("You have saved for Immortal Fortitude 3 times, ending stance", oInitiator, FALSE);
 		}
 		else // Increment

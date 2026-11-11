@@ -3,6 +3,7 @@
 //#include "x0_inc_generic"
 #include "prc_add_spell_dc"
 #include "x0_inc_generic"
+#include "bnd_inc_bndfunc"
 
 //
 // Does the disintegrate logic.
@@ -71,8 +72,27 @@ void SetBusy(int value)
 //
 // Known issues: The sphere still takes AOO's, when it shouldn't.
 //
+
+void SweepForceBarriersForOriginalSphere(object oSphere)
+{
+    if (!GetIsObjectValid(oSphere)) return;
+    location lSphere = GetLocation(oSphere);
+    object oHit = MyFirstObjectInShape(SHAPE_SPHERE, 3.5f, lSphere, TRUE, OBJECT_TYPE_CREATURE | OBJECT_TYPE_PLACEABLE | OBJECT_TYPE_AREA_OF_EFFECT);
+    while (GetIsObjectValid(oHit))
+    {
+        int nType = GetObjectType(oHit);
+        if ((nType == OBJECT_TYPE_PLACEABLE && (GetLocalInt(oHit, "PRC_WALL_OF_FORCE") || GetLocalInt(oHit, "PRC_FORCECAGE") || GetTag(oHit) == "ZurielWallOfForce" || GetTag(oHit) == "ZurielForceCage")) ||
+            (nType == OBJECT_TYPE_CREATURE && GetIsObjectValid(GetLocalObject(oHit, "ZurielForceCageCreator"))))
+        {
+            DestroyForceBarrierObject(oHit);
+        }
+        oHit = MyNextObjectInShape(SHAPE_SPHERE, 3.5f, lSphere, TRUE, OBJECT_TYPE_CREATURE | OBJECT_TYPE_PLACEABLE | OBJECT_TYPE_AREA_OF_EFFECT);
+    }
+}
+
 void main()
 {
+    SweepForceBarriersForOriginalSphere(OBJECT_SELF);
     object oCaster = GetFactionLeader(OBJECT_SELF);
     //SendMessageToPC(oCaster, "sp_ai_sphereofud entering");
     

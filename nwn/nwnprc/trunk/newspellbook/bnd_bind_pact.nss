@@ -40,6 +40,12 @@ void main()
 
     effect eLink = EffectVisualEffect(VFX_DUR_CESSATE_POSITIVE);
 
+    // Zuriel's Pact Fortification doubles all benefits received from Pact Augmentation.
+    // Check both GetHasSpellEffect(VESTIGE_ZURIEL) and GetLocalInt("ZurielBoundActive") so
+    // Zuriel's 2x multiplier applies whether Zuriel is bound first, bound last, or still resolving its cast.
+    int bZurielActive = !GetLocalInt(oBinder, "ZurielExpellingNow") && (GetHasSpellEffect(VESTIGE_ZURIEL, oBinder) || GetLocalInt(oBinder, "ZurielBoundActive"));
+    int nMult = (bZurielActive && !GetIsVestigeExploited(oBinder, VESTIGE_ZURIEL_PACT_FORTIFICATION)) ? 2 : 1;
+
     int i, bHasNewSelection = FALSE;
     for(i = 1; i <= 11; i++)
     {
@@ -52,17 +58,17 @@ void main()
             SetLocalInt(oBinder, "SavedPactAugment"+IntToString(i), GetLocalInt(oBinder, "PactAugment"+IntToString(i)));
     }
 
-    int nAug1  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment1")  : GetLocalInt(oBinder, "SavedPactAugment1");
-    int nAug2  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment2")  : GetLocalInt(oBinder, "SavedPactAugment2");
-    int nAug3  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment3")  : GetLocalInt(oBinder, "SavedPactAugment3");
-    int nAug4  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment4")  : GetLocalInt(oBinder, "SavedPactAugment4");
-    int nAug5  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment5")  : GetLocalInt(oBinder, "SavedPactAugment5");
-    int nAug6  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment6")  : GetLocalInt(oBinder, "SavedPactAugment6");
-    int nAug7  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment7")  : GetLocalInt(oBinder, "SavedPactAugment7");
-    int nAug8  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment8")  : GetLocalInt(oBinder, "SavedPactAugment8");
-    int nAug9  = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment9")  : GetLocalInt(oBinder, "SavedPactAugment9");
-    int nAug10 = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment10") : GetLocalInt(oBinder, "SavedPactAugment10");
-    int nAug11 = bHasNewSelection ? GetLocalInt(oBinder, "PactAugment11") : GetLocalInt(oBinder, "SavedPactAugment11");
+    int nAug1  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment1")  : GetLocalInt(oBinder, "SavedPactAugment1"))  * nMult;
+    int nAug2  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment2")  : GetLocalInt(oBinder, "SavedPactAugment2"))  * nMult;
+    int nAug3  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment3")  : GetLocalInt(oBinder, "SavedPactAugment3"))  * nMult;
+    int nAug4  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment4")  : GetLocalInt(oBinder, "SavedPactAugment4"))  * nMult;
+    int nAug5  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment5")  : GetLocalInt(oBinder, "SavedPactAugment5"))  * nMult;
+    int nAug6  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment6")  : GetLocalInt(oBinder, "SavedPactAugment6"))  * nMult;
+    int nAug7  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment7")  : GetLocalInt(oBinder, "SavedPactAugment7"))  * nMult;
+    int nAug8  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment8")  : GetLocalInt(oBinder, "SavedPactAugment8"))  * nMult;
+    int nAug9  = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment9")  : GetLocalInt(oBinder, "SavedPactAugment9"))  * nMult;
+    int nAug10 = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment10") : GetLocalInt(oBinder, "SavedPactAugment10")) * nMult;
+    int nAug11 = (bHasNewSelection ? GetLocalInt(oBinder, "PactAugment11") : GetLocalInt(oBinder, "SavedPactAugment11")) * nMult;
 
     // Temp HP: MUST be applied as a standalone unlinked effect (never inside EffectLinkEffects),
     // because NWN CNWSEffectListHandler::OnEffectRemoved only subtracts m_nTemporaryHitPoints when

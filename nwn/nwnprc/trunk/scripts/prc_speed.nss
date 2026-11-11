@@ -95,6 +95,7 @@ void main()
     if (GetLevelByClass(CLASS_TYPE_BINDER, oPC) || GetHasFeat(FEAT_PRACTICED_BINDER, oPC))
     {
     	if (GetHasSpellEffect(VESTIGE_RONOVE, oPC) && GetLocalInt(oPC, "ExploitVestige") != VESTIGE_RONOVE_SPRINT && !GetLocalInt(oPC, "ExploitVestige"+IntToString(VESTIGE_RONOVE_SPRINT))) nNewSpeed += 10; 
+    	if ((GetHasSpellEffect(VESTIGE_TKHALUULJIN, oPC) || GetLocalInt(oPC, "TkhalFlight")) && GetLocalInt(oPC, "ExploitVestige") != VESTIGE_TKHALUULJIN_FLIGHT_OF_THE_ALIEN && !GetLocalInt(oPC, "ExploitVestige"+IntToString(VESTIGE_TKHALUULJIN_FLIGHT_OF_THE_ALIEN))) nNewSpeed = PRCMax(nNewSpeed, 150);
     }
     
     object oArmor = GetItemInSlot(INVENTORY_SLOT_CHEST, oPC);    
@@ -120,6 +121,7 @@ void main()
     // See if we should alter speed based on armor. Dwarves ignore this, as does Wargird's Armor, and the Aym Vestige, and Wildren race
     int nAym = FALSE;
     if (GetLocalInt(oPC, "ExploitVestige") != VESTIGE_AYM_DWARVEN_STEP && !GetLocalInt(oPC, "ExploitVestige"+IntToString(VESTIGE_AYM_DWARVEN_STEP)) && GetHasSpellEffect(VESTIGE_AYM, oPC)) nAym = TRUE;
+    if (GetLocalInt(oPC, "ExploitVestige") != VESTIGE_TKHALUULJIN_FLIGHT_OF_THE_ALIEN && !GetLocalInt(oPC, "ExploitVestige"+IntToString(VESTIGE_TKHALUULJIN_FLIGHT_OF_THE_ALIEN)) && (GetHasSpellEffect(VESTIGE_TKHALUULJIN, oPC) || GetLocalInt(oPC, "TkhalFlight"))) nAym = TRUE;
     if(GetPRCSwitch(PRC_PNP_ARMOR_SPEED) 
 	&& MyPRCGetRacialType(oPC) != RACIAL_TYPE_DWARF 
 	&& oArmor != oWOL && !nAym 
