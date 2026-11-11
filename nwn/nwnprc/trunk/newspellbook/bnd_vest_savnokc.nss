@@ -4,9 +4,9 @@
 Savnok, the Instigator
   
 Granted Abilities: 
-Savnok grants you abilities associated with his death and the command of allies’ positions.
+Savnok grants you abilities associated with his death and the command of allies positions.
 
-Call Armor: At will as a full-round action, you can summon a suit of full plate armor, which appears about your body. As you attain higher effective binder levels, the armor’s
+Call Armor: At will as a full-round action, you can summon a suit of full plate armor, which appears about your body. As you attain higher effective binder levels, the armors
 quality improves, as given on the following table. At 5th level, it becomes +1. At 9th level, +2. At 13th level, it grants immunity to sneak attacks. At 17th level, +4. 
 At 20th level, immunity to critical hits. You can dismiss the armor with another full-round action.
 */
@@ -32,6 +32,7 @@ void SavnokDamageResist(object oBinder, object oArmor, int nLevel)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 	
     object oArmor = GetItemPossessedBy(oBinder, "SavnokCallArmor");

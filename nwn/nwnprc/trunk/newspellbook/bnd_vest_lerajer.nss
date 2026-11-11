@@ -13,11 +13,13 @@ Special Requirement: Leraje hates Amon for some unknown reason and will not answ
 
 Ricochet: As a standard action, you can make a ranged attack against two adjacent targets. 
 */
+#include "bnd_inc_bndfunc"
 
 #include "prc_inc_combat"
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder    = OBJECT_SELF;
     object oTarget       = PRCGetSpellTargetObject();
 	object oWeapon       = GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder);

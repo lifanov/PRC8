@@ -25,6 +25,7 @@ its save, you must wait 1d4 rounds before using the ability again. You cannot im
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
   	object oBinder = OBJECT_SELF;
   	if(GetLocalInt(oBinder, "HalphaxDelay")) return;
   	object oTarget = PRCGetSpellTargetObject();

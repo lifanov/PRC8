@@ -19,6 +19,7 @@ you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject(); 
 	int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_HAAGENTI);
@@ -62,7 +63,7 @@ void main()
         		    AssignCommand(oTarget, ClearAllActions());
 
         		    // Make the character ghost for the duration of the maze. Apply here so the effect gets a spellID association
-        		    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectCutsceneGhost(), oTarget, 600.0f);
+        		    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectCutsceneGhost()), oTarget, 600.0f);
 
         		    // Apply some VFX
         		    DoMazeVFX(GetLocation(oTarget));

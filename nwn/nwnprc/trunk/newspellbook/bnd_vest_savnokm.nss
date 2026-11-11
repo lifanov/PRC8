@@ -10,6 +10,8 @@
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
+	if (GetSpellId() == 19184 && !TakeSwiftAction(OBJECT_SELF)) return;
 	if(!BindAbilCooldown(OBJECT_SELF, GetSpellId(), VESTIGE_SAVNOK)) return;
 	DoTransposition(FALSE, FALSE);
 }

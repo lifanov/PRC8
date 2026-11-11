@@ -150,7 +150,7 @@ effect EffectFascinate();
  *
  * @return           the Confused effect
  */
-effect PRCEffectConfused();
+effect PRCEffectConfused(object oTarget = OBJECT_INVALID);
 
 /**
  * It's EffectHeal, but allows us to manipulate the HP total healed
@@ -303,6 +303,26 @@ void SPApplyEffectToObject(int nDurationType, effect eEffect, object oTarget, fl
     int bDispellable = TRUE, int nSpellID = -1, int nCasterLevel = -1, object oCaster = OBJECT_SELF)
 {
     if (-1 == nSpellID) nSpellID = PRCGetSpellId();
+    int bIsBinderSu = GetLocalInt(oCaster, "BinderSuSLA") || GetLocalInt(OBJECT_SELF, "BinderSuSLA") || (nSpellID >= 19020 && nSpellID <= 19200);
+    if (bIsBinderSu)
+    {
+        if (GetHasSpellEffect(2076, oTarget) || GetHasSpellEffect(14215, oTarget) || GetPersistantLocalInt(oTarget, "NullPsionicsField") || GetLocalInt(oTarget, "BinderInAMF"))
+            return;
+        if (nDurationType != DURATION_TYPE_INSTANT)
+        {
+            if (GetEffectSubType(eEffect) != SUBTYPE_SUPERNATURAL)
+            {
+                string sEffTag = GetEffectTag(eEffect);
+                int nEffSpell = GetEffectSpellId(eEffect);
+                eEffect = SupernaturalEffect(eEffect);
+                if (sEffTag != "") eEffect = TagEffect(eEffect, sEffTag);
+                if (nEffSpell >= 0) eEffect = SetEffectSpellId(eEffect, nEffSpell);
+            }
+            if (GetEffectSpellId(eEffect) < 0 && nSpellID >= 0)
+                eEffect = SetEffectSpellId(eEffect, nSpellID);
+            bDispellable = FALSE;
+        }
+    }
 
     //if it was cast from the new spellbook, remove previous effects
     //if(GetLocalInt(OBJECT_SELF, "UsingActionCastSpell"))
@@ -572,11 +592,18 @@ effect EffectFascinate(){
 }
 
 // It's just Confused
-effect PRCEffectConfused()
+effect PRCEffectConfused(object oTarget = OBJECT_INVALID)
 {
     effect eBlank;
-    if (GetLevelByClass(CLASS_TYPE_WILD_MAGE, PRCGetSpellTargetObject()) >= 6 || 
-       (GetHasSpellEffect(VESTIGE_DAHLVERNAR, PRCGetSpellTargetObject()) && GetLocalInt(PRCGetSpellTargetObject(), "ExploitVestige") != VESTIGE_DAHLVERNAR_MAD_SOUL)
+    if (!GetIsObjectValid(oTarget))
+        oTarget = PRCGetSpellTargetObject();
+    if (!GetIsObjectValid(oTarget))
+        oTarget = OBJECT_SELF;
+    if (GetLevelByClass(CLASS_TYPE_WILD_MAGE, oTarget) >= 6 ||
+       (GetHasSpellEffect(VESTIGE_DAHLVERNAR, oTarget) && !GetLocalInt(oTarget, "ExploitVestige_" + IntToString(VESTIGE_DAHLVERNAR_MAD_SOUL)) && GetLocalInt(oTarget, "ExploitVestige") != VESTIGE_DAHLVERNAR_MAD_SOUL) ||
+       ((GetHasSpellEffect(VESTIGE_ZCERYLL, oTarget) || GetLocalInt(oTarget, "ZceryllBoundActive")) && !GetLocalInt(oTarget, "ExploitVestige_" + IntToString(VESTIGE_ZCERYLL_ALIEN_MIND)) && GetLocalInt(oTarget, "ExploitVestige") != VESTIGE_ZCERYLL_ALIEN_MIND) ||
+       GetIsImmune(oTarget, IMMUNITY_TYPE_CONFUSED) ||
+       GetIsImmune(oTarget, IMMUNITY_TYPE_MIND_SPELLS)
        ) return eBlank;
 
     effect eEffect = EffectConfused();

@@ -31,6 +31,7 @@ Ruinous Attack: If your effective binder level is at least 10th, your melee atta
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_PERM_ELEMENTAL_SAVANT_FIRE), EffectPact(oBinder));

@@ -32,6 +32,7 @@ Spirits of the City: You can animate objects, as the spell, as a caster of your 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
     
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_PROT_PRC_CIRCLEROCK), EffectPact(oBinder));

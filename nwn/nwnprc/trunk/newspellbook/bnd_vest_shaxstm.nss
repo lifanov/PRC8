@@ -27,12 +27,16 @@ Storm Strike: As a swift action, you can charge a melee attack or melee touch at
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!TakeSwiftAction(oBinder)) return;
 
    	// The OnHit
    	object oItem = GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder);
    	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder);
+   	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oBinder);
+   	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_CWEAPON_B, oBinder);
+   	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_ARMS, oBinder);
    	SetLocalInt(oBinder, "ShaxStormStrikeArmed", TRUE);
    	DelayCommand(6.0, DeleteLocalInt(oBinder, "ShaxStormStrikeArmed"));
    	IPSafeAddItemProperty(oItem, ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), 6.0, X2_IP_ADDPROP_POLICY_KEEP_EXISTING, FALSE, FALSE);

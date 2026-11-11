@@ -25,6 +25,7 @@ again for 5 rounds. Both uses of the ability channel positive energy and deal a 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
   	object oBinder = OBJECT_SELF;
   	if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_BUER)) return;
   	object oTarget = PRCGetSpellTargetObject();

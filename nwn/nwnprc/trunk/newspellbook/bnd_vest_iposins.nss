@@ -24,6 +24,7 @@ Flash of Insight: As a swift action, you gain a true seeing effect (as the spell
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!TakeSwiftAction(oBinder)) return;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_IPOS)) return;

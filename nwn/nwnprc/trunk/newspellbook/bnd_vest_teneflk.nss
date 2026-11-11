@@ -23,6 +23,7 @@ Vessel of Emptiness: You can use the flicker shadow magic mystery once per day. 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder      = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_TENEBROUS);
     int nUses = 1;
@@ -44,7 +45,7 @@ void main()
     	float fDur = 6.0 * nBinderLevel;
     	object oSkin = GetPCSkin(oBinder);
     	ActionDoCommand(AddItemProperty(DURATION_TYPE_TEMPORARY, ItemPropertyBonusFeat(IP_CONST_FEAT_MYST_FLICKER), oSkin, fDur));
-    	ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectVisualEffect(PSI_DUR_TEMPORAL_ACCELERATION), oBinder, fDur);
+    	ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectVisualEffect(PSI_DUR_TEMPORAL_ACCELERATION)), oBinder, fDur);
     	SetLocalInt(oBinder, "TenebrousFlicker", nBinderLevel);
     	DelayCommand(fDur, DeleteLocalInt(oBinder, "TenebrousFlicker"));
     }    

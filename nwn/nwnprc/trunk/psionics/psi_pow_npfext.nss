@@ -41,6 +41,7 @@
 */
 
 #include "prc_craft_inc"
+#include "bnd_inc_bndfunc"
 
 void RemoveEffectsNPF(object oObject)
 {
@@ -123,5 +124,6 @@ void main()
         //ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_HOLY_AID_DN_ORANGE), oEnter);
 
         DeletePersistantLocalInt(oExit, "NullPsionicsField");
+        RestoreBinderVestigesFromAMF(oExit);
     }
 }

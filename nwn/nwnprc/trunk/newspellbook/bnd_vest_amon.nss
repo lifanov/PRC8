@@ -21,12 +21,12 @@ binder level to every creature in its area. A successful Refl ex
 save halves this damage. Once you have used this ability, you
 cannot do so again for 5 rounds.
 
-Ram Attack: You can use the ram’s horns that you gain
-from Amon’s sign as a natural weapon that deals 1d6 points
+Ram Attack: You can use the rams horns that you gain
+from Amons sign as a natural weapon that deals 1d6 points
 of damage (plus 1-1/2 times your Strength bonus). When
 you charge a foe with your ram attack, you deal an extra 1d8
 points of damage on a successful hit. You cannot use this
-ability if you do not show Amon’s sign.
+ability if you do not show Amons sign.
 */
 
 #include "bnd_inc_bndfunc"
@@ -34,6 +34,7 @@ ability if you do not show Amon’s sign.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_CROWN_OF_GLORY), EffectPact(oBinder));

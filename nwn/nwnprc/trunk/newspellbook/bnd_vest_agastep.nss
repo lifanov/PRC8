@@ -23,6 +23,7 @@ Once you have used this ability, you cannot do so again for 5 rounds. You and yo
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_AGARES)) return;
     int nDC        = GetBinderDC(oBinder, VESTIGE_AGARES);
@@ -46,7 +47,7 @@ void main()
             {
                 // Apply effects
                 fDelay = GetDistanceBetween(oBinder, oTarget) / 20.0f;
-                DelayCommand(fDelay, ApplyEffectToObject(DURATION_TYPE_TEMPORARY, eLink, oTarget, 6.0));
+                DelayCommand(fDelay, ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oTarget, 6.0));
             }// end if - Save
         }// end if - Targeting check
 

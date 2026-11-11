@@ -24,6 +24,7 @@ can charge your weapon for an entire round. Once you have used this ability, you
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!TakeSwiftAction(oBinder)) return;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_TENEBROUS)) return;
@@ -37,13 +38,16 @@ void main()
 		else if ((nBinderLevel-7)/4 >= 2) nDam = 41; //3d8
 		else if ((nBinderLevel-7)/4 >= 1) nDam = DAMAGE_BONUS_2d8;
 		
-		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectDamageIncrease(nDam, DAMAGE_TYPE_COLD), oBinder, 6.0);
+		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectDamageIncrease(nDam, DAMAGE_TYPE_COLD)), oBinder, 6.0);
 	}
 	else
 	{
     	// The OnHit
     	object oItem = GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder);
     	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder);
+    	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oBinder);
+    	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_CWEAPON_B, oBinder);
+    	if (!GetIsObjectValid(oItem)) oItem = GetItemInSlot(INVENTORY_SLOT_ARMS, oBinder);
     	SetLocalInt(oBinder, "TenebrousVoidArmed", TRUE);
     	DelayCommand(6.0, DeleteLocalInt(oBinder, "TenebrousVoidArmed"));
     	IPSafeAddItemProperty(oItem, ItemPropertyOnHitCastSpell(IP_CONST_ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 1), 6.0, X2_IP_ADDPROP_POLICY_KEEP_EXISTING, FALSE, FALSE);

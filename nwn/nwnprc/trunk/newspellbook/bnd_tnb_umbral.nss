@@ -23,6 +23,7 @@ void TenebrousUmbralLock(object oBinder, int nSpell)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     float fDur = RoundsToSeconds(GetLevelByClass(CLASS_TYPE_TENEBROUS_APOSTATE, oBinder)*2);
 	int nSpell = GetSpellId();    

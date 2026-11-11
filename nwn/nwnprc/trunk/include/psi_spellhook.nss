@@ -89,8 +89,10 @@ int PsiPrePowerCastCode()
     //---------------------------------------------------------------------------
     X2BreakConcentrationSpells();
 
+    int bIsBinderSu = GetLocalInt(oManifester, "BinderSuSLA") || (nPowerID >= 19020 && nPowerID <= 19200);
+
     // Ectoplasmic Form conc check
-    if (GetLocalInt(oTarget, "PRC_Power_EctoForm"))
+    if (!bIsBinderSu && GetLocalInt(oTarget, "PRC_Power_EctoForm"))
     {
         nContinue = GetIsSkillSuccessful(oManifester, SKILL_CONCENTRATION, (20 + nPowerLevel));
     }
@@ -98,7 +100,7 @@ int PsiPrePowerCastCode()
     //---------------------------------------------------------------------------
     // Run Disrupting Strike Check
     //---------------------------------------------------------------------------
-    if (nContinue && GetLocalInt(oManifester, "DisruptingStrike_PsionicsFail"))
+    if (!bIsBinderSu && nContinue && GetLocalInt(oManifester, "DisruptingStrike_PsionicsFail"))
     {
         nContinue = FALSE;
     }

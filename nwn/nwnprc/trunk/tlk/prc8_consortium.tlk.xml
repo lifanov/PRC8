@@ -48987,7 +48987,7 @@ Although Amon once ruled as a deity of light and justice, his long existence as 
 
 Vestige Level: 1st
 Binding DC: 20
-Special Requirement: Amon particularly despises four other vestiges: Chupoclops, Eurynome, Karsus, and Leraje. If you currently host one of these spirits, Amon refuses to answer your call. Similarly, these spirits will not answer your call if you are already bound to Amon.
+Special Requirement: Amon particularly despises four other vestiges: Chupoclops, Eurynome, Karsus, and Leraje. If you have hosted one of these spirits within the last 24 hours, Amon refuses to answer your call. Similarly, these spirits will not answer your call if you are already bound to Amon.
 
 Influence: Amon's influence makes you surly and irritable. In addition, since Amon despises living deities of fire, sun, and law, he forces you to resist beneficial spells cast by those devoted to such powers. You must make a saving throw to resist such a spell; failure allows you to gain the benefit.
 
@@ -49242,7 +49242,7 @@ Use: Automatic</entry>
   <entry id="58153" lang="en" sex="m">Leraje, the Green Herald</entry>
   <entry id="58154" lang="en" sex="m">Leraje, the Green Herald
   
-Once a favored servant of the primary deity of the elves, Leraje allowed her pride to become her downfall. Leraje gives her summoners the ability to bring a bow to hand at will, to fire it with accuracy, and to damage a foe's sense of self with it. In addition, she gives her hosts keen vision in darkness and skill at hiding.
+Once a favored servant of the primary deity of the elves, Leraje allowed her pride to become her downfall. As a vestige, she grants her summoners an elf's eyesight, great skill with a bow, and the ability to hide well.
 
 Vestige Level: 1st
 Binding DC: 15
@@ -49325,7 +49325,7 @@ Influence: You shift quickly from distraction to extreme focus and back again. S
 Granted Abilities: 
 Dahlver-Nar armors you and blends his madness with your sanity, lending you some of his selfish powers.
 
-Mad Soul: Binding to Dahlver-Nar grants you immunity to Wisdom damage, Wisdom drain, and confusion effects.
+Mad Soul: Binding to Dahlver-Nar grants you immunity to Wisdom damage, Wisdom drain, madness, insanity, and confusion effects.
 
 Maddening Moan: You can emit a frightful moan as a standard action. Every creature within a 30-foot spread must succeed on a Will save or be dazed for 1 round. Once you have used this ability, you cannot do so again for 5 rounds. Maddening moan is a mind-affecting sonic ability.
 
@@ -49381,7 +49381,7 @@ Sneak Attack: You deal an extra 1d6 points of damage plus 1d6 points per four ef
   <entry id="58174" lang="en" sex="m">Savnok, the Instigator</entry>
   <entry id="58175" lang="en" sex="m">Savnok, the Instigator
   
-Once a servant of gods, Savnok now grants his summoners the ability to wear heavy armor, to draw arrows from thin air, to take the place of allies in combat, and to cause wounds that do not heal.
+Once a servant of gods, Savnok now grants his summoners the ability to wear heavy armor and summon it from the ether, the power to shift places with an ally, and protection against piercing weapons.
 
 Vestige Level: 2nd
 Binding DC: 20
@@ -49396,7 +49396,7 @@ Call Armor: At will as a full-round action, you can summon a suit of full plate 
 
 Heavy Armor Proficiency: You are proficient with heavy armor.
 
-Move Ally: You can instantly swap positions with any visible willing ally within 5 feet per two effective binder levels of your position. Using this ability is a standard action at first, though at 13th level you can use it as a swift action. Once you have used this ability, you cannot do so again for 5 rounds.
+Move Ally: You can instantly swap positions with any visible willing ally within 5 feet per two effective binder levels of your position. Using this ability is a standard action at first, though at 7th level you can use it as a move action, and at 13th level you can use it as a swift action. Once you have used this ability, you cannot do so again for 5 rounds.
 
 Savnok's Armor: While wearing your called armor, you can ignore some of the damage from attacks by nonpiercing weapons. When you first gain the ability to summon Savnok, this ability gives you damage reduction 1/piercing, and the value improves by +1 for every four effective binder levels you possess.</entry>
   <entry id="58176" lang="en" sex="m">Savnok, the Instigator Call Armor</entry>
@@ -49496,7 +49496,7 @@ Paimon's Dexterity: You gain a +4 bonus to Dexterity.
 
 Paimon's Skills: You gain a +4 bonus on Tumble checks and Perform checks.
 
-Uncanny Dodge: You retain your Dexterity bonus to AC (if any) even if caught flat-footed or struck by an invisible attacker.
+Uncanny Dodge: You retain your Dexterity bonus to AC (if any) even if caught flat-footed or struck by an invisible attacker. If you have uncanny dodge from another source, you gain improved uncanny dodge instead.
 
 Whirlwind Attack: You gain the benefit of the Whirlwind Attack feat.</entry>
   <entry id="58194" lang="en" sex="m">Paimon, the Dancer Dance of Death</entry>
@@ -49906,6 +49906,7 @@ Level
 1:  Favored of Dantalion - Always make a good pact with Dantalion
     Scholarship of Dantalion - Once per day, double the Lore bonus Dantalion grants for one round
 2:  Swift Awe of Dantalion - Awe of Dantalion is now a swift action instead of a move action
+    Improved Read Thoughts - +2 DC to Dantalion's Read Thoughts ability
 3:  Overwhelming Thoughts - Daze target of Read Thoughts
 4:  Dantalion's Glare - Blind creatures in 30 ft. cone
     Improved Thought Travel - Thought Travel is now a move action

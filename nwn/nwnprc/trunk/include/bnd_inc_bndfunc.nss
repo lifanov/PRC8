@@ -237,6 +237,9 @@ void ScrubAllUnboundVestigeSkinFeats(object oBinder);
 void CleanupAndrasMount(object oBinder);
 void CleanupAgaresCompanion(object oBinder);
 void RestoreVestigeSkinFeats(object oBinder, int nVestige);
+int GetIsBinderInAntimagicField(object oCreature);
+void SuppressBinderVestigesInAMF(object oBinder);
+void RestoreBinderVestigesFromAMF(object oBinder);
 
 /**
  * Checks for the special requirements of each vestige
@@ -1334,7 +1337,7 @@ int DoSpecialRequirements(object oBinder, int nVestige)
 		return FALSE;
 	if (nVestige == VESTIGE_NABERIUS && 4 > GetSkillRank(SKILL_LORE, oBinder, TRUE) && 4 > GetSkillRank(SKILL_BLUFF, oBinder, TRUE))
 		return FALSE;
-	// Ronove’s seal must be drawn in the soil under the sky.	
+	// Ronoves seal must be drawn in the soil under the sky.	
 	if (nVestige == VESTIGE_RONOVE && (GetIsAreaNatural(GetArea(oBinder)) != AREA_NATURAL || GetIsAreaAboveGround(GetArea(oBinder)) != AREA_ABOVEGROUND))
 		return FALSE;
 	if (nVestige == VESTIGE_HAAGENTI && (CREATURE_SIZE_LARGE > PRCGetCreatureSize(oBinder) || (GetHasFeat(FEAT_RACE_POWERFUL_BUILD, oBinder) && CREATURE_SIZE_MEDIUM > PRCGetCreatureSize(oBinder))))
@@ -1360,7 +1363,7 @@ int DoSpecialRequirements(object oBinder, int nVestige)
         	eTest = GetNextEffect(oBinder);
         }	
     }		
-	// Agagres’s seal must be drawn in the soil
+	// Agagress seal must be drawn in the soil
 	if (nVestige == VESTIGE_AGARES && GetIsAreaNatural(GetArea(oBinder)) != AREA_NATURAL)
 		return FALSE;
 	if (nVestige == VESTIGE_BUER && GetIsAreaInterior(GetArea(oBinder)))
@@ -1719,5 +1722,139 @@ void RemoveVestigeNaturalWeapons(object oBinder, int nVestige)
             ExecuteScript("unarmed_caller", oBinder);
         }
         ExecuteScript("prc_bab_caller", oBinder);
+    }
+}
+
+
+int GetIsBinderInAntimagicField(object oCreature)
+{
+    if (!GetIsObjectValid(oCreature)) return FALSE;
+    return GetHasSpellEffect(2076, oCreature) // SPELL_ANTIMAGIC_FIELD
+        || GetHasSpellEffect(14215, oCreature) // POWER_NULL_PSIONICS_FIELD
+        || GetPersistantLocalInt(oCreature, "NullPsionicsField")
+        || GetLocalInt(oCreature, "BinderInAMF");
+}
+
+void ReapplyVestigeFromAMF(object oBinder, int nVestige)
+{
+    if (!GetIsObjectValid(oBinder)) return;
+    if (GetIsBinderInAntimagicField(oBinder)) return;
+    string sScript = Get2DACache("spells", "ImpactScript", nVestige);
+    if (sScript != "")
+    {
+        SetLocalInt(oBinder, "PRC_SPELLID_OVERRIDE", nVestige);
+        SetLocalInt(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE", TRUE);
+        SetLocalObject(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE", oBinder);
+        ExecuteScript(sScript, oBinder);
+        DeleteLocalInt(oBinder, "PRC_SPELLID_OVERRIDE");
+        DeleteLocalInt(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE");
+        DeleteLocalObject(oBinder, "PRC_SPELL_TARGET_OBJECT_OVERRIDE");
+    }
+}
+
+void SuppressBinderVestigesInAMF(object oBinder)
+{
+    if (!GetIsObjectValid(oBinder)) return;
+    if (GetLocalInt(oBinder, "BinderInAMF")) return;
+
+    int nVestige;
+    int bAnyBound = FALSE;
+    for (nVestige = VESTIGE_AMON; nVestige <= VESTIGE_ABYSM; nVestige++)
+    {
+        if (GetHasSpellEffect(nVestige, oBinder))
+        {
+            bAnyBound = TRUE;
+            SetLocalInt(oBinder, "AMF_Bound_" + IntToString(nVestige), TRUE);
+            PRCRemoveSpellEffects(nVestige, oBinder, oBinder);
+            GZPRCRemoveSpellEffects(nVestige, oBinder, FALSE);
+        }
+    }
+
+    if (GetHasSpellEffect(VESTIGE_PACT_AUGMENTATION, oBinder))
+    {
+        SetLocalInt(oBinder, "AMF_Bound_PactAug", TRUE);
+        PRCRemoveSpellEffects(VESTIGE_PACT_AUGMENTATION, oBinder, oBinder);
+        GZPRCRemoveSpellEffects(VESTIGE_PACT_AUGMENTATION, oBinder, FALSE);
+    }
+
+    effect eEff = GetFirstEffect(oBinder);
+    while (GetIsEffectValid(eEff))
+    {
+        int nEffSpell = GetEffectSpellId(eEff);
+        string sEffTag = GetEffectTag(eEff);
+        if ((nEffSpell >= 19020 && nEffSpell <= 19200)
+            || sEffTag == "BinderPactAugmentEff")
+        {
+            if (sEffTag == "BinderPactAugmentEff")
+                SetLocalInt(oBinder, "AMF_Bound_PactAug", TRUE);
+            RemoveEffect(oBinder, eEff);
+        }
+        eEff = GetNextEffect(oBinder);
+    }
+
+    object oSkin = GetPCSkin(oBinder);
+    if (GetIsObjectValid(oSkin))
+    {
+        int nFeatIdx = 0;
+        itemproperty ip = GetFirstItemProperty(oSkin);
+        while (GetIsItemPropertyValid(ip))
+        {
+            if (GetItemPropertyType(ip) == ITEM_PROPERTY_BONUS_FEAT)
+            {
+                int nSub = GetItemPropertySubType(ip);
+                if (GetItemPropertyDurationType(ip) == DURATION_TYPE_TEMPORARY
+                    || (nSub >= 13730 && nSub <= 13808)
+                    || nSub == 4607 || nSub == 4610)
+                {
+                    SetLocalInt(oBinder, "AMF_SkinFeat_" + IntToString(nFeatIdx), nSub);
+                    nFeatIdx++;
+                    RemoveItemProperty(oSkin, ip);
+                }
+            }
+            ip = GetNextItemProperty(oSkin);
+        }
+        SetLocalInt(oBinder, "AMF_SkinFeatCount", nFeatIdx);
+    }
+
+    if (bAnyBound)
+    {
+        RemoveVestigeNaturalWeapons(oBinder, 0);
+    }
+
+    SetLocalInt(oBinder, "BinderInAMF", TRUE);
+}
+
+void RestoreBinderVestigesFromAMF(object oBinder)
+{
+    if (!GetIsObjectValid(oBinder)) return;
+    if (!GetLocalInt(oBinder, "BinderInAMF")) return;
+    DeleteLocalInt(oBinder, "BinderInAMF");
+
+    object oSkin = GetPCSkin(oBinder);
+    int nFeatCnt = GetLocalInt(oBinder, "AMF_SkinFeatCount");
+    int idx;
+    for (idx = 0; idx < nFeatCnt; idx++)
+    {
+        int nSub = GetLocalInt(oBinder, "AMF_SkinFeat_" + IntToString(idx));
+        DeleteLocalInt(oBinder, "AMF_SkinFeat_" + IntToString(idx));
+        if (GetIsObjectValid(oSkin) && nSub > 0)
+            IPSafeAddItemProperty(oSkin, ItemPropertyBonusFeat(nSub), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+    }
+    DeleteLocalInt(oBinder, "AMF_SkinFeatCount");
+
+    int nVestige;
+    for (nVestige = VESTIGE_AMON; nVestige <= VESTIGE_ABYSM; nVestige++)
+    {
+        if (GetLocalInt(oBinder, "AMF_Bound_" + IntToString(nVestige)))
+        {
+            DeleteLocalInt(oBinder, "AMF_Bound_" + IntToString(nVestige));
+            ReapplyVestigeFromAMF(oBinder, nVestige);
+        }
+    }
+
+    if (GetLocalInt(oBinder, "AMF_Bound_PactAug"))
+    {
+        DeleteLocalInt(oBinder, "AMF_Bound_PactAug");
+        ExecuteScript("bnd_bind_pact", oBinder);
     }
 }

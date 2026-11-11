@@ -242,6 +242,13 @@ void PRCShowSpellResist(object oCaster, object oTarget, int nResist, float fDela
 //
 int PRCDoResistSpell(object oCaster, object oTarget, int nEffCasterLvl=0, float fDelay = 0.0)
 {
+    int nCheckSpellId = PRCGetSpellId(oCaster);
+    if (GetLocalInt(oCaster, "BinderSuSLA") || (nCheckSpellId >= 19020 && nCheckSpellId <= 19200))
+    {
+        if (GetHasSpellEffect(2076, oTarget) || GetHasSpellEffect(14215, oTarget) || GetPersistantLocalInt(oTarget, "NullPsionicsField") || GetLocalInt(oTarget, "BinderInAMF"))
+            return SPELL_RESIST_PASS;
+        return SPELL_RESIST_FAIL;
+    }
     int nResist;
 
     // Check if the archmage shape mastery applies to this target

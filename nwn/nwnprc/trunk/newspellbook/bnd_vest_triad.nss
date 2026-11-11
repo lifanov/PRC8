@@ -46,6 +46,7 @@ Weapon Proficiency: You gain proficiency in all simple, martial, and exotic weap
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 	int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_THETRIAD);
 	SetLocalInt(oBinder, "TheTriadPsion", nBinderLevel);

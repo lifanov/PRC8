@@ -9,7 +9,7 @@ Vestige Level: 3rd
 Binding DC: 20
 Special Requirement: No
 
-Influence: Paimon’s influence makes you lascivious and bold. In addition, Paimon requires that you dance (moving at half speed) whenever you hear music.
+Influence: Paimons influence makes you lascivious and bold. In addition, Paimon requires that you dance (moving at half speed) whenever you hear music.
 
 Granted Abilities: 
 Paimon gives you the ability to dance in and out of combat, and to make whirling attacks against multiple foes.
@@ -17,11 +17,11 @@ Paimon gives you the ability to dance in and out of combat, and to make whirling
 Dance of Death: When you use this ability as a standard action, you move up to your speed in a line and make a single attack against any creature you move 
 past, provoking attacks of opportunity normally. Once you have used this ability, you cannot do so again for 5 rounds.
 
-Paimon’s Blades: You gain proficiency with the rapier and short sword, and the benefit of the Weapon Finesse feat when you wield such weapons.
+Paimons Blades: You gain proficiency with the rapier and short sword, and the benefit of the Weapon Finesse feat when you wield such weapons.
 
-Paimon’s Dexterity: You gain a +4 bonus to Dexterity.
+Paimons Dexterity: You gain a +4 bonus to Dexterity.
 
-Paimon’s Skills: You gain a +4 bonus on Tumble checks and Perform checks.
+Paimons Skills: You gain a +4 bonus on Tumble checks and Perform checks.
 
 Uncanny Dodge: You retain your Dexterity bonus to AC (if any) even if caught flat-footed or struck by an invisible attacker.
 
@@ -32,6 +32,7 @@ Whirlwind Attack: You gain the benefit of the Whirlwind Attack feat.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(PSI_DUR_BURST), EffectPact(oBinder));
@@ -45,7 +46,12 @@ void main()
     // We get this with the Practiced Binder feat
     if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder))
     {
-		if (!GetIsVestigeExploited(oBinder, VESTIGE_PAIMON_DODGE)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_UNCANNY_DODGE1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+		if (!GetIsVestigeExploited(oBinder, VESTIGE_PAIMON_DODGE))
+		{
+			if (GetHasFeat(FEAT_UNCANNY_DODGE_1, oBinder))
+				IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_UNCANNY_DODGE2), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+			IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_UNCANNY_DODGE1), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+		}
     }	
 	
     // Binders only down here

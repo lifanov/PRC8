@@ -27,6 +27,7 @@ Storm Strike: As a swift action, you can charge a melee attack or melee touch at
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     if(!TakeSwiftAction(oBinder)) return;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_SHAX)) return;

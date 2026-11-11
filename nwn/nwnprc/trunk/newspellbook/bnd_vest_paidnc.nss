@@ -15,6 +15,7 @@ past, provoking attacks of opportunity normally. Once you have used this ability
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     //Declare major variables
     object oBinder = OBJECT_SELF;
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_PAIMON)) return;

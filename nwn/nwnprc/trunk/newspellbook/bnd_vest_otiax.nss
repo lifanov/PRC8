@@ -9,7 +9,7 @@ Vestige Level: 5th
 Binding DC: 25
 Special Requirement: No
 
-Influence: Otiax’s motives remain a mystery, but its influence is clear. When confronted with unopened doors or gates, you become agitated and nervous. This emotional 
+Influence: Otiaxs motives remain a mystery, but its influence is clear. When confronted with unopened doors or gates, you become agitated and nervous. This emotional 
 state lasts until the door or gate is opened, or until you can no longer see it. Furthermore, Otiax cannot abide a lock remaining secured. Thus, whenever you see a 
 key, Otiax requires that you use it to open the corresponding lock.
 
@@ -20,7 +20,7 @@ Air Blast: You can focus the air around you into a concentrated blast that batte
 opponent or one that is up to 10 feet away. This attack deals 2d6 points of bludgeoning damage, but you do not add your Strength bonus to the damage roll. If your 
 base attack bonus is high enough, you might be entitled to additional air blast attacks each round when you make a full attack.
 
-Concealing Mist: The mist that constantly surrounds you forms a screen that grants you concealment (foes’ melee and ranged attacks have a 20% miss chance).
+Concealing Mist: The mist that constantly surrounds you forms a screen that grants you concealment (foes melee and ranged attacks have a 20% miss chance).
 
 Open Portal: At will as a swift action, you can open (but not close) an unlocked door, chest, box, or other object.
 
@@ -32,6 +32,7 @@ level. Once you have used this ability, you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_OBSCURING_MIST), EffectPact(oBinder));

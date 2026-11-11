@@ -9,12 +9,12 @@ Vestige Level: 5th
 Binding DC: 25
 Special Requirement: No
 
-Influence: Dantalion’s influence causes you to be aloof and use stately gestures. Dantalion can’t help but be curious about the leaders of the day, 
+Influence: Dantalions influence causes you to be aloof and use stately gestures. Dantalion cant help but be curious about the leaders of the day, 
 so anytime you are within 100 feet of someone who clearly is (or professes to be) a leader of others, Dantalion requires that you try to read that 
-person’s thoughts. Once you have made the attempt, regardless of success or failure, you need not try to read that person’s thoughts again.
+persons thoughts. Once you have made the attempt, regardless of success or failure, you need not try to read that persons thoughts again.
 
 Granted Abilities: 
-Pact magic grimoires attest to Dantalion’s profound wisdom and his extensive knowledge about all subjects. Because he knows all thoughts, he can grant 
+Pact magic grimoires attest to Dantalions profound wisdom and his extensive knowledge about all subjects. Because he knows all thoughts, he can grant 
 you a portion of that power, as well as the ability to travel just by thinking. You also gain a portion of his commanding presence, which many binders 
 ascribe to his royal origins.
 
@@ -37,6 +37,7 @@ this ability, you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(PSI_DUR_INTELLECT_FORTRESS), EffectPact(oBinder));

@@ -35,6 +35,7 @@ can attempt a Will save to negate the effect.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_BLOOD_FOUNTAIN), EffectPact(oBinder));
@@ -42,7 +43,9 @@ void main()
     // If he gets influence, you can't concentrate
     if (!GetLocalInt(oBinder, "PactQuality"+IntToString(VESTIGE_DAHLVERNAR))) FloatingTextStringOnCreature("You have made a poor pact, and Dahlver Nar enjoins you from using concentration abilities!", oBinder, FALSE);    
     
-    // Mad Soul is in prc_inc_damage and prc_effect_inc
+    // Mad Soul is in prc_inc_damage and prc_effect_inc; also grant SPELL_INSANITY immunity
+    if (!GetIsVestigeExploited(oBinder, VESTIGE_DAHLVERNAR_MAD_SOUL))
+        eLink = EffectLinkEffects(eLink, EffectSpellImmunity(SPELL_INSANITY));
     
     // We get this with the Practiced Binder feat
     if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder))

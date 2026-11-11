@@ -24,6 +24,7 @@ level. Once you have used this ability, you cannot do so again for 5 rounds.
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     //Declare major variables
     object oBinder = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_OTIAX);

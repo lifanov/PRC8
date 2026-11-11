@@ -7,7 +7,7 @@ Tenebrous, once a powerful demon prince, offers dominion over darkness and death
 
 Vestige Level: 4th
 Binding DC: 21
-Special Requirement: You must draw Tenebrous’s seal at night.
+Special Requirement: You must draw Tenebrouss seal at night.
 
 Influence: While influenced by Tenebrous, you are filled with a sense of detachment and an aching feeling of loss and abandonment. 
 Tenebrous requires that you never be the first to act in combat. If your initiative check result is the highest, you must delay until someone else takes a turn.
@@ -50,6 +50,7 @@ void TenebrousInfluence(object oBinder, int nCombat)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
     SetLocalObject(GetModule(), "TenebrousCharm", oBinder);
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_TENEBROUS);
@@ -59,7 +60,6 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_DARKNESS))     IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_DARKNESS),   HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_SEE_DARKNESS))
     {
-        eLink = EffectLinkEffects(eLink, EffectUltravision());
         eLink = EffectLinkEffects(eLink, EffectUltravision());
     }
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_TENEBROUS_TOUCH_VOID))   IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_TENEBROUS_TOUCH_VOID), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);

@@ -23,6 +23,7 @@ Aura of Despair: Every creature within 10 feet of you takes a –2 penalty on atta
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 	int nSpellId = PRCGetSpellId();
 

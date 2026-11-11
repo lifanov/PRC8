@@ -23,6 +23,7 @@ Open Portal: At will as a swift action, you can open (but not close) an unlocked
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     //Declare major variables
     object oBinder = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_OTIAX);

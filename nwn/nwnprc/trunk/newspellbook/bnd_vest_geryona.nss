@@ -21,6 +21,7 @@ Acidic Gaze: The gaze of your devilish eyes can cause foes to erupt with acid. W
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
     int nDC = GetBinderDC(oBinder, VESTIGE_GERYON);
     location lTarget = GetLocation(oBinder);

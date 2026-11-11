@@ -37,6 +37,7 @@ make a rushed Diplomacy check as a standard action and take no penalty. (Normall
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_MAGIC_RESISTANCE_SILENT), EffectPact(oBinder));

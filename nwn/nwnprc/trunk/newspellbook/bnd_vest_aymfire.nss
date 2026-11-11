@@ -6,11 +6,13 @@ Aym, Queen Avarice
 Halo of Fire: At will, you can shroud yourself in a wreath of flame. Any opponent that strikes you in melee takes 
 1d6 points of fire damage. You can also deal 1d6 points of fire damage with each melee touch attack you make.
 */
+#include "bnd_inc_bndfunc"
 
 #include "prc_inc_sp_tch"
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject(); 
     int nAttack = PRCDoMeleeTouchAttack(oTarget);

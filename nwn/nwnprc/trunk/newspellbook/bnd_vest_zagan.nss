@@ -29,6 +29,7 @@ Lizard Bane: Zagan’s grants you +2 melee attack and +2d6 damage on melee attacks
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject();
 	object oSkin = GetPCSkin(oBinder);	
 

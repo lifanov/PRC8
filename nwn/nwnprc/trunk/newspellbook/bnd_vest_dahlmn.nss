@@ -14,6 +14,7 @@ Once you have used this ability, you cannot do so again for 5 rounds. Maddening 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     int nDC = GetBinderDC(oBinder, VESTIGE_DAHLVERNAR);
     if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_DAHLVERNAR)) return;

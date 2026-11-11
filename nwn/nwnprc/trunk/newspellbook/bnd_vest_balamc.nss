@@ -21,6 +21,7 @@ Balam’s Cunning: You reroll your next failed saving throw. Once you have used th
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
 	if(!BindAbilCooldown(oBinder, GetSpellId(), VESTIGE_BALAM)) return;
 

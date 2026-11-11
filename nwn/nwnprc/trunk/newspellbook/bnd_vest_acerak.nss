@@ -3,7 +3,7 @@
 
 Acererak, the Devourer
   
-Acererak, a half-human lich, grasped at godlike power only to lose his grip on reality. As a vestige, he grants abilities that are similar to a lich’s powers.
+Acererak, a half-human lich, grasped at godlike power only to lose his grip on reality. As a vestige, he grants abilities that are similar to a lichs powers.
 
 Vestige Level: 5th
 Binding DC: 25
@@ -20,7 +20,7 @@ Detect Undead: You can use detect undead as the spell at will (caster level equa
 
 Hide from Undead: At will as a standard action, you can cast hide from undead.
 
-Lich’s Energy Immunities: You gain immunity to cold and electricity damage.
+Lichs Energy Immunities: You gain immunity to cold and electricity damage.
 
 Paralyzing Touch: As a standard action, you can make a touch attack to paralyze a living foe. The touched creature must succeed on a Fortitude save or be 
 paralyzed for a number of rounds equal to one-half your effective binder level. Each round on its turn, the paralyzed creature can attempt a new saving 
@@ -33,6 +33,7 @@ Undead Healing: Negative energy (such as that of an inflict spell) heals you rat
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = PRCGetSpellTargetObject(); 
 
     effect eLink = EffectLinkEffects(EffectVisualEffect(VFX_DUR_SYMB_DEATH), EffectPact(oBinder));

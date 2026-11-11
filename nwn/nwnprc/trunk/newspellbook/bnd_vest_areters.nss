@@ -21,6 +21,7 @@ Resistance: Your gain a +4 bonus on a saving throw of your choice. You may chang
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     //Declare major variables
     object oBinder = OBJECT_SELF;
 	if(!TakeMoveAction(oBinder)) return;

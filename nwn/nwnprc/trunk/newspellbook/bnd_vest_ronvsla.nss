@@ -15,6 +15,7 @@ Once you have used your far hand in this way, you cannot use it again for 5 roun
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     int nBinderLevel = GetBinderLevel(oBinder, VESTIGE_RONOVE);
     int nSLA = GetSpellId();

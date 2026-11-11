@@ -40,6 +40,7 @@ void main()
         DeleteLocalInt(oBinder, "AndrasMountWasActive");
         return;
     }
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     if (GetLocalInt(oBinder, "AndrasMount"))
         return;
 

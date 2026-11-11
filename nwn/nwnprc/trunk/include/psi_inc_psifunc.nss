@@ -764,6 +764,23 @@ void _AssignUsePowerFakeCastCommands(object oManifester, object oTarget, locatio
 }
 
 
+int _IsVestigePsionicPower(object oManifester, int nSpellID, int nPower)
+{
+    if ((nSpellID >= 19000 && nSpellID <= 19200) || GetLocalInt(oManifester, "BinderSuSLA"))
+        return TRUE;
+    if ((GetHasSpellEffect(VESTIGE_ARETE, oManifester) || GetLocalInt(oManifester, "AretePsion") > 0) &&
+        (nSpellID == 14529 || nSpellID == 14530 || nPower == 14100 || nPower == 14124))
+        return TRUE;
+    if ((GetHasSpellEffect(VESTIGE_THETRIAD, oManifester) || GetLocalInt(oManifester, "TheTriadPsion") > 0) &&
+        (nSpellID == 14424 || nSpellID == 14441 || nSpellID == 14522 || nPower == 14002 || nPower == 14031 || nPower == 14080))
+        return TRUE;
+    if ((GetHasSpellEffect(VESTIGE_ABYSM, oManifester) || GetLocalInt(oManifester, "AbysmPsion") > 0) &&
+        ((nSpellID >= 14415 && nSpellID <= 14420) || nSpellID == 14476 || nSpellID == 14483 || (nSpellID >= 14502 && nSpellID <= 14506) ||
+         nPower == 14330 || (nPower >= 14036 && nPower <= 14040) || nPower == 14095 || nPower == 14098 || nPower == 14336 || (nPower >= 14091 && nPower <= 14094)))
+        return TRUE;
+    return FALSE;
+}
+
 /** Internal function.
  * Places the cheatcasting of the real power into the manifester's action queue.
  */
@@ -805,6 +822,9 @@ void _UsePowerAux(object oManifester, object oMfToken, int nSpellId,
         // Queue the real manifestation
         //ActionCastSpell(nPower, nLevelOverride, 0, 0, METAMAGIC_NONE, CLASS_TYPE_INVALID, TRUE, TRUE, oTarget);
 
+        int bVestigePsiSu = _IsVestigePsionicPower(oManifester, nSpellId, nPower);
+        if (bVestigePsiSu)
+            AssignCommand(oManifester, ActionDoCommand(SetLocalInt(oManifester, "BinderSuSLA", TRUE)));
         if(nLevelOverride != 0)
             AssignCommand(oManifester, ActionDoCommand(SetLocalInt(oManifester, PRC_CASTERLEVEL_OVERRIDE, nLevelOverride)));
         if(GetIsObjectValid(oTarget))
@@ -813,6 +833,8 @@ void _UsePowerAux(object oManifester, object oMfToken, int nSpellId,
             AssignCommand(oManifester, ActionCastSpellAtLocation(nPower, lTarget, METAMAGIC_NONE, TRUE, PROJECTILE_PATH_TYPE_DEFAULT, TRUE));
         if(nLevelOverride != 0)
             AssignCommand(oManifester, ActionDoCommand(DeleteLocalInt(oManifester, PRC_CASTERLEVEL_OVERRIDE)));
+        if (bVestigePsiSu)
+            AssignCommand(oManifester, ActionDoCommand(DeleteLocalInt(oManifester, "BinderSuSLA")));
 
         // Destroy the manifestation token for this manifestation
         _DestroyManifestationToken(oManifester, oMfToken);
@@ -873,7 +895,7 @@ struct manifestation EvaluateManifestation(object oManifester, object oTarget, s
     {
         manif.bCanManifest = TRUE;
     }	
-	else if(GetAbilityScoreOfClass(oManifester, nClass) - 10 < nPowerLevel && !bIgnoreConstraints && !bIsPsiLike && !GetHasSpellEffect(VESTIGE_ARETE, oManifester) && !GetHasSpellEffect(VESTIGE_THETRIAD, oManifester) && !GetHasSpellEffect(VESTIGE_ABYSM, oManifester) && manif.nSpellID != POWER_ELAN_RESILIANCE)
+	else if(GetAbilityScoreOfClass(oManifester, nClass) - 10 < nPowerLevel && !bIgnoreConstraints && !bIsPsiLike && !_IsVestigePsionicPower(oManifester, manif.nSpellID, 0) && manif.nSpellID != POWER_ELAN_RESILIANCE)
     {
         FloatingTextStrRefOnCreature(16826411, oManifester, FALSE); // "You do not have a high enough ability score to manifest this power"
         manif.bCanManifest = FALSE;
@@ -1032,8 +1054,16 @@ void UsePower(int nPower, int nClass, int bIsPsiLike = FALSE, int nLevelOverride
     int nSpellID       = PRCGetSpellId();
     int nManifDur      = StringToInt(Get2DACache("spells", "ConjTime", nPower)) + StringToInt(Get2DACache("spells", "CastTime", nPower));
     int bQuicken       = FALSE;
-    
-    
+    int bVestigePsiSu  = _IsVestigePsionicPower(oManifester, nSpellID, nPower);
+    if (bVestigePsiSu)
+    {
+        if (GetHasSpellEffect(2076, oManifester) || GetHasSpellEffect(14215, oManifester) || GetPersistantLocalInt(oManifester, "NullPsionicsField") || GetLocalInt(oManifester, "BinderInAMF"))
+        {
+            FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", oManifester, FALSE);
+            return;
+        }
+        nManifDur = 0;
+    }
     if (GetLocalInt(oManifester, "MindStabDur")) nManifDur = 0;
 
     // Normally swift action powers check

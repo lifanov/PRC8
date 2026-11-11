@@ -26,6 +26,7 @@ nauseated for 1 round and sickened for an additional 1d4 rounds. Those who make 
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     location lTarget = PRCGetSpellTargetLocation();
     float fRange = FeetToMeters(60.0);    
@@ -41,11 +42,11 @@ void main()
         	if(!PRCMySavingThrow(SAVING_THROW_FORT, oTarget, nDC, SAVING_THROW_TYPE_POISON))
         	{
         	    ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_DISEASE_S), oTarget);
-        	    DelayCommand(6.0, ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectSickened(), oTarget, RoundsToSeconds(d4())));
-        	    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectNausea(oTarget, 6.0), oTarget, RoundsToSeconds(1));
+        	    DelayCommand(6.0, ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectSickened()), oTarget, RoundsToSeconds(d4())));
+        	    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectNausea(oTarget, 6.0)), oTarget, RoundsToSeconds(1));
         	}    
         	else
-        		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectSickened(), oTarget, RoundsToSeconds(1));
+        		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectSickened()), oTarget, RoundsToSeconds(1));
         }
         oTarget = MyNextObjectInShape(SHAPE_SPELLCONE, fRange, lTarget, FALSE, OBJECT_TYPE_CREATURE);
     }   

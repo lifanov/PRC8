@@ -63,6 +63,8 @@ void ReapplyVestige(object oBinder, int nVestige)
 void main()
 {
     object oBinder = GetPCSpeaker();
+    if (!GetIsObjectValid(oBinder)) oBinder = OBJECT_SELF;
+    if (GetIsBinderInAntimagicField(oBinder)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", oBinder, FALSE); return; }
     int nValue = GetLocalInt(oBinder, DYNCONV_VARIABLE);
     int nStage = GetStage(oBinder);
 
@@ -95,7 +97,7 @@ void main()
     					AddChoice(GetStringByStrRef(StringToInt(Get2DACache("Spells", "Name", i))), i, oBinder);
     			}		
 
-                MarkStageSetUp(STAGE_SELECT_VESTIGE, oBinder);
+                MarkStageSetUp(STAGE_SELECT_METAMAGIC, oBinder);
             }
             else if(nStage == STAGE_SELECT_METAMAGIC)
             {
@@ -149,6 +151,7 @@ void main()
            	// Remove the vestige for 5 rounds
 			PRCRemoveSpellEffects(nVestige, oBinder, oBinder);
 			GZPRCRemoveSpellEffects(nVestige, oBinder, FALSE);
+			ScrubVestigeSkinFeats(oBinder, nVestige);
 			DelayCommand(RoundsToSeconds(5), ReapplyVestige(oBinder, nVestige));
            	
            	if (nChoice == 1) 

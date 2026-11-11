@@ -21,7 +21,7 @@ void DantalionOverwhelm(object oBinder, object oTarget, int nDC)
     	if(!PRCMySavingThrow(SAVING_THROW_WILL, oTarget, nDC, SAVING_THROW_TYPE_NONE))
     	{
     		ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(PSI_IMP_CONCUSSION_BLAST), oTarget);
-    		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, EffectDazed(), oTarget, RoundsToSeconds(d4()));
+    		ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(EffectDazed()), oTarget, RoundsToSeconds(d4()));
     	}	
     	else // Enemy succeeded on saving throw here
     	{
@@ -34,6 +34,7 @@ void DantalionOverwhelm(object oBinder, object oTarget, int nDC)
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
 	object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject(); 
     int nDC = 10 + GetBinderLevel(oBinder, VESTIGE_DANTALION)/2 + GetAbilityModifier(ABILITY_CHARISMA, oBinder);
@@ -43,17 +44,19 @@ void main()
 	if (GetLevelByClass(CLASS_TYPE_SCION_DANTALION, oBinder) >= 5)
 	{
 	    location lTarget = GetLocation(oBinder);
+	    float fRange = FeetToMeters(5.0 * GetBinderLevel(oBinder, VESTIGE_DANTALION));
+	    int nMaxExtra = PRCMax(2, GetAbilityModifier(ABILITY_CHARISMA, oBinder)) - 1;
+	    int nExtraCount = 0;
 	    ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_FNF_DEEP_SLUMBER), oBinder);
-	    // Use the function to get the closest creature as a target
-	    object oAreaTarget = MyFirstObjectInShape(SHAPE_SPHERE, FeetToMeters(45.0), lTarget, TRUE, OBJECT_TYPE_CREATURE);
-	    while(GetIsObjectValid(oAreaTarget))
+	    object oAreaTarget = MyFirstObjectInShape(SHAPE_SPHERE, fRange, lTarget, TRUE, OBJECT_TYPE_CREATURE);
+	    while(GetIsObjectValid(oAreaTarget) && nExtraCount < nMaxExtra)
 	    {
 	        if(oAreaTarget != oBinder && oAreaTarget != oTarget && GetIsEnemy(oBinder, oAreaTarget)) // Enemies only
 	        {
-				DantalionOverwhelm(oBinder, oAreaTarget, nDC);	
+				DantalionOverwhelm(oBinder, oAreaTarget, nDC);
+				nExtraCount++;
 	        }
-	    //Select the next target within the spell shape.
-	    oAreaTarget = MyNextObjectInShape(SHAPE_SPHERE, FeetToMeters(45.0), lTarget, TRUE, OBJECT_TYPE_CREATURE);
+	        oAreaTarget = MyNextObjectInShape(SHAPE_SPHERE, fRange, lTarget, TRUE, OBJECT_TYPE_CREATURE);
 	    }	
 	}    
 }

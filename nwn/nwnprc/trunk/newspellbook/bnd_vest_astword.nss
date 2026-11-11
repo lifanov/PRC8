@@ -23,6 +23,7 @@ Word of Astaroth: You may charm a single creature with your glowing words. You m
 
 void main()
 {
+    if (GetIsBinderInAntimagicField(OBJECT_SELF)) { FloatingTextStringOnCreature("Vestige supernatural abilities do not function inside an Antimagic Field!", OBJECT_SELF, FALSE); return; }
     object oBinder = OBJECT_SELF;
     object oTarget = PRCGetSpellTargetObject();
     float fRange = FeetToMeters(60.0);    
