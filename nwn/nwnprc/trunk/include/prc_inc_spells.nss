@@ -960,9 +960,13 @@ int PRCMySavingThrow(int nSavingThrow, object oTarget, int nDC, int nSaveType = 
     if (GetHasSpellEffect(MELD_PLANAR_WARD, oTarget) && (GetIsOfSubschool(nSpell, SUBSCHOOL_CHARM) || GetIsOfSubschool(nSpell, SUBSCHOOL_COMPULSION)))
     	return 2;
     	
-    // Chucoclops influence makes you autofail fear saves
+    // Chupoclops influence makes you autofail fear saves (unless immune to fear)
     if (GetHasSpellEffect(VESTIGE_CHUPOCLOPS, oTarget) && !GetLocalInt(oTarget, "PactQuality"+IntToString(VESTIGE_CHUPOCLOPS)) && nSaveType == SAVING_THROW_TYPE_FEAR)
-    	return 1;
+    {
+        if (GetIsImmune(oTarget, IMMUNITY_TYPE_FEAR, oSaveVersus))
+            return (bImmunityCheck ? 2 : 0);
+        return 0;
+    }
 
     // Iron Mind's Mind Over Body, allows them to treat other saves as will saves up to 3/day.
     // No point in having it trigger when its a will save.
@@ -1344,10 +1348,10 @@ int PRCMySavingThrow(int nSavingThrow, object oTarget, int nDC, int nSaveType = 
     //Serene Guardian Unclouded Mind
     int nSerene = GetLevelByClass(CLASS_TYPE_SERENE_GUARDIAN, oTarget);
     //Applies on failed will saves from 9th level on
-    if (nSaveRoll == 1 && nSavingThrow == SAVING_THROW_WILL && nSerene >= 9)
+    if (nSaveRoll == 0 && nSavingThrow == SAVING_THROW_WILL && nSerene >= 9)
     {
         if (GetIsSkillSuccessful(oTarget, SKILL_CONCENTRATION, nDC)) // Concentration check to beat the DC
-            nSaveRoll = 0;
+            nSaveRoll = 1;
     }
     
     // Iron Mind Barbed Mind ability
@@ -2118,7 +2122,7 @@ int GetHasMettle(object oTarget, int nSavingThrow = SAVING_THROW_WILL)
     if(GetLevelByClass(CLASS_TYPE_CRUSADER, oTarget) > 12) return TRUE;
     if(GetLocalInt(oTarget, "FactotumMettle")) return TRUE;
 
-    if(nSavingThrow = SAVING_THROW_WILL)
+    if (nSavingThrow == SAVING_THROW_WILL)
     {
         // Iron Mind's ability only functions in Heavy Armour
         if(GetLevelByClass(CLASS_TYPE_IRONMIND, oTarget) > 4

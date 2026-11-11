@@ -46,5 +46,5 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_ELIGOR_RESILIENCE)) eLink = EffectLinkEffects(eLink, EffectACIncrease(nBonus, AC_NATURAL_BONUS));
     if (!GetIsVestigeExploited(oBinder, VESTIGE_ELIGOR_ARMOR))      IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_ARMOR_PROF_HEAVY), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

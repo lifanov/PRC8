@@ -82,5 +82,5 @@ void main()
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_ZCERYLL_BOLTS))  IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_ZCERYLL_BOLTS),   HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_ZCERYLL_SUMMON)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_ZCERYLL_SUMMON),  HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

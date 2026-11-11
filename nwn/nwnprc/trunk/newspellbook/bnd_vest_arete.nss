@@ -58,7 +58,6 @@ void main()
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(12134),    HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(12135),    HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 		SetLocalInt(oBinder, "AretePsion", GetBinderLevel(oBinder, VESTIGE_ARETE));
-	}	
-    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));     
+	}
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));     
 }

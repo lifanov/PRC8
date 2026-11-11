@@ -23,6 +23,23 @@ Mount: As a full-round action, you can summon a heavy warhorse. You can use this
 void main()
 {
     object oBinder = OBJECT_SELF;
+    if (GetLocalInt(oBinder, "AndrasMountCleanupMode"))
+    {
+        DeleteLocalInt(oBinder, "AndrasMountCleanupMode");
+        if (HorseGetIsMounted(oBinder))
+        {
+            int bHasOwnPaladinMount = (GetLevelByClass(CLASS_TYPE_PALADIN, oBinder) >= 5);
+            string sMountedRes = GetSkinString(oBinder, "sX3_HorseResRef");
+            if (GetLocalInt(oBinder, "AndrasMountWasActive") ||
+                (!bHasOwnPaladinMount && GetStringLeft(sMountedRes, 9) == "x3_palhrs"))
+            {
+                AssignCommand(oBinder, ClearAllActions(TRUE));
+                HorseInstantDismount(oBinder);
+            }
+        }
+        DeleteLocalInt(oBinder, "AndrasMountWasActive");
+        return;
+    }
     if (GetLocalInt(oBinder, "AndrasMount"))
         return;
 
@@ -41,6 +58,11 @@ void main()
         return;
     }
     
-     HorseSummonPhantomSteed(1, 24);
-     SetLocalInt(oBinder, "AndrasMount", TRUE);
+    object oSummoned = HorseSummonPhantomSteed(1, 24);
+    if (GetIsObjectValid(oSummoned))
+    {
+        SetLocalInt(oSummoned, "AndrasSummonedMount", TRUE);
+        SetLocalObject(oBinder, "AndrasMountObj", oSummoned);
+        SetLocalInt(oBinder, "AndrasMount", TRUE);
+    }
 }

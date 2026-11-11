@@ -40,7 +40,7 @@ void main()
            
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_AMON_DARKVISION)) eLink = EffectLinkEffects(eLink, EffectUltravision());
            
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));  
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));  
     
     // We get this with the Practiced Binder feat
     if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder))

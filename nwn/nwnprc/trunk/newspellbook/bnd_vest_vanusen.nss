@@ -30,7 +30,9 @@ Vanus’s Ears: Being bound to Vanus grants you a +10 bonus on Listen checks.
 void main()
 {
     //Declare major variables
-    object oBinder = GetLocalObject(GetModule(), "VanusFear");
+    object oBinder = GetAreaOfEffectCreator(OBJECT_SELF);
+    if (!GetIsObjectValid(oBinder) || GetObjectType(oBinder) != OBJECT_TYPE_CREATURE)
+        oBinder = GetLocalObject(GetModule(), "VanusFear");
     object oTarget = GetEnteringObject();
 
 	//FloatingTextStringOnCreature("Entering Object is "+GetName(oTarget), oBinder, FALSE);

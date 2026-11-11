@@ -41,7 +41,6 @@ void main()
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(12105),    HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 		IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(12051),    HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 		SetLocalInt(oBinder, "AbysmPsion", GetBinderLevel(oBinder, VESTIGE_ABYSM));
-	}	
-    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));     
+	}
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));     
 }

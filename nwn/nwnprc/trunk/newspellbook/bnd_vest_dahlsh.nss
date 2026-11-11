@@ -31,8 +31,8 @@ void main()
     // Let the AI know
     PRCSignalSpellEvent(oTarget, TRUE, nSpellID, oBinder);
 
-    // Save - Fortitude negates, or it's an ally
-    if(!PRCMySavingThrow(SAVING_THROW_FORT, oTarget, nDC, SAVING_THROW_TYPE_NONE) || GetIsFriend(oBinder, oTarget))
+    // Save - Will negates, or it's an ally
+    if(!PRCMySavingThrow(SAVING_THROW_WILL, oTarget, nDC, SAVING_THROW_TYPE_NONE) || GetIsFriend(oBinder, oTarget))
 	{
     	// Get the OnHitCast: Unique on the manifester's armor / hide
     	ExecuteScript("prc_keep_onhit_a", oBinder);

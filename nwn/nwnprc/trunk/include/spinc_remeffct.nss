@@ -152,7 +152,10 @@ int GetShouldNotBeRemoved(effect eEff)
     if(GetTag(oCreator) == "q6e_ShaorisFellTemple")
         return TRUE;
         
-	if(GetEffectSpellId(eEff) >= VESTIGE_AMON && VESTIGE_ABYSM >= GetEffectSpellId(eEff))
+	int nEffSpellId = GetEffectSpellId(eEff);
+	if((nEffSpellId >= VESTIGE_AMON && nEffSpellId <= VESTIGE_ABYSM) ||
+	   nEffSpellId == VESTIGE_PACT_AUGMENTATION ||
+	   GetEffectTag(eEff) == "BinderPactAugmentEff")
 		return TRUE;
 		
 	if(GetEffectSpellId(eEff) >= MELD_ACROBAT_BOOTS && MELD_ELDER_SPIRIT >= GetEffectSpellId(eEff))

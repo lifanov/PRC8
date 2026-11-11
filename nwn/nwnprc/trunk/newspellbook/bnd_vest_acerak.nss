@@ -47,5 +47,5 @@ void main()
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_ACERERAK_TOUCH  )) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_ACERERAK_TOUCH ),     HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_ACERERAK_HEALING)) SetLocalInt(oBinder, "AcererakHealing", TRUE);
      
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

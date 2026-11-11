@@ -409,6 +409,7 @@ void main()
                 //add other types here
                 )
             && !GetIsObjectValid(GetEffectCreator(eTest))
+            && !(GetEffectSpellId(eTest) >= VESTIGE_AMON && GetEffectSpellId(eTest) <= VESTIGE_ABYSM)
             )
             RemoveEffect(oPC, eTest);
         eTest=GetNextEffect(oPC);

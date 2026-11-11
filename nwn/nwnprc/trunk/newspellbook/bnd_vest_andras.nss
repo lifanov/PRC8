@@ -90,5 +90,5 @@ void main()
     if (!GetIsVestigeExploited(oBinder, VESTIGE_ANDRAS_DISCORD)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRAS_DISCORD), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
     if (!GetIsVestigeExploited(oBinder, VESTIGE_ANDRAS_MOUNT)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_ANDRAS_MOUNT), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

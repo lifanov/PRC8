@@ -32,6 +32,5 @@ void main()
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_FREEDOM))      IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_SHAX_FREEDOM), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_IMMUNITY))     eLink = EffectLinkEffects(eLink, EffectDamageImmunityIncrease(DAMAGE_TYPE_ELECTRICAL,  100));
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_SHAX_STORM_STRIKE)) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_SHAX_STRIKE),  HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
-	
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

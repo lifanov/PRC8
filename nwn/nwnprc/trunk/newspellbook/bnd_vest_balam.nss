@@ -59,5 +59,5 @@ void main()
 	}
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_BALAM_FINESSE   )) IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_WEAPON_FINESSE  ), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
      
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

@@ -84,6 +84,7 @@ void FinishTestHarness()
 }
 
 #include "test_binder_nui"
+#include "test_bnd_base"
 
 void RunAllTestSuites(object oPC)
 {
@@ -94,6 +95,7 @@ void RunAllTestSuites(object oPC)
     SetPlotFlag(oTarget, TRUE);
 
     RunTestSuite_BinderNUI(oHelper, oPC, oTarget);
+    DelayCommand(13.5, RunTestSuite_BinderBasic(oHelper, oPC, oTarget));
     DelayCommand(32.5, FinishTestHarness());
 }
 

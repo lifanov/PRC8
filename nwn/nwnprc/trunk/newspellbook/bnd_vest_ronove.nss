@@ -40,8 +40,18 @@ void main()
     // If she gets influence, you can't drink potions
     if (!GetLocalInt(oBinder, "PactQuality"+IntToString(VESTIGE_RONOVE))) FloatingTextStringOnCreature("You have made a poor pact, and Ronove enjoins you from drinking potions!", oBinder, FALSE);    
     
-    // Cold Iron and Magic Attacks is in bnd_events
-    
+    // Cold Iron and Magic Attacks (+1 DR bypass at EBL 1-6, +3 DR bypass at EBL 7+ on melee and unarmed/creature weapons)
+    int nRonoveEBL = GetBinderLevel(oBinder, VESTIGE_RONOVE);
+    if (!GetIsVestigeExploited(oBinder, VESTIGE_RONOVE_COLD_IRON))
+    {
+        object oRight = GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oBinder);
+        if (GetIsObjectValid(oRight) && IPGetIsMeleeWeapon(oRight))
+            DelayCommand(0.05, ApplyBinderWeaponDRBypass(oBinder, oRight));
+        object oLeft = GetItemInSlot(INVENTORY_SLOT_LEFTHAND, oBinder);
+        if (GetIsObjectValid(oLeft) && IPGetIsMeleeWeapon(oLeft))
+            DelayCommand(0.05, ApplyBinderWeaponDRBypass(oBinder, oLeft));
+    }
+
     // We get this with the Practiced Binder feat
     if (GetLevelByClass(CLASS_TYPE_BINDER, oBinder) || GetHasFeat(FEAT_PRACTICED_BINDER, oBinder))
     {
@@ -59,10 +69,12 @@ void main()
     	}	
 		if (!GetIsVestigeExploited(oBinder, VESTIGE_RONOVE_FISTS))
 		{
-			SetLocalInt(oBinder, "RonovesFists", GetBinderLevel(oBinder, VESTIGE_RONOVE));   	
+			SetLocalInt(oBinder, "RonovesFists", nRonoveEBL);   	
 			IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_FEAT_IMPROVED_UNARMED_STRIKE), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
+			SetLocalInt(oBinder, "CALL_UNARMED_FEATS", TRUE);
+			SetLocalInt(oBinder, "CALL_UNARMED_FISTS", TRUE);
+			DelayCommand(0.1, ExecuteScript("unarmed_caller", oBinder));
 		}
-    }	
-    
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    }
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

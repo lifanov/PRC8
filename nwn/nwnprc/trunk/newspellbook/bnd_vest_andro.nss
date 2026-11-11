@@ -62,5 +62,5 @@ void main()
     		DelayCommand(0.1, ExecuteScript("prc_sneak_att", oBinder));    	
     	}	
     }	
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }

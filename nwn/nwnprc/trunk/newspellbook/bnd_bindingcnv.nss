@@ -138,6 +138,30 @@ void TransferTempList(object oBinder)
     DeleteLocalInt(oBinder, "PRC_MeldshapeConvo_ListInited");
 }
 
+int GetAvailableNaberiusSkillCount(object oBinder)
+{
+    int nCount = 0;
+    int i;
+    for (i = 0; i < 40; i++)
+    {
+        string sSkill = GetStringByStrRef(StringToInt(Get2DACache("skills", "Name", i)));
+        if (!GetSkillRank(i, oBinder, TRUE) && sSkill != "" && StringToInt(Get2DACache("skills", "Untrained", i)) && !GetLocalInt(oBinder, "NaberiusSkill" + IntToString(i)))
+        {
+            nCount++;
+        }
+    }
+    return nCount;
+}
+
+int GetNaberiusTargetSkillCount(object oBinder)
+{
+    int nConMod = GetAbilityModifier(ABILITY_CONSTITUTION, oBinder);
+    if (nConMod <= 0)
+        return 0;
+    int nAvail = GetAvailableNaberiusSkillCount(oBinder) + GetLocalInt(oBinder, "NaberiusSkillCount");
+    return nConMod < nAvail ? nConMod : nAvail;
+}
+
 void main()
 {
     object oBinder = GetPCSpeaker();
@@ -165,6 +189,7 @@ void main()
                
                 string sVestige;
                 int i, nVestige;
+                SetLocalInt(oBinder, "BinderCheckingMenuReqs", TRUE);
                 for(i = 0; i < 50 ; i++)
                 {
                     sVestige = GetStringByStrRef(StringToInt(Get2DACache(sVestigeFile, "Name", i)));
@@ -176,7 +201,8 @@ void main()
                     {
 						AddChoice(sVestige, i, oBinder);  
                     }
-                }                
+                }
+                DeleteLocalInt(oBinder, "BinderCheckingMenuReqs");                
 												      
                 // Set the next, previous and wait tokens to default values
                 SetDefaultTokens();
@@ -355,7 +381,7 @@ void main()
         		{
         			nStage = STAGE_PACT_AUGMENT;
         		}
-        		else if (GetLocalInt(oBinder, "nVestige") == 4 && GetAbilityModifier(ABILITY_CONSTITUTION, oBinder) >= 1)
+        		else if (GetLocalInt(oBinder, "nVestige") == 4 && GetNaberiusTargetSkillCount(oBinder) >= 1)
         		{
         			nStage = STAGE_NABERIUS;
         		}   
@@ -389,7 +415,7 @@ void main()
         	{
         		nStage = STAGE_PACT_AUGMENT;
         	}
-        	else if (GetLocalInt(oBinder, "nVestige") == 4 && GetAbilityModifier(ABILITY_CONSTITUTION, oBinder) >= 1)
+        	else if (GetLocalInt(oBinder, "nVestige") == 4 && GetNaberiusTargetSkillCount(oBinder) >= 1)
         	{
         		nStage = STAGE_NABERIUS;
         	}   
@@ -417,7 +443,7 @@ void main()
         		SetLocalInt(oBinder, "NaberiusSkillCount", GetLocalInt(oBinder, "NaberiusSkillCount")+1);
         	}		
         	
-        	if (GetAbilityModifier(ABILITY_CONSTITUTION, oBinder) - GetLocalInt(oBinder, "NaberiusSkillCount"))
+        	if (GetNaberiusTargetSkillCount(oBinder) > GetLocalInt(oBinder, "NaberiusSkillCount") && GetAvailableNaberiusSkillCount(oBinder) > 0)
         	{
         		nStage = STAGE_NABERIUS;
         	}

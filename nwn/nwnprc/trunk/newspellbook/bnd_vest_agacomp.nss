@@ -21,6 +21,19 @@ The size of the earth elemental you can summon depends on your effective binder 
 
 #include "bnd_inc_bndfunc"
 
+void MarkAgaresSummon(object oBinder, string sExpectedResRef)
+{
+    int nIdx = 1;
+    object oSum = GetAssociate(ASSOCIATE_TYPE_SUMMONED, oBinder, nIdx);
+    while (GetIsObjectValid(oSum))
+    {
+        if (GetResRef(oSum) == sExpectedResRef)
+            SetLocalInt(oSum, "AgaresElementalSummon", TRUE);
+        nIdx++;
+        oSum = GetAssociate(ASSOCIATE_TYPE_SUMMONED, oBinder, nIdx);
+    }
+}
+
 void main()
 {
     object oBinder = OBJECT_SELF;
@@ -53,4 +66,5 @@ void main()
     MultisummonPreSummon();
     ApplyEffectAtLocation(DURATION_TYPE_TEMPORARY, EffectSummonCreature(sSummon, VFX_FNF_SUMMON_MONSTER_3), PRCGetSpellTargetLocation(), HoursToSeconds(24));
     SetLocalInt(oBinder, "AgaresSummoned", TRUE);
+    DelayCommand(0.2f, MarkAgaresSummon(oBinder, sSummon));
 }

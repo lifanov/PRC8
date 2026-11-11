@@ -41,5 +41,5 @@ void main()
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_DESHARIS_SMITE))        IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_DESHARIS_SMITE),    HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	if (!GetIsVestigeExploited(oBinder, VESTIGE_DESHARIS_ANIMATE))   	IPSafeAddItemProperty(GetPCSkin(oBinder), ItemPropertyBonusFeat(IP_CONST_VESTIGE_DESHARIS_ANIMATE),  HoursToSeconds(24), X2_IP_ADDPROP_POLICY_KEEP_EXISTING);
 	
-    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SupernaturalEffect(eLink), oBinder, HoursToSeconds(24));      
+    ApplyEffectToObject(DURATION_TYPE_TEMPORARY, SetEffectSpellId(SupernaturalEffect(eLink), PRCGetSpellId()), oBinder, HoursToSeconds(24));      
 }
