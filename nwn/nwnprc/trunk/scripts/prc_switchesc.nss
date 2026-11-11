@@ -2230,13 +2230,22 @@ void main()
         }
         else if (nStage == STAGE_NATURAL_WEAPON)
         {
-            /*if(nChoice = -512)
-                //no primary natural weapon
-                SetPersistantLocalInt(oPC, "NaturalWeaponPlayerOverride", -1);
-            else
-                //specific natural weapon
-                SetPersistantLocalInt(oPC, "NaturalWeaponPlayerOverride", nChoice);*/
-            SetPrimaryNaturalWeapon(oPC, nChoice);
+            if (nChoice != CHOICE_RETURN_TO_PREVIOUS)
+            {
+                if (nChoice == -1)
+                {
+                    SetPersistantLocalInt(oPC, "NaturalWeaponPlayerOverride", -1);
+                    SetPrimaryNaturalWeapon(oPC, -1);
+                    SetLocalInt(oPC, "CALL_UNARMED_FEATS", TRUE);
+                    SetLocalInt(oPC, "CALL_UNARMED_FISTS", TRUE);
+                    ExecuteScript("unarmed_caller", oPC);
+                }
+                else
+                {
+                    SetPersistantLocalInt(oPC, "NaturalWeaponPlayerOverride", nChoice + 1);
+                    SetPrimaryNaturalWeapon(oPC, nChoice);
+                }
+            }
 
             nStage = STAGE_ENTRY;
             MarkStageNotSetUp(nStage, oPC);

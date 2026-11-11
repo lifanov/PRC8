@@ -231,6 +231,7 @@ int GetBinderDC(object oBinder, int nVestige);
  */
 int DoSpecialRequirements(object oBinder, int nVestige);
 void ApplyBinderWeaponDRBypass(object oBinder, object oItem);
+void RemoveVestigeNaturalWeapons(object oBinder, int nVestige);
 void ScrubVestigeSkinFeats(object oBinder, int nVestige);
 void ScrubAllUnboundVestigeSkinFeats(object oBinder);
 void CleanupAndrasMount(object oBinder);
@@ -928,6 +929,7 @@ void ExpelVestige(object oBinder, int nVestige)
 		GZPRCRemoveSpellEffects(nVestige, oBinder, FALSE);
 		CleanupPreEpicVestigeState(oBinder, nVestige);
 		ScrubVestigeSkinFeats(oBinder, nVestige);
+		RemoveVestigeNaturalWeapons(oBinder, nVestige);
 		if (nVestige == VESTIGE_ANDRAS)
 			CleanupAndrasMount(oBinder);
 		if (nVestige == VESTIGE_AGARES)
@@ -1611,5 +1613,111 @@ void ApplyBinderWeaponDRBypass(object oBinder, object oItem)
         DeleteLocalInt(oItem, "BinderDRBypassBonus");
         IPRemoveMatchingItemProperties(oItem, ITEM_PROPERTY_ATTACK_BONUS, DURATION_TYPE_TEMPORARY);
         IPRemoveMatchingItemProperties(oItem, ITEM_PROPERTY_DECREASED_ATTACK_MODIFIER, DURATION_TYPE_TEMPORARY);
+    }
+}
+
+
+void RemoveVestigeNaturalWeapons(object oBinder, int nVestige)
+{
+    if (nVestige == 0 || nVestige == VESTIGE_CHUPOCLOPS)
+    {
+        if (array_exists(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF"))
+        {
+            int i;
+            for (i = 0; i < array_get_size(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF"); i++)
+            {
+                string sSec = array_get_string(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF", i);
+                if (FindSubString(sSec, "prc_troll_bite_") == 0)
+                    array_set_string(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF", i, "");
+            }
+        }
+    }
+
+    if (nVestige == 0 || nVestige == VESTIGE_AMON)
+    {
+        if (array_exists(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF"))
+        {
+            int i;
+            for (i = 0; i < array_get_size(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF"); i++)
+            {
+                string sSec = array_get_string(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF", i);
+                if (FindSubString(sSec, "prc_mino_gore_") == 0)
+                    array_set_string(oBinder, "ARRAY_NAT_SEC_WEAP_RESREF", i, "");
+            }
+        }
+        if (array_exists(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF"))
+        {
+            int i;
+            for (i = 0; i < array_get_size(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF"); i++)
+            {
+                string sPri = array_get_string(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF", i);
+                if (FindSubString(sPri, "prc_mino_gore_") == 0)
+                {
+                    array_set_string(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF", i, "");
+                    if (array_exists(oBinder, "ARRAY_NAT_PRI_WEAP_ATTACKS"))
+                        array_set_int(oBinder, "ARRAY_NAT_PRI_WEAP_ATTACKS", i, 0);
+                }
+            }
+        }
+        object oWeapL = GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder);
+        if (GetIsObjectValid(oWeapL) && FindSubString(GetResRef(oWeapL), "prc_mino_gore_") == 0)
+        {
+            DestroyObject(oWeapL);
+            DeleteLocalInt(oBinder, "NATURAL_WEAPON_ATTACK_COUNT");
+        }
+    }
+
+    if (nVestige == 0 || nVestige == VESTIGE_IPOS)
+    {
+        if (array_exists(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF"))
+        {
+            int i;
+            for (i = 0; i < array_get_size(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF"); i++)
+            {
+                string sPri = array_get_string(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF", i);
+                if (FindSubString(sPri, "prc_claw_1d6l_") == 0)
+                {
+                    array_set_string(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF", i, "");
+                    if (array_exists(oBinder, "ARRAY_NAT_PRI_WEAP_ATTACKS"))
+                        array_set_int(oBinder, "ARRAY_NAT_PRI_WEAP_ATTACKS", i, 0);
+                }
+            }
+        }
+        object oWeapL = GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder);
+        if (GetIsObjectValid(oWeapL) && FindSubString(GetResRef(oWeapL), "prc_claw_1d6l_") == 0)
+        {
+            DestroyObject(oWeapL);
+            DeleteLocalInt(oBinder, "NATURAL_WEAPON_ATTACK_COUNT");
+        }
+        object oWeapR = GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oBinder);
+        if (GetIsObjectValid(oWeapR) && FindSubString(GetResRef(oWeapR), "prc_claw_1d6l_") == 0)
+            DestroyObject(oWeapR);
+    }
+
+    if (nVestige == 0 || nVestige == VESTIGE_AMON || nVestige == VESTIGE_IPOS)
+    {
+        DeletePersistantLocalInt(oBinder, "NaturalWeaponPlayerOverride");
+        GetObjectToApplyNewEffect("WP_PrimaryNaturalWeapEffect", oBinder, TRUE);
+        int bEquippedOther = FALSE;
+        if (array_exists(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF"))
+        {
+            int i;
+            for (i = 0; i < array_get_size(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF"); i++)
+            {
+                if (array_get_string(oBinder, "ARRAY_NAT_PRI_WEAP_RESREF", i) != "")
+                {
+                    ExecuteScript("prc_bab_caller", oBinder);
+                    bEquippedOther = TRUE;
+                    break;
+                }
+            }
+        }
+        if (!bEquippedOther && GetHasSpellEffect(VESTIGE_RONOVE, oBinder))
+        {
+            SetLocalInt(oBinder, "CALL_UNARMED_FEATS", TRUE);
+            SetLocalInt(oBinder, "CALL_UNARMED_FISTS", TRUE);
+            ExecuteScript("unarmed_caller", oBinder);
+        }
+        ExecuteScript("prc_bab_caller", oBinder);
     }
 }

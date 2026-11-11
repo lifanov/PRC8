@@ -226,6 +226,12 @@ void ExpelledVestigeCleanup(object oBinder)
         AssignCommand(oHammer, SetIsDestroyable(TRUE, TRUE, TRUE));
         DestroyObject(oHammer);
     }
+    if (!GetHasSpellEffect(VESTIGE_AMON, oBinder))
+        RemoveVestigeNaturalWeapons(oBinder, VESTIGE_AMON);
+    if (!GetHasSpellEffect(VESTIGE_IPOS, oBinder))
+        RemoveVestigeNaturalWeapons(oBinder, VESTIGE_IPOS);
+    if (!GetHasSpellEffect(VESTIGE_CHUPOCLOPS, oBinder))
+        RemoveVestigeNaturalWeapons(oBinder, VESTIGE_CHUPOCLOPS);
 	// Using Disguise Self strips the hide of all the vestige feats, this reapplies them
 	// Checks for having naberius (and not having Disguise Self exploited), but missing the disguise self feat
 	if (GetHasSpellEffect(VESTIGE_NABERIUS, oBinder) &&
@@ -750,6 +756,7 @@ void main()
     	DeleteLocalInt(oBinder, "AgaresDelay");
     	DeleteLocalInt(oBinder, "AmonRam");
     	ClearExploitVestigeState(oBinder);
+    	RemoveVestigeNaturalWeapons(oBinder, 0);
     	ScrubAllUnboundVestigeSkinFeats(oBinder);
     	if (!GetHasSpellEffect(VESTIGE_ANDRAS, oBinder))
     		CleanupAndrasMount(oBinder);

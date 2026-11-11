@@ -550,9 +550,34 @@ void UnarmedFists(object oCreature)
             }
         }	
 
+        object oWeapR = GetItemInSlot(INVENTORY_SLOT_CWEAPON_R, oCreature);
+        if (GetIsObjectValid(oWeapR) && FindSubString(GetResRef(oWeapR), "prc_claw_1d6") == 0)
+            DestroyObject(oWeapR);
+
+        SetLocalObject(oCreature, "EquippedUnarmedFist", oWeapL);
         int iKi = (iMonkEq > 9)  ? 1 : 0;
             iKi = (iMonkEq > 12) ? 2 : iKi;
             iKi = (iMonkEq > 15) ? 3 : iKi;
+
+        // Ronove Cold Iron and Magic Attacks (+1 DR bypass at EBL 1-6, +3 at EBL 7+) and Aym (+5 at EBL 10+)
+        if (GetHasSpellEffect(VESTIGE_RONOVE, oCreature) &&
+            GetLocalInt(oCreature, "ExploitVestige") != VESTIGE_RONOVE_COLD_IRON &&
+            !GetLocalInt(oCreature, "ExploitVestige_" + IntToString(VESTIGE_RONOVE_COLD_IRON)) &&
+            !GetLocalInt(oCreature, "ExploitVestige" + IntToString(VESTIGE_RONOVE_COLD_IRON)))
+        {
+            int nRonEBL = GetLocalInt(oCreature, "RonovesFists");
+            if (nRonEBL <= 0) nRonEBL = GetLevelByClass(CLASS_TYPE_BINDER, oCreature);
+            int iRonKi = (nRonEBL >= 7) ? 3 : 1;
+            if (iRonKi > iKi) iKi = iRonKi;
+        }
+        if (GetHasSpellEffect(VESTIGE_AYM, oCreature) &&
+            (GetLevelByClass(CLASS_TYPE_BINDER, oCreature) > 0 || GetHasFeat(FEAT_PRACTICED_BINDER, oCreature)) &&
+            GetLocalInt(oCreature, "ExploitVestige") != VESTIGE_AYM_RUINOUS_ATTACK &&
+            !GetLocalInt(oCreature, "ExploitVestige_" + IntToString(VESTIGE_AYM_RUINOUS_ATTACK)) &&
+            !GetLocalInt(oCreature, "ExploitVestige" + IntToString(VESTIGE_AYM_RUINOUS_ATTACK)))
+        {
+            if (iKi < 5) iKi = 5;
+        }
 
         int iDragClaw = GetHasFeat(FEAT_CLAWDRAGON,oCreature) ? 1: 0;
             iDragClaw = GetHasFeat(FEAT_CLAWENH2,oCreature)   ? 2: iDragClaw;

@@ -495,8 +495,15 @@ void DoNaturalWeaponHB(object oPC = OBJECT_SELF)
         {
             //get the resref to use
             string sResRef = array_get_string(oPC, ARRAY_NAT_SEC_WEAP_RESREF, i);
-            //if null, move to next
-            if(sResRef != "")
+            // Skip if this secondary weapon is currently serving as the creature's active primary natural weapon
+            object oPrimaryWeapL = GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oPC);
+            int bIsActivePrimary = (!GetIsObjectValid(GetItemInSlot(INVENTORY_SLOT_RIGHTHAND, oPC)) &&
+                                    GetIsUsingPrimaryNaturalWeapons(oPC) &&
+                                    GetIsObjectValid(oPrimaryWeapL) &&
+                                    (GetResRef(oPrimaryWeapL) == sResRef || GetTag(oPrimaryWeapL) == sResRef));
+
+            //if null or active primary, move to next
+            if(sResRef != "" && !bIsActivePrimary)
             {
                 //get the created item
                 object oWeapon = GetObjectByTag(sResRef);

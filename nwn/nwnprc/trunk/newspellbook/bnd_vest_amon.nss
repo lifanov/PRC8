@@ -51,8 +51,11 @@ void main()
     		string sResRef = "prc_mino_gore_";
     		int nSize = PRCGetCreatureSize(oBinder);
     		sResRef += GetAffixForSize(nSize);
-    		AddNaturalPrimaryWeapon(oBinder, sResRef);  
-    		DelayCommand(1.0, IPSafeAddItemProperty(GetItemInSlot(INVENTORY_SLOT_CWEAPON_L, oBinder), ItemPropertyDamageBonus(IP_CONST_DAMAGETYPE_PIERCING, GetAbilityModifier(ABILITY_STRENGTH, oBinder)/2), HoursToSeconds(24), X2_IP_ADDPROP_POLICY_REPLACE_EXISTING, FALSE, TRUE));
+    		AddNaturalSecondaryWeapon(oBinder, sResRef, 1);
+    		int bForcePrimaryGore = (!GetHasSpellEffect(VESTIGE_IPOS, oBinder) && !GetHasSpellEffect(VESTIGE_RONOVE, oBinder));
+    		if (bForcePrimaryGore)
+    			DeletePersistantLocalInt(oBinder, "NaturalWeaponPlayerOverride");
+    		AddNaturalPrimaryWeapon(oBinder, sResRef, 1, bForcePrimaryGore);
     	}	
     }	
     // Binders only down here

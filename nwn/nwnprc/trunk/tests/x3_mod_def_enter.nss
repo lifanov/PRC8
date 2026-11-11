@@ -85,6 +85,7 @@ void FinishTestHarness()
 
 #include "test_binder_nui"
 #include "test_bnd_base"
+#include "test_bnd_natw"
 
 void RunAllTestSuites(object oPC)
 {
@@ -96,6 +97,7 @@ void RunAllTestSuites(object oPC)
 
     RunTestSuite_BinderNUI(oHelper, oPC, oTarget);
     DelayCommand(13.5, RunTestSuite_BinderBasic(oHelper, oPC, oTarget));
+    DelayCommand(18.0, RunTestSuite_BinderNatWeap(oHelper, oPC, oTarget));
     DelayCommand(32.5, FinishTestHarness());
 }
 
